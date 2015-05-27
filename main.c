@@ -4,6 +4,7 @@
 #include "curses.h"
 
 typedef struct Tank{ chtype ch; int paint; } tank;
+jebi se
 
 int top[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8 };
 int left[] = { 2, 5, 8, 1, 4, 7, 0, 3, 6 };
