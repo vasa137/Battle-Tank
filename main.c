@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <windows.h>
 #include <conio.h>
-#include <curses.h>
+#include "curses.h"
 #include <time.h>
 #include <sys/timeb.h>
 
@@ -11,11 +11,11 @@
 
 typedef struct Tank{ chtype ch; int paint; } tank;
 
-chtype matrix[dimx+1][dimy+1];                         // velicina mape
+chtype matrix[dimx + 1][dimy + 1];                         // velicina mape
 
-int top[]    = { 0, 1, 2, 3, 4, 5, 6, 7, 8 };
-int left[]   = { 2, 5, 8, 1, 4, 7, 0, 3, 6 };
-int right[]  = { 6, 3, 0, 7, 4, 1, 8, 5, 2 };
+int top[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8 };
+int left[] = { 2, 5, 8, 1, 4, 7, 0, 3, 6 };
+int right[] = { 6, 3, 0, 7, 4, 1, 8, 5, 2 };
 int bottom[] = { 8, 7, 6, 5, 4, 3, 2, 1, 0 };
 
 tank special_tank_v[] = { { ACS_VLINE, 1 }, { ACS_VLINE, 1 }, { ACS_VLINE, 1 }, { ACS_VLINE, 1 }, { ACS_BULLET, 5 }, { ACS_VLINE, 1 }, { ACS_DIAMOND, 4 }, { ACS_HLINE, 4 }, { ACS_DIAMOND, 4 } };
@@ -89,7 +89,7 @@ void create_tank(int y, int x, int barrel, tank* tank_type)
 		break;
 	case 3: print_tank(y, x, tank_type, right);
 		break;
-	case 4: print_tank(y, x, tank_type, bottom); 
+	case 4: print_tank(y, x, tank_type, bottom);
 		break;
 	}
 }
@@ -99,31 +99,31 @@ void delete_tank(int y, int x){
 	attron(COLOR_PAIR(6));
 
 	mvaddch(y - 1, x - 1, ' ');
-	matrix[y - 1 - 2][x - 1 - 2]=' ';
+	matrix[y - 1 - 2][x - 1 - 2] = ' ';
 
 	mvaddch(y - 1, x, ' ');
-	matrix[y - 1 - 2][x - 2]=' ';
+	matrix[y - 1 - 2][x - 2] = ' ';
 
 	mvaddch(y - 1, x + 1, ' ');
-	matrix[y - 1 - 2][x + 1 - 2]=' ';
+	matrix[y - 1 - 2][x + 1 - 2] = ' ';
 
 	mvaddch(y, x - 1, ' ');
-	matrix[y - 2][x - 1 - 2]=' ';
+	matrix[y - 2][x - 1 - 2] = ' ';
 
 	mvaddch(y, x, ' ');
-	matrix[y - 2][x - 2]=' ';
+	matrix[y - 2][x - 2] = ' ';
 
 	mvaddch(y, x + 1, ' ');
-	matrix[y - 2][x + 1- 2]=' ';
+	matrix[y - 2][x + 1 - 2] = ' ';
 
 	mvaddch(y + 1, x - 1, ' ');
-	matrix[y + 1 - 2][x - 1 - 2]=' ';
+	matrix[y + 1 - 2][x - 1 - 2] = ' ';
 
 	mvaddch(y + 1, x, ' ');
-	matrix[y + 1 - 2][x - 2]=' ';
+	matrix[y + 1 - 2][x - 2] = ' ';
 
 	mvaddch(y + 1, x + 1, ' ');
-	matrix[y + 1 - 2][x + 1 - 2]=' ';
+	matrix[y + 1 - 2][x + 1 - 2] = ' ';
 	refresh();
 }
 
@@ -136,32 +136,49 @@ void move_tank(int y, int x, int mov, tank* ver, tank* hor){
 	}
 }
 
-int can_move(int y,int x,int barrel) {      
-	switch(barrel)
+int can_move(int y, int x, int barrel) {
+	switch (barrel)
 	{
-	case 1: case 4: if ( matrix[y-2][x-2-1]==' ' && matrix[y-2][x-2]==' ' && matrix[y-2][x-2+1]==' ') return 1; else return 0; 
-	case 2: case 3: if ( matrix[y-2-1][x-2]==' ' && matrix[y-2][x-2]==' ' && matrix[y-2+1][x-2]==' ') return 1; else return 0;
+	case 1: case 4: if (matrix[y - 2][x - 2 - 1] == ' ' && matrix[y - 2][x - 2] == ' ' && matrix[y - 2][x - 2 + 1] == ' ') return 1; else return 0;
+	case 2: case 3: if (matrix[y - 2 - 1][x - 2] == ' ' && matrix[y - 2][x - 2] == ' ' && matrix[y - 2 + 1][x - 2] == ' ') return 1; else return 0;
 	}
 }
 
-int can_fly(int y,int x)
+int delay_s(int timeToDelay, unsigned short* mm, unsigned short* pp, int *check){
+	if (*check == 1){    
+		return 1;
+	}
+	if (*mm - *pp > 0){
+		if (*mm - *pp >= timeToDelay)	{
+			return 1;
+		}
+	}
+	else if (*mm - *pp < 0){
+		if (1000 - *pp + *mm >= timeToDelay){
+			return 1;
+		}
+	}
+	return 0;
+}
+
+int can_fly(int y, int x)
 {
-	if((matrix[y-2][x-2])==' ') return 1;
+	if ((matrix[y - 2][x - 2]) == ' ') return 1;
 	else return 0;
 }
 
-void delete_projectile(int y,int x)
+void delete_projectile(int y, int x)
 {
 	attron(COLOR_PAIR(6));
 	mvaddch(y, x, ' ');
-	matrix[y - 2][x - 2]=' ';
+	matrix[y - 2][x - 2] = ' ';
 }
 
-void print_projectile(int y,int x)
+void print_projectile(int y, int x)
 {
 	attron(COLOR_PAIR(8));
-	mvaddch(y, x, ACS_BULLET| A_BOLD);
-	matrix[y - 2][x - 2]='*';
+	mvaddch(y, x, ACS_BULLET | A_BOLD);
+	matrix[y - 2][x - 2] = '*';
 }
 
 /*void check_projectile(int y,int x)
@@ -170,43 +187,51 @@ void print_projectile(int y,int x)
 }
 */
 
-void move_projectile(int *y, int *x,int barrel,int *f)
+void move_projectile(int *y, int *x, int barrel, int *check)
 {
-	if(*f==2) delete_projectile(*y,*x); //ako je metak bio u letu brisi ga
+	if (*check == 2) delete_projectile(*y, *x);
+	else if (*check == 1) *check = 2; //ako je metak bio u letu brisi ga
 	switch (barrel){
-	case 1:   if(can_fly(*y-1,*x)) print_projectile(--*y, *x); else *f=0; /*check_projectile(y-1,x)*/ break;
-	case 2:	  if(can_fly(*y,*x-1)) print_projectile(*y, --*x); else *f=0; /*check_projectile(y,x-1)*/ break;
-	case 3:	  if(can_fly(*y,*x+1)) print_projectile(*y, ++*x); else *f=0; /*check_projectile(y,x+1)*/ break;
-	case 4:   if(can_fly(*y+1,*x)) print_projectile(++*y, *x); else *f=0; /*check_projectile(y+1,x)*/ break;
+	case 1:   if (can_fly(*y - 1, *x)) print_projectile(--*y, *x); else *check = 0; /*check_projectile(y-1,x)*/ break;
+	case 2:	  if (can_fly(*y, *x - 1)) print_projectile(*y, --*x); else *check = 0; /*check_projectile(y,x-1)*/ break;
+	case 3:	  if (can_fly(*y, *x + 1)) print_projectile(*y, ++*x); else *check = 0; /*check_projectile(y,x+1)*/ break;
+	case 4:   if (can_fly(*y + 1, *x)) print_projectile(++*y, *x); else *check = 0; /*check_projectile(y+1,x)*/ break;
 	}
+	refresh();
 }
 
 
 
-void projectile(int *py, int*px ,int y,int x, int last_move,int *f)
+void projectile(int *py, int*px, int y, int x, int projectil_dir, unsigned short* mm, unsigned short* pp, int *check)
 {
-	if(*f==1) 
+	struct timeb vreme;
+	ftime(&vreme);
+	if (*check == 1) // prvo postavljanje checka na 1, samo taj put ulazi u petlju
 	{
-		switch (last_move){       //definisanje pocetnog mesta na kome je cevka
-				case 1:  *py=y-1; *px=x; break;
-				case 2:	 *py=y; *px=x=1;  break;
-				case 3:	 *py=y; *px=x+1;  break;
-				case 4:  *py=y+1; *px=x; break;
-		}
-		*f=2; //prelazi u stanje leta
+		switch (projectil_dir){       //definisanje pocetnog mesta na kome je cevka
+		case 1:  *py = y - 1; *px = x;  break;
+		case 2:	 *py = y; *px = x - 1;  break;
+		case 3:	 *py = y; *px = x + 1;  break;
+		case 4:  *py = y + 1; *px = x;  break;
+		} 
+		*pp = *mm = vreme.millitm;
 	}
-
-	if( MIJAT ) move_projectile(py, px, last_move, f); // stanje leta
+	*mm = vreme.millitm;
+	if (delay_s(40, mm, pp, check)) {
+		move_projectile(py, px, projectil_dir, check); // u prvom pozivu check ce preci u 2->stanje leta
+		ftime(&vreme);
+		*pp = *mm = vreme.millitm;
+	}
 }
 
-void action(int *y, int *x, tank* ver, tank* hor, int keyPressed,int *f,int *last_move){
+void action(int *y, int *x, tank* ver, tank* hor, int keyPressed, int *check, int *last_move, int *projectil_dir){
 	switch (keyPressed)
 	{
-	case KEY_UP:    *last_move=1; if(can_move(*y-2,*x,1)) move_tank(--*y, *x, KEY_UP, ver, hor);    else create_tank(*y, *x, 1, ver); refresh(); break;
-	case KEY_LEFT:  *last_move=2; if(can_move(*y,*x-2,2)) move_tank(*y, --*x, KEY_LEFT, ver, hor);  else create_tank(*y, *x, 2, hor); refresh(); break;
-	case KEY_RIGHT: *last_move=3; if(can_move(*y,*x+2,3)) move_tank(*y, ++*x, KEY_RIGHT, ver, hor); else create_tank(*y, *x, 3, hor); refresh(); break;
-	case KEY_DOWN:  *last_move=4; if(can_move(*y+2,*x,4)) move_tank(++*y, *x, KEY_DOWN, ver, hor);  else create_tank(*y, *x, 4, ver); refresh(); break;
-	case ' ':       *f=1; break;
+	case KEY_UP:    *last_move = 1; if (can_move(*y - 2, *x, 1)) move_tank(--*y, *x, KEY_UP, ver, hor);    else create_tank(*y, *x, 1, ver); refresh(); break;
+	case KEY_LEFT:  *last_move = 2; if (can_move(*y, *x - 2, 2)) move_tank(*y, --*x, KEY_LEFT, ver, hor);  else create_tank(*y, *x, 2, hor); refresh(); break;
+	case KEY_RIGHT: *last_move = 3; if (can_move(*y, *x + 2, 3)) move_tank(*y, ++*x, KEY_RIGHT, ver, hor); else create_tank(*y, *x, 3, hor); refresh(); break;
+	case KEY_DOWN:  *last_move = 4; if (can_move(*y + 2, *x, 4)) move_tank(++*y, *x, KEY_DOWN, ver, hor);  else create_tank(*y, *x, 4, ver); refresh(); break;
+	case ' ':       if (!(*check)) { *projectil_dir = *last_move;  *check = 1; } break;
 	}
 }
 
@@ -237,11 +262,11 @@ void print_object(int c){
 	case 'b': print_brick(); break;
 	case 'v': print_water(); break;
 	case 'g': print_grass(); break;
-	default:  print_blanko();break;
+	default:  print_blanko(); break;
 	}
 }
 
-void print_border(int y1, int x1, int y2, int x2) 
+void print_border(int y1, int x1, int y2, int x2)
 {
 	int i;
 	attron(COLOR_PAIR(10)); // dodaj atribut za boju
@@ -259,8 +284,8 @@ void print_border(int y1, int x1, int y2, int x2)
 		mvaddch(i, x1, ACS_VLINE);
 		mvaddch(i, x2, ACS_VLINE);
 
-		matrix[i-3][0] = 'e';
-		matrix[i-2][dimy] = 'e';
+		matrix[i - 3][0] = 'e';
+		matrix[i - 2][dimy] = 'e';
 	}
 
 	for (i = x1 + 1; i<x2; i++)
@@ -268,13 +293,13 @@ void print_border(int y1, int x1, int y2, int x2)
 		mvaddch(y1, i, ACS_HLINE);
 		mvaddch(y2, i, ACS_HLINE);
 
-		matrix[0][i-3] = 'e';
-		matrix[dimx][i-3] = 'e';
+		matrix[0][i - 3] = 'e';
+		matrix[dimx][i - 3] = 'e';
 	}
 	refresh();
 }
 
-void create_map(char map_name[]) 
+void create_map(char map_name[])
 {
 	FILE *map;
 	int c;
@@ -285,15 +310,15 @@ void create_map(char map_name[])
 	xM = 1;
 	map = fopen(map_name, "r");
 
-	print_border(x1,y1,x2,y2); //okvir
+	print_border(x1, y1, x2, y2); //okvir
 
 	move(++pom, x1 + 1);
-	while ((c=fgetc(map)) != EOF)
+	while ((c = fgetc(map)) != EOF)
 	{
-		if(c=='\n') continue;
+		if (c == '\n') continue;
 		if (c != '/')
 		{
-			if(c=='.') c=' ';
+			if (c == '.') c = ' ';
 			matrix[xM][yM++] = c;
 			print_object(c);
 			refresh();
@@ -306,34 +331,35 @@ void create_map(char map_name[])
 }
 
 void time_now(){
-		time_t pIntTime;
-		struct tm* currentLocalTime;
-		char* dateTimeString =(char*) calloc(100+1, sizeof(char));
-		pIntTime = time(NULL);
-		currentLocalTime = localtime(&pIntTime);
-		if (currentLocalTime && dateTimeString)
+	time_t pIntTime;
+	struct tm* currentLocalTime;
+	char* dateTimeString = (char*)calloc(100 + 1, sizeof(char));
+	pIntTime = time(NULL);
+	currentLocalTime = localtime(&pIntTime);
+	if (currentLocalTime && dateTimeString)
 		strftime(dateTimeString, 100, "%H:%M:%S", currentLocalTime);
-		mvaddstr(1,42,dateTimeString);
-		refresh();
-		free(dateTimeString);
+	mvaddstr(1, 42, dateTimeString);
+	refresh();
+	free(dateTimeString);
 }
 
 void main(){
-	int y = 4, x = 4, f = 0, keyPressed, last_move, px, py; // f- da li postoji projektil
+	unsigned short mm, pp;
+	struct timeb vreme;
+	int y = 4, x = 4, check = 0, keyPressed, last_move, projectil_dir, px, py; // f- da li postoji projektil
 	char map_name[50] = "vasa.txt";
 	init_curses();
 	create_map(map_name);
 	create_tank(y, x, 1, special_tank_v);
-	last_move=1; //zato sto tenk stvaramo uspravno
+	last_move = 1; //zato sto tenk stvaramo uspravno
 	while (1){
 		time_now();
-		if(kbhit())
+		if (_kbhit())
 		{
-			keyPressed=getch();
-			action(&y, &x, special_tank_v, special_tank_h, keyPressed, &f, &last_move);
-			if(f) projectile(&py, &px, y, x, last_move, &f);
+			keyPressed = getch();
+			action(&y, &x, special_tank_v, special_tank_h, keyPressed, &check, &last_move, &projectil_dir);
 		}
-
+		if (check) projectile(&py, &px, y, x, projectil_dir, &mm, &pp, &check);
 	}
 }
 
