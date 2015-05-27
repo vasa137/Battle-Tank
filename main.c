@@ -1,9 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <windows.h>
-#include "conio.h"
+#include <conio.h>
 #include <curses.h>
-
+#include <time.h>
+#include <sys/timeb.h>
 
 #define dimx 65
 #define dimy 90
@@ -98,31 +99,31 @@ void delete_tank(int y, int x){
 	attron(COLOR_PAIR(6));
 
 	mvaddch(y - 1, x - 1, ' ');
-	matrix[y - 1 - 2][x - 1 - 2]='.';
+	matrix[y - 1 - 2][x - 1 - 2]=' ';
 
 	mvaddch(y - 1, x, ' ');
-	matrix[y - 1 - 2][x - 2]='.';
+	matrix[y - 1 - 2][x - 2]=' ';
 
 	mvaddch(y - 1, x + 1, ' ');
-	matrix[y - 1 - 2][x + 1 - 2]='.';
+	matrix[y - 1 - 2][x + 1 - 2]=' ';
 
 	mvaddch(y, x - 1, ' ');
-	matrix[y - 2][x - 1 - 2]='.';
+	matrix[y - 2][x - 1 - 2]=' ';
 
 	mvaddch(y, x, ' ');
-	matrix[y - 2][x - 2]='.';
+	matrix[y - 2][x - 2]=' ';
 
 	mvaddch(y, x + 1, ' ');
-	matrix[y - 2][x + 1- 2]='.';
+	matrix[y - 2][x + 1- 2]=' ';
 
 	mvaddch(y + 1, x - 1, ' ');
-	matrix[y + 1 - 2][x - 1 - 2]='.';
+	matrix[y + 1 - 2][x - 1 - 2]=' ';
 
 	mvaddch(y + 1, x, ' ');
-	matrix[y + 1 - 2][x - 2]='.';
+	matrix[y + 1 - 2][x - 2]=' ';
 
 	mvaddch(y + 1, x + 1, ' ');
-	matrix[y + 1 - 2][x + 1 - 2]='.';
+	matrix[y + 1 - 2][x + 1 - 2]=' ';
 	refresh();
 }
 
@@ -135,13 +136,77 @@ void move_tank(int y, int x, int mov, tank* ver, tank* hor){
 	}
 }
 
-void start_tank(int *y, int *x, tank* ver, tank* hor, int keyPressed){
+int can_move(int y,int x,int barrel) {      
+	switch(barrel)
+	{
+	case 1: case 4: if ( matrix[y-2][x-2-1]==' ' && matrix[y-2][x-2]==' ' && matrix[y-2][x-2+1]==' ') return 1; else return 0; 
+	case 2: case 3: if ( matrix[y-2-1][x-2]==' ' && matrix[y-2][x-2]==' ' && matrix[y-2+1][x-2]==' ') return 1; else return 0;
+	}
+}
+
+int can_fly(int y,int x)
+{
+	if((matrix[y-2][x-2])==' ') return 1;
+	else return 0;
+}
+
+void delete_projectile(int y,int x)
+{
+	attron(COLOR_PAIR(6));
+	mvaddch(y, x, ' ');
+	matrix[y - 2][x - 2]=' ';
+}
+
+void print_projectile(int y,int x)
+{
+	attron(COLOR_PAIR(8));
+	mvaddch(y, x, ACS_BULLET| A_BOLD);
+	matrix[y - 2][x - 2]='*';
+}
+
+/*void check_projectile(int y,int x)
+{
+
+}
+*/
+
+void move_projectile(int *y, int *x,int barrel,int *f)
+{
+	if(*f==2) delete_projectile(*y,*x); //ako je metak bio u letu brisi ga
+	switch (barrel){
+	case 1:   if(can_fly(*y-1,*x)) print_projectile(--*y, *x); else *f=0; /*check_projectile(y-1,x)*/ break;
+	case 2:	  if(can_fly(*y,*x-1)) print_projectile(*y, --*x); else *f=0; /*check_projectile(y,x-1)*/ break;
+	case 3:	  if(can_fly(*y,*x+1)) print_projectile(*y, ++*x); else *f=0; /*check_projectile(y,x+1)*/ break;
+	case 4:   if(can_fly(*y+1,*x)) print_projectile(++*y, *x); else *f=0; /*check_projectile(y+1,x)*/ break;
+	}
+}
+
+
+
+void projectile(int *py, int*px ,int y,int x, int last_move,int *f)
+{
+	if(*f==1) 
+	{
+		switch (last_move){       //definisanje pocetnog mesta na kome je cevka
+				case 1:  *py=y-1; *px=x; break;
+				case 2:	 *py=y; *px=x=1;  break;
+				case 3:	 *py=y; *px=x+1;  break;
+				case 4:  *py=y+1; *px=x; break;
+		}
+		*f=2; //prelazi u stanje leta
+	}
+
+	if( MIJAT ) move_projectile(py, px, last_move, f); // stanje leta
+}
+
+void action(int *y, int *x, tank* ver, tank* hor, int keyPressed,int *f,int *last_move){
 	switch (keyPressed)
 	{
-	case KEY_UP:    if(can_move(*y-2,*x,1)) move_tank(--*y, *x, KEY_UP, ver, hor);    else create_tank(*y, *x, 1, ver); refresh(); break;
-	case KEY_LEFT:  if(can_move(*y,*x-2,2)) move_tank(*y, --*x, KEY_LEFT, ver, hor);  else create_tank(*y, *x, 2, hor); refresh(); break;
-	case KEY_RIGHT: if(can_move(*y,*x+2,3)) move_tank(*y, ++*x, KEY_RIGHT, ver, hor); else create_tank(*y, *x, 3, hor); refresh(); break;
-	case KEY_DOWN:  if(can_move(*y+2,*x,4)) move_tank(++*y, *x, KEY_DOWN, ver, hor);  else create_tank(*y, *x, 4, ver); refresh(); break;
+	case KEY_UP:    *last_move=1; if(can_move(*y-2,*x,1)) move_tank(--*y, *x, KEY_UP, ver, hor);    else create_tank(*y, *x, 1, ver); refresh(); break;
+	case KEY_LEFT:  *last_move=2; if(can_move(*y,*x-2,2)) move_tank(*y, --*x, KEY_LEFT, ver, hor);  else create_tank(*y, *x, 2, hor); refresh(); break;
+	case KEY_RIGHT: *last_move=3; if(can_move(*y,*x+2,3)) move_tank(*y, ++*x, KEY_RIGHT, ver, hor); else create_tank(*y, *x, 3, hor); refresh(); break;
+	case KEY_DOWN:  *last_move=4; if(can_move(*y+2,*x,4)) move_tank(++*y, *x, KEY_DOWN, ver, hor);  else create_tank(*y, *x, 4, ver); refresh(); break;
+	case ' ':       *f=1; break;
 	}
 }
 
@@ -176,7 +241,7 @@ void print_object(int c){
 	}
 }
 
-void print_border(int y1, int x1, int y2, int x2)
+void print_border(int y1, int x1, int y2, int x2) 
 {
 	int i;
 	attron(COLOR_PAIR(10)); // dodaj atribut za boju
@@ -209,7 +274,7 @@ void print_border(int y1, int x1, int y2, int x2)
 	refresh();
 }
 
-void create_map(char map_name[])
+void create_map(char map_name[]) 
 {
 	FILE *map;
 	int c;
@@ -228,6 +293,7 @@ void create_map(char map_name[])
 		if(c=='\n') continue;
 		if (c != '/')
 		{
+			if(c=='.') c=' ';
 			matrix[xM][yM++] = c;
 			print_object(c);
 			refresh();
@@ -239,22 +305,36 @@ void create_map(char map_name[])
 	}
 }
 
-int can_move(int y,int x,int barrel){      
-	switch(barrel)
-	{
-	case 1: case 4: if ( matrix[y-2][x-2-1]=='.' && matrix[y-2][x-2]=='.' && matrix[y-2][x-2+1]=='.') return 1; else return 0; 
-	case 2: case 3: if ( matrix[y-2-1][x-2]=='.' && matrix[y-2][x-2]=='.' && matrix[y-2+1][x-2]=='.') return 1; else return 0;
-	}
+void time_now(){
+		time_t pIntTime;
+		struct tm* currentLocalTime;
+		char* dateTimeString =(char*) calloc(100+1, sizeof(char));
+		pIntTime = time(NULL);
+		currentLocalTime = localtime(&pIntTime);
+		if (currentLocalTime && dateTimeString)
+		strftime(dateTimeString, 100, "%H:%M:%S", currentLocalTime);
+		mvaddstr(1,42,dateTimeString);
+		refresh();
+		free(dateTimeString);
 }
 
 void main(){
-	int x = 4, y = 4, keyPressed;
+	int y = 4, x = 4, f = 0, keyPressed, last_move, px, py; // f- da li postoji projektil
 	char map_name[50] = "vasa.txt";
 	init_curses();
 	create_map(map_name);
-	create_tank(y, x, 1, normal_tank_v);
+	create_tank(y, x, 1, special_tank_v);
+	last_move=1; //zato sto tenk stvaramo uspravno
 	while (1){
+		time_now();
+		if(kbhit())
+		{
 			keyPressed=getch();
-		  start_tank(&y, &x, special_tank_v, special_tank_h, keyPressed);
+			action(&y, &x, special_tank_v, special_tank_h, keyPressed, &f, &last_move);
+			if(f) projectile(&py, &px, y, x, last_move, &f);
+		}
+
 	}
 }
+
+
