@@ -79,7 +79,7 @@ void print_grass(int y, int x){
 
 void print_water(int y,int x){
 	attron(COLOR_PAIR(10));
-	mvaddch(y,x,245|A_ALTCHARSET);
+	mvaddch(y,x,'~');
 	matrix[y-y1][x-x1] = 'w';
 }
 
@@ -88,7 +88,6 @@ void print_blanko(int y,int x){
 	mvaddch(y,x,' ');
 	matrix[y-y1][x-x1] = ' ';
 }
-
 
 void print_tank(int y, int x, tank *tank_type, int *position)
 {
@@ -432,10 +431,10 @@ void projectile(int *py, int*px, int y, int x, int projectil_dir, unsigned short
 void action(int *y, int *x, tank* ver, tank* hor, int keyPressed, int *check, int *last_move, int *projectil_dir){
 	switch (keyPressed)
 	{
-	case KEY_UP:    *last_move = 1; if (can_move(*y - 2, *x, 1)) move_tank(--*y, *x, KEY_UP, ver, hor);    else create_tank(*y, *x, 1, ver); refresh(); break;
-	case KEY_LEFT:  *last_move = 2; if (can_move(*y, *x - 2, 2)) move_tank(*y, --*x, KEY_LEFT, ver, hor);  else create_tank(*y, *x, 2, hor); refresh(); break;
-	case KEY_RIGHT: *last_move = 3; if (can_move(*y, *x + 2, 3)) move_tank(*y, ++*x, KEY_RIGHT, ver, hor); else create_tank(*y, *x, 3, hor); refresh(); break;
-	case KEY_DOWN:  *last_move = 4; if (can_move(*y + 2, *x, 4)) move_tank(++*y, *x, KEY_DOWN, ver, hor);  else create_tank(*y, *x, 4, ver); refresh(); break;
+	case KEY_UP:    *last_move = 1; if (can_move(*y - 2, *x, 1)) move_tank(--*y, *x, KEY_UP, ver, hor);    else { delete_tank(*y, *x);  create_tank(*y, *x, 1, ver); } refresh(); break;
+	case KEY_LEFT:  *last_move = 2; if (can_move(*y, *x - 2, 2)) move_tank(*y, --*x, KEY_LEFT, ver, hor);  else { delete_tank(*y, *x); create_tank(*y, *x, 2, hor);  } refresh(); break;
+	case KEY_RIGHT: *last_move = 3; if (can_move(*y, *x + 2, 3)) move_tank(*y, ++*x, KEY_RIGHT, ver, hor); else { delete_tank(*y, *x);  create_tank(*y, *x, 3, hor); } refresh(); break;
+	case KEY_DOWN:  *last_move = 4; if (can_move(*y + 2, *x, 4)) move_tank(++*y, *x, KEY_DOWN, ver, hor);  else { delete_tank(*y, *x);  create_tank(*y, *x, 4, ver); } refresh(); break;
 	case ' ':       if (!(*check)) { *projectil_dir = *last_move;  *check = 1; } break;
 	}
 }
@@ -529,7 +528,7 @@ void main(){
 	struct timeb vreme;
 	char last_object=' ';
 	int y = 4, x = 4, check = 0, keyPressed, last_move, projectil_dir, px, py; // f- da li postoji projektil
-	char map_name[50] = "vasa.txt";
+	char map_name[50] = "map.txt";
 	init_curses();
 	create_map(map_name);
 	create_tank(y, x, 1, special_tank_v);
