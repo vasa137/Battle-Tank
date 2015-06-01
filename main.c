@@ -6,6 +6,69 @@
 #include <time.h>
 #include <sys/timeb.h>
 
+void print_tank(int y, int x, tank *tank_type, int *position)
+{
+	attron(COLOR_PAIR(tank_type[position[0]].paint));
+	mvaddch(y - 1, x - 1, tank_type[position[0]].ch);
+	matrix[y - 1 - 2][x - 1 - 2] = 't';
+
+	attron(COLOR_PAIR(tank_type[position[1]].paint));
+	mvaddch(y - 1, x, tank_type[position[1]].ch);
+	matrix[y - 1 - 2][x - 2] = 't';
+
+	attron(COLOR_PAIR(tank_type[position[2]].paint));
+	mvaddch(y - 1, x + 1, tank_type[position[2]].ch);
+	matrix[y - 1 - 2][x + 1 - 2] = 't';
+
+	attron(COLOR_PAIR(tank_type[position[3]].paint));
+	mvaddch(y, x - 1, tank_type[position[3]].ch);
+	matrix[y - 2][x - 1 - 2] = 't';
+
+	attron(COLOR_PAIR(tank_type[position[4]].paint));
+	mvaddch(y, x, tank_type[position[4]].ch);
+	matrix[y - 2][x - 2] = 't';
+
+	attron(COLOR_PAIR(tank_type[position[5]].paint));
+	mvaddch(y, x + 1, tank_type[position[5]].ch);
+	matrix[y - 2][x + 1 - 2] = 't';
+
+	attron(COLOR_PAIR(tank_type[position[6]].paint));
+	mvaddch(y + 1, x - 1, tank_type[position[6]].ch);
+	matrix[y + 1 - 2][x - 1 - 2] = 't';
+
+	attron(COLOR_PAIR(tank_type[position[7]].paint));
+	mvaddch(y + 1, x, tank_type[position[7]].ch);
+	matrix[y + 1 - 2][x - 2] = 't';
+
+	attron(COLOR_PAIR(tank_type[position[8]].paint));
+	mvaddch(y + 1, x + 1, tank_type[position[8]].ch);
+	matrix[y + 1 - 2][x + 1 - 2] = 't';
+	refresh();
+}
+
+
+void colision(int y, int x, int barrel, barrier bar ){ // saljes mi koordinate udara.
+	switch (bar.obs){
+	case 'b':
+		switch (barrel){
+		case 1: case 4://up and down.
+			if (matrix[y - 2][x - 2 - 1] == 'b') print_blanko(y, x - 1);
+			if (matrix[y - 2][x - 2] == 'b') print_blanko(y, x);
+			if (matrix[y - 2][x - 2 + 1] == 'b') print_blanko(y, x + 1);
+			break;
+		case 2: case 3:// left and right.
+			if (matrix[y - 2 - 1][x - 2] == 'b') print_blanko(y - 1, x);
+			if (matrix[y - 2][x - 2] == 'b') print_blanko(y, x);
+			if (matrix[y - 2 + 1][x - 2] == 'b') print_blanko(y + 1, x);
+			break;
+		}
+	case 'o':; // za botove.
+	case 'c':; // za beton, kada budemo imali strukturu.
+	case '*':; // za metak o metak, gledamo razlicite strane i gledamo da li se sudaraju, pazimo na mimoilazenje.
+	}
+
+}
+
 #define dimx 65
 #define dimy 90
 
