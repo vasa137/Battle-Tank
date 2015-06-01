@@ -287,6 +287,7 @@ char move_projectile(int *y, int *x, int projectil_dir, int *check, char *last_o
 		{
 			case 1: print_projectile(--*y, *x, object.obs); break;
 			case 0: collision(*y-1,*x,projectil_dir,object.obs); *check = 0; break;
+			case 2: --*y; break; //ako naidje na travu samo pomeri metak ali ga ne ispisuj!
 		}
 		break;
 	
@@ -296,6 +297,7 @@ char move_projectile(int *y, int *x, int projectil_dir, int *check, char *last_o
 		{
 			case 1: print_projectile(*y, --*x, object.obs); break;
 			case 0: collision(*y,*x-1,projectil_dir,object.obs); *check = 0; break;
+			case 2: --*x; break;
 		}
 		break;
 	case 3:	
@@ -304,6 +306,7 @@ char move_projectile(int *y, int *x, int projectil_dir, int *check, char *last_o
 		{
 			case 1: print_projectile(*y, ++*x, object.obs); break;
 			case 0: collision(*y,*x+1,projectil_dir,object.obs); *check = 0; break;
+			case 2: ++*x; break;
 		}
 		break;
 
@@ -313,6 +316,7 @@ char move_projectile(int *y, int *x, int projectil_dir, int *check, char *last_o
 		{
 			case 1: print_projectile(++*y, *x, object.obs); break;
 			case 0: collision(*y+1,*x,projectil_dir,object.obs); *check = 0; break;
+			case 2: ++*y; break;
 		}
 		break;
 
