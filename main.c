@@ -51,15 +51,25 @@ void colision(int y, int x, int barrel, barrier bar ){ // saljes mi koordinate u
 	switch (bar.obs){
 	case 'b':
 		switch (barrel){
-		case 1: case 4://up and down.
-			if (matrix[y - 2][x - 2 - 1] == 'b') print_blanko(y, x - 1);
+		case 1://up 
+			if ((matrix[y - 2][x - 2 - 1] == 'b') && (matrix[y - 2 + 1][x - 2 - 1] != 'b')) print_blanko(y, x - 1);
 			if (matrix[y - 2][x - 2] == 'b') print_blanko(y, x);
-			if (matrix[y - 2][x - 2 + 1] == 'b') print_blanko(y, x + 1);
+			if (matrix[y - 2][x - 2 + 1] == 'b' && (matrix[y - 2 + 1][x - 2 - 1] != 'b')) print_blanko(y, x + 1);
 			break;
-		case 2: case 3:// left and right.
-			if (matrix[y - 2 - 1][x - 2] == 'b') print_blanko(y - 1, x);
+		case 2: // left.
+			if ((matrix[y - 2 - 1][x - 2] == 'b') && (matrix[y - 2 - 1][x - 2 + 1] != 'b')) print_blanko(y - 1, x);
 			if (matrix[y - 2][x - 2] == 'b') print_blanko(y, x);
-			if (matrix[y - 2 + 1][x - 2] == 'b') print_blanko(y + 1, x);
+			if ((matrix[y - 2 + 1][x - 2] == 'b') && (matrix[y - 2 + 1][x - 2 + 1] != 'b'))print_blanko(y + 1, x);
+			break;
+		case 3: //right.
+			if ((matrix[y - 2 - 1][x - 2] == 'b') && (matrix[y - 2 - 1][x - 2 - 1] != 'b')) print_blanko(y - 1, x);
+			if (matrix[y - 2][x - 2] == 'b') print_blanko(y, x);
+			if ((matrix[y - 2 + 1][x - 2] == 'b') && (matrix[y - 2 + 1][x - 2 - 1] != 'b')) print_blanko(y + 1, x);
+			break;
+		case 4:
+			if ((matrix[y - 2][x - 2 - 1] == 'b') && (matrix[y - 2 - 1][x - 2 - 1] != 'b')) print_blanko(y, x - 1);
+			if (matrix[y - 2][x - 2] == 'b') print_blanko(y, x);
+			if (matrix[y - 2][x - 2 + 1] == 'b' && (matrix[y - 2 - 1][x - 2 - 1] != 'b')) print_blanko(y, x + 1);
 			break;
 		}
 	case 'o':; // za botove.
