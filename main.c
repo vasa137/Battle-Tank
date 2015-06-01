@@ -41,7 +41,7 @@ void init_colors(){
 	start_color();
 	init_pair(1, COLOR_WHITE, COLOR_BLACK);
 	init_pair(2, COLOR_GREEN, COLOR_BLACK);
-	init_pair(3, COLOR_WHITE, COLOR_RED);
+	init_pair(3, COLOR_YELLOW , COLOR_RED);
 	init_pair(4, COLOR_WHITE, COLOR_YELLOW);
 	init_pair(5, COLOR_BLACK, COLOR_YELLOW);
 	init_pair(6, COLOR_BLACK, COLOR_BLACK);
@@ -185,8 +185,8 @@ int delay_s(int timeToDelay, unsigned short* mm, unsigned short* pp, int *check)
 }
 
 void print_brick(int y,int x){
-	attron(COLOR_PAIR(9) | A_BOLD);
-	mvaddch(y,x, ACS_CKBOARD);
+	attron(COLOR_PAIR(3));
+	mvaddch(y,x, ACS_PLUS);
 	attroff(A_BOLD);
 	matrix[y-y1][x-x1] = 'b';
 }
@@ -362,7 +362,7 @@ void print_object(int y,int x,int c){
 	switch (c)
 	{
 	case 'b': print_brick(y,x); break;
-	case 'v': print_water(y,x); break;
+	case 'w': print_water(y,x); break;
 	case 'g': print_grass(y,x); break;
 	default:  print_blanko(y,x); break;
 	}
