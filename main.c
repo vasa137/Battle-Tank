@@ -52,6 +52,7 @@ void init_colors(){
 	init_pair(9, COLOR_RED, COLOR_YELLOW);
 	init_pair(10, COLOR_WHITE, COLOR_BLUE);
 	init_pair(11, COLOR_YELLOW, COLOR_BLUE);
+	init_pair(12, COLOR_CYAN, COLOR_BLUE);
 }
 
 void init_curses(){
@@ -73,13 +74,13 @@ void print_brick(int y,int x){
 
 void print_grass(int y, int x){
 	attron(COLOR_PAIR(2));
-	mvaddch(y,x,'#');
+	mvaddch(y,x,ACS_BOARD);
 	matrix[y-y1][x-x1] = 'g';
 }
 
 void print_water(int y,int x){
-	attron(COLOR_PAIR(10));
-	mvaddch(y,x,'~');
+	attron(COLOR_PAIR(12));
+	mvaddch(y,x,ACS_BOARD);
 	matrix[y-y1][x-x1] = 'w';
 }
 
