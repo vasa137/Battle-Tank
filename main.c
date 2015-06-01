@@ -31,6 +31,8 @@ int left[] = { 2, 5, 8, 1, 4, 7, 0, 3, 6 };
 int right[] = { 6, 3, 0, 7, 4, 1, 8, 5, 2 };
 int bottom[] = { 8, 7, 6, 5, 4, 3, 2, 1, 0 };
 
+int visit_grass[3][3]={0,0,0,0,0,0,0,0,0};
+
 tank special_tank_v[] = { { ACS_VLINE, 1 }, { ACS_VLINE, 1 }, { ACS_VLINE, 1 }, { ACS_VLINE, 1 }, { ACS_BULLET, 5 }, { ACS_VLINE, 1 }, { ACS_DIAMOND, 4 }, { ACS_HLINE, 4 }, { ACS_DIAMOND, 4 } };
 tank special_tank_h[] = { { ACS_HLINE, 1 }, { ACS_HLINE, 1 }, { ACS_HLINE, 1 }, { ACS_HLINE, 1 }, { ACS_BULLET, 5 }, { ACS_HLINE, 1 }, { ACS_DIAMOND, 4 }, { ACS_VLINE, 4 }, { ACS_DIAMOND, 4 } };
 
@@ -62,42 +64,114 @@ void init_curses(){
 	resize_term(70, 150);
 }
 
+void print_brick(int y,int x){
+	attron(COLOR_PAIR(3));
+	mvaddch(y,x, ACS_PLUS);
+	attroff(A_BOLD);
+	matrix[y-y1][x-x1] = 'b';
+}
+
+void print_grass(int y, int x){
+	attron(COLOR_PAIR(2));
+	mvaddch(y,x,'#');
+	matrix[y-y1][x-x1] = 'g';
+}
+
+void print_water(int y,int x){
+	attron(COLOR_PAIR(10));
+	mvaddch(y,x,245|A_ALTCHARSET);
+	matrix[y-y1][x-x1] = 'w';
+}
+
+void print_blanko(int y,int x){
+	attron(COLOR_PAIR(6));
+	mvaddch(y,x,' ');
+	matrix[y-y1][x-x1] = ' ';
+}
+
+
 void print_tank(int y, int x, tank *tank_type, int *position)
 {
+	if (matrix[y - 1 - 2][x - 1 - 2] == 'g'){
+		visit_grass[0][0]=1;
+	}
+	else{
 	attron(COLOR_PAIR(tank_type[position[0]].paint));
 	mvaddch(y - 1, x - 1, tank_type[position[0]].ch);
+	}
 	matrix[y - 1 - 2][x - 1 - 2] = 't';
-
+	//
+	if (matrix[y - 1 - 2][x - 2] == 'g'){
+		visit_grass[0][1]=1;
+	}
+	else{
 	attron(COLOR_PAIR(tank_type[position[1]].paint));
 	mvaddch(y - 1, x, tank_type[position[1]].ch);
+	}
 	matrix[y - 1 - 2][x - 2] = 't';
-
+	//
+	if (matrix[y - 1 - 2][x + 1 - 2] == 'g'){
+		visit_grass[0][2]=1;
+	}
+	//
+	else{
 	attron(COLOR_PAIR(tank_type[position[2]].paint));
 	mvaddch(y - 1, x + 1, tank_type[position[2]].ch);
+	}
 	matrix[y - 1 - 2][x + 1 - 2] = 't';
-
+	//
+	if (matrix[y - 2][x - 1 - 2] == 'g'){
+		visit_grass[1][0]=1;
+	}
+	else{
 	attron(COLOR_PAIR(tank_type[position[3]].paint));
 	mvaddch(y, x - 1, tank_type[position[3]].ch);
+	}
 	matrix[y - 2][x - 1 - 2] = 't';
-
+	//
+	if (matrix[y - 2][x - 2] == 'g'){
+		visit_grass[1][1]=1;
+	}
+	else{
 	attron(COLOR_PAIR(tank_type[position[4]].paint));
 	mvaddch(y, x, tank_type[position[4]].ch);
+	}
 	matrix[y - 2][x - 2] = 't';
-
+	//
+	if (matrix[y - 2][x + 1 - 2] == 'g'){
+		visit_grass[1][2]=1;
+	}
+	else{
 	attron(COLOR_PAIR(tank_type[position[5]].paint));
 	mvaddch(y, x + 1, tank_type[position[5]].ch);
+	}
 	matrix[y - 2][x + 1 - 2] = 't';
-
+	//
+	if (matrix[y + 1 - 2][x - 1 - 2] == 'g'){
+		visit_grass[2][0]=1;
+	}
+	else{
 	attron(COLOR_PAIR(tank_type[position[6]].paint));
 	mvaddch(y + 1, x - 1, tank_type[position[6]].ch);
+	}
 	matrix[y + 1 - 2][x - 1 - 2] = 't';
-
+	//
+	if (matrix[y + 1 - 2][x - 2] == 'g'){
+		visit_grass[2][1]=1;
+	}
+	else{
 	attron(COLOR_PAIR(tank_type[position[7]].paint));
 	mvaddch(y + 1, x, tank_type[position[7]].ch);
+	}
 	matrix[y + 1 - 2][x - 2] = 't';
-
+	//
+	if (matrix[y + 1 - 2][x + 1 - 2] == 'g'){
+		visit_grass[2][2]=1;
+	}
+	else{
 	attron(COLOR_PAIR(tank_type[position[8]].paint));
 	mvaddch(y + 1, x + 1, tank_type[position[8]].ch);
+	}
 	matrix[y + 1 - 2][x + 1 - 2] = 't';
 	refresh();
 }
@@ -119,34 +193,60 @@ void create_tank(int y, int x, int barrel, tank* tank_type)
 
 void delete_tank(int y, int x){
 
-	attron(COLOR_PAIR(6));
+	if(!visit_grass[0][0]) print_blanko(y - 1, x - 1); //ako je blanko, to znaci da je u visitu 0!print_blanko(y - 1, x - 1);
+	else{
+	print_grass(y - 1, x - 1);
+	visit_grass[0][0]=0;
+	}
 
-	mvaddch(y - 1, x - 1, ' ');
-	matrix[y - 1 - 2][x - 1 - 2] = ' ';
+	if(!visit_grass[0][1]) print_blanko(y - 1, x); 
+	else{
+	print_grass(y - 1, x);
+	visit_grass[0][1]=0;
+	}
 
-	mvaddch(y - 1, x, ' ');
-	matrix[y - 1 - 2][x - 2] = ' ';
+	if(!visit_grass[0][2]) print_blanko(y - 1, x + 1);
+	else{
+	print_grass(y - 1, x + 1);
+	visit_grass[0][2]=0;
+	}
 
-	mvaddch(y - 1, x + 1, ' ');
-	matrix[y - 1 - 2][x + 1 - 2] = ' ';
+	if(!visit_grass[1][0]) print_blanko(y, x - 1);
+	else{
+	print_grass(y , x - 1);
+	visit_grass[1][0]=0;
+	}
 
-	mvaddch(y, x - 1, ' ');
-	matrix[y - 2][x - 1 - 2] = ' ';
+	if(!visit_grass[1][1]) print_blanko(y, x);
+	else{
+	print_grass(y , x);
+	visit_grass[1][1]=0;
+	}
 
-	mvaddch(y, x, ' ');
-	matrix[y - 2][x - 2] = ' ';
+	if(!visit_grass[1][2]) print_blanko(y, x + 1);
+	else{
+	print_grass(y , x + 1);
+	visit_grass[1][2]=0;
+	}
 
-	mvaddch(y, x + 1, ' ');
-	matrix[y - 2][x + 1 - 2] = ' ';
+	if(!visit_grass[2][0]) print_blanko(y + 1, x - 1);
+	else{
+	print_grass(y + 1, x - 1);
+	visit_grass[2][0]=0;
+	}
 
-	mvaddch(y + 1, x - 1, ' ');
-	matrix[y + 1 - 2][x - 1 - 2] = ' ';
+	if(!visit_grass[2][1]) print_blanko(y + 1, x);
+	else{
+	print_grass(y + 1, x);
+	visit_grass[2][1]=0;
+	}
 
-	mvaddch(y + 1, x, ' ');
-	matrix[y + 1 - 2][x - 2] = ' ';
+	if(!visit_grass[2][2]) print_blanko(y + 1, x + 1);
+	else{
+	print_grass(y + 1, x + 1);
+	visit_grass[2][2]=0;
+	}
 
-	mvaddch(y + 1, x + 1, ' ');
-	matrix[y + 1 - 2][x + 1 - 2] = ' ';
 	refresh();
 }
 
@@ -162,8 +262,15 @@ void move_tank(int y, int x, int mov, tank* ver, tank* hor){
 int can_move(int y, int x, int barrel) {
 	switch (barrel)
 	{
-	case 1: case 4: if (matrix[y - 2][x - 2 - 1] == ' ' && matrix[y - 2][x - 2] == ' ' && matrix[y - 2][x - 2 + 1] == ' ') return 1; else return 0;
-	case 2: case 3: if (matrix[y - 2 - 1][x - 2] == ' ' && matrix[y - 2][x - 2] == ' ' && matrix[y - 2 + 1][x - 2] == ' ') return 1; else return 0;
+	case 1: case 4: 
+		if (((matrix[y - 2][x - 2 - 1] == ' ') || (matrix[y - 2][x - 2 - 1] == 'g')) && 
+		((matrix[y - 2][x - 2] == ' ') || (matrix[y - 2][x - 2] == 'g')) && 
+		((matrix[y - 2][x - 2 + 1] == ' ') || (matrix[y - 2][x - 2 + 1] == 'g'))) return 1; else return 0;
+
+	case 2: case 3: 
+		if (((matrix[y - 2 - 1][x - 2] == ' ') || (matrix[y - 2 - 1][x - 2] == 'g')) && 
+		((matrix[y - 2][x - 2] == ' ') || (matrix[y - 2][x - 2] == 'g')) && 
+		((matrix[y - 2 + 1][x - 2] == ' ') || (matrix[y - 2 + 1][x - 2] == 'g'))) return 1; else return 0;
 	}
 }
 
@@ -182,31 +289,6 @@ int delay_s(int timeToDelay, unsigned short* mm, unsigned short* pp, int *check)
 		}
 	}
 	return 0;
-}
-
-void print_brick(int y,int x){
-	attron(COLOR_PAIR(3));
-	mvaddch(y,x, ACS_PLUS);
-	attroff(A_BOLD);
-	matrix[y-y1][x-x1] = 'b';
-}
-
-void print_grass(int y, int x){
-	attron(COLOR_PAIR(2));
-	mvaddch(y,x,'#');
-	matrix[y-y1][x-x1] = 'g';
-}
-
-void print_water(int y,int x){
-	attron(COLOR_PAIR(10));
-	mvaddch(y,x,'~');
-	matrix[y-y1][x-x1] = 'w';
-}
-
-void print_blanko(int y,int x){
-	attron(COLOR_PAIR(6));
-	mvaddch(y,x,' ');
-	matrix[y-y1][x-x1] = ' ';
 }
 
 barrier can_fly(int y, int x)
