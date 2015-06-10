@@ -1,36 +1,32 @@
 #include "tank.h"
 
-void move_tank(int y, int x, int mov, tank* ver, tank* hor){
-	switch (mov){
-	case KEY_UP:    delete_tank(y + 1, x);  create_tank(y, x, 1, ver);  break;
-	case KEY_LEFT:  delete_tank(y, x + 1);  create_tank(y, x, 2, hor);  break;
-	case KEY_RIGHT: delete_tank(y, x - 1);  create_tank(y, x, 3, hor);  break;
-	case KEY_DOWN:  delete_tank(y - 1, x);  create_tank(y, x, 4, ver);  break;
+int delay_s(int timeToDelay, unsigned short* mm, unsigned short* pp, int *check){
+	if (*check == 1){    
+		return 1;
 	}
+	if (*mm - *pp > 0){
+		if (*mm - *pp >= timeToDelay)	{
+			return 1;
+		}
+	}
+	else if (*mm - *pp < 0){
+		if (1000 - *pp + *mm >= timeToDelay){
+			return 1;
+		}
+	}
+	return 0;
 }
 
-int can_move(int y, int x, int barrel) {
-	switch (barrel)
-	{
-	case 1: case 4: 
-		if (((matrix[y - y1b][x - x1b - 1] == ' ') || (matrix[y - y1b][x - x1b - 1] == 'g')) && 
-		((matrix[y - y1b][x - x1b] == ' ') || (matrix[y - y1b][x - x1b] == 'g')) && 
-		((matrix[y - y1b][x - x1b + 1] == ' ') || (matrix[y - y1b][x - x1b + 1] == 'g'))) return 1; else return 0;
-
-	case 2: case 3: 
-		if (((matrix[y - y1b - 1][x - x1b] == ' ') || (matrix[y - y1b - 1][x - x1b] == 'g')) && 
-		((matrix[y - y1b][x - x1b] == ' ') || (matrix[y - y1b][x - x1b] == 'g')) && 
-		((matrix[y - y1b + 1][x - x1b] == ' ') || (matrix[y - y1b + 1][x - x1b] == 'g'))) return 1; else return 0;
-	}
-}
-
-void action(int *y, int *x, tank* ver, tank* hor, int keyPressed, int *check, int *last_move, int *projectil_dir){
-	switch (keyPressed)
-	{
-	case KEY_UP:    *last_move = 1; if (can_move(*y - 2, *x, 1)) move_tank(--*y, *x, KEY_UP, ver, hor);    else { delete_tank(*y, *x);  create_tank(*y, *x, 1, ver); } refresh(); break;
-	case KEY_LEFT:  *last_move = 2; if (can_move(*y, *x - 2, 2)) move_tank(*y, --*x, KEY_LEFT, ver, hor);  else { delete_tank(*y, *x); create_tank(*y, *x, 2, hor);  } refresh(); break;
-	case KEY_RIGHT: *last_move = 3; if (can_move(*y, *x + 2, 3)) move_tank(*y, ++*x, KEY_RIGHT, ver, hor); else { delete_tank(*y, *x);  create_tank(*y, *x, 3, hor); } refresh(); break;
-	case KEY_DOWN:  *last_move = 4; if (can_move(*y + 2, *x, 4)) move_tank(++*y, *x, KEY_DOWN, ver, hor);  else { delete_tank(*y, *x);  create_tank(*y, *x, 4, ver); } refresh(); break;
-	case ' ':       if (!(*check)) { *projectil_dir = *last_move;  *check = 1; } break;
-	}
+void time_now(){
+	time_t pIntTime;
+	struct tm* currentLocalTime;
+	char* dateTimeString = (char*)calloc(100 + 1, sizeof(char));
+	pIntTime = time(NULL);
+	currentLocalTime = localtime(&pIntTime);
+	attron(COLOR_PAIR(1));
+	if (currentLocalTime && dateTimeString)
+		strftime(dateTimeString, 100, "%H:%M:%S", currentLocalTime);
+	mvaddstr(1, 42, dateTimeString);
+	refresh();
+	free(dateTimeString);
 }
