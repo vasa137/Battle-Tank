@@ -105,7 +105,7 @@ void print_object(int y,int x,int c);
 
 void print_border();
 
-void create_map(char map_name[]);
+void create_map();
 
 void time_now();
 
