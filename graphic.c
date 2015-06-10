@@ -268,7 +268,7 @@ void print_border()
 	refresh();
 }
 
-void create_map(char map_name[])
+void create_map()
 {
 	FILE *map;
 	int c;
