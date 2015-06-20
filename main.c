@@ -25,17 +25,20 @@ TankDesign normal_tank_h[] = { { 126, 6 }, { ACS_HLINE, 1 }, { 126, 6 }, { ACS_D
 
 void main(){
 	unsigned short mm, pp;
+	TankAll mainTank, currTank;
 	struct timeb vreme;
-	char last_object=' ';
-	int keyPressed; // f- da li postoji projektil
+	
+	int keyPressed, i; // f- da li postoji projektil
 	int bot_barrel = 2, z = 4, t = 62, flag = 1, flag1 = 1, bot_barrel1 = 3;
 	int z1 = 4, t1 = 50;
 	clock_t start = clock();
     clock_t start1 = clock();
     clock_t end= clock();
     clock_t end1 = clock();
+	lst = (Lst*)malloc(sizeof(Lst));
 	lst->first = NULL;
 	lst->last = NULL;
+	lst->n = 0;
 	init_curses();
 	create_map(map_name);
 	main_menu(1);
@@ -45,19 +48,27 @@ void main(){
 	lst->first->tankAll.tank.tPos.barrel = 1;
 	lst->first->tankAll.tank.tPos.last_move = 1; //zato sto tenk stvaramo uspravno.
 	lst->first->tankAll.projectile.projetPhase = 0;
-	lst->first->tankAll.tank.tankDesign
-	
-	create_tank(y, x, 1, special_tank_v);
- 
+	lst->first->tankAll.tank.tankDesign_v = special_tank_v;
+	lst->first->tankAll.tank.tankDesign_h = special_tank_h;
+	lst->first->tankAll.projectile.last_object = ' ';
+	mainTank = lst->first->tankAll;
+	create_tank(1, mainTank);
 	while (1){
 		time_now();
 		if (_kbhit())
 		{
 			keyPressed = getch();
-			action(&y, &x, special_tank_v, special_tank_h, keyPressed, &check, &last_move, &projectil_dir);
+			action(&mainTank.tank.tPos.y, &mainTank.tank.tPos.x, mainTank.tank.tankDesign_v, mainTank.tank.tankDesign_h, keyPressed,
+				&mainTank.projectile.projetPhase, &mainTank.tank.tPos.last_move, &mainTank.projectile.pPos.projectil_dir);
 		}
 		easy_bot(&start, &flag, &bot_barrel, &z, &t);
 		//easy_bot(&start1, &flag1, &bot_barrel1, &z1, &t1);
-		if (check) projectile(&py, &px, y, x, projectil_dir, &mm, &pp, &check, &last_object);
+		for (i = 0, lst->curr = lst->first; i < lst->n; i++, lst->curr = lst->curr->next){
+			currTank = lst->curr->tankAll;
+			if (currTank.projectile.projetPhase) projectile(&currTank.projectile.pPos.y, &currTank.projectile.pPos.x, currTank.tank.tPos.y, 
+															currTank.tank.tPos.x,currTank.projectile.pPos.projectil_dir, &currTank.projectile.mm,
+															&currTank.projectile.pp, &currTank.projectile.projetPhase, &currTank.projectile.last_object);
+		}
+
 	}
 }
