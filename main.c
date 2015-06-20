@@ -27,7 +27,7 @@ void main(){
 	unsigned short mm, pp;
 	struct timeb vreme;
 	char last_object=' ';
-	int y = 24, x = 38, check = 0, keyPressed, last_move, projectil_dir, px, py; // f- da li postoji projektil
+	int keyPressed; // f- da li postoji projektil
 	int bot_barrel = 2, z = 4, t = 62, flag = 1, flag1 = 1, bot_barrel1 = 3;
 	int z1 = 4, t1 = 50;
 	clock_t start = clock();
@@ -40,8 +40,15 @@ void main(){
 	create_map(map_name);
 	main_menu(1);
 	alloc_tank();
+	lst->first->tankAll.tank.tPos.x = 38;
+	lst->first->tankAll.tank.tPos.y = 24;
+	lst->first->tankAll.tank.tPos.barrel = 1;
+	lst->first->tankAll.tank.tPos.last_move = 1; //zato sto tenk stvaramo uspravno.
+	lst->first->tankAll.projectile.projetPhase = 0;
+	lst->first->tankAll.tank.tankDesign
+	
 	create_tank(y, x, 1, special_tank_v);
-	last_move = 1; //zato sto tenk stvaramo uspravno
+ 
 	while (1){
 		time_now();
 		if (_kbhit())
