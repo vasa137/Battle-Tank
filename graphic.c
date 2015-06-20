@@ -51,7 +51,7 @@ void print_blanko(int y,int x){
 	matrix[y-y1b][x-x1b] = ' ';
 }
 
-void print_tank(int y, int x, tank *tank_type, int *position)
+void print_tank(int y, int x, TankDesign *tank_type, int *position)
 {
 	if (matrix[y - 1 - y1b][x - 1 - x1b] == 'g'){
 		visit_grass[0][0]=1;
@@ -137,17 +137,17 @@ void print_tank(int y, int x, tank *tank_type, int *position)
 	refresh();
 }
 
-void create_tank(int y, int x, int barrel, tank* tank_type)
+void create_tank(int barrel, TankAll current)
 {
 	switch (barrel)
 	{
-	case 1: print_tank(y, x, tank_type, top);
+	case 1: print_tank(current.tank.tPos.y, current.tank.tPos.x, current.tank.tankDesign_v, top);
 		break;
-	case 2: print_tank(y, x, tank_type, left);
+	case 2: print_tank(current.tank.tPos.y, current.tank.tPos.x, current.tank.tankDesign_h, left);
 		break;
-	case 3: print_tank(y, x, tank_type, right);
+	case 3: print_tank(current.tank.tPos.y, current.tank.tPos.x, current.tank.tankDesign_v, right);
 		break;
-	case 4: print_tank(y, x, tank_type, bottom);
+	case 4: print_tank(current.tank.tPos.y, current.tank.tPos.x, current.tank.tankDesign_h, bottom);
 		break;
 	}
 }
