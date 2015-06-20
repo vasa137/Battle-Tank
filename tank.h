@@ -40,6 +40,8 @@ typedef struct Tank_Design{
 	int paint;
 }TankDesign;
 
+
+
 typedef struct Tank_Position{
 	int x;
 	int y;
@@ -55,7 +57,8 @@ typedef struct Projectile_Position{
 }ProjectilePosition;
 
 typedef struct TAnk{
-	TankDesign tankDesign[9];
+	TankDesign *tankDesign_h;
+	TankDesign *tankDesign_v;
 	TankPosition tPos;
 	int3x3 visit_grass;
 }Tank;
@@ -64,10 +67,10 @@ typedef struct PRojectile{
 	unsigned short mm, pp;
 	ProjectilePosition pPos;
 	int projetPhase;
+	char last_object;
 }Projectile;
 
 typedef struct Whole_Struct{
-	int tank_exist; // Promeni u zavisnosti od implementacije.
 	int projectile_exist;
 	Tank tank;
 	Projectile projectile;
@@ -80,6 +83,7 @@ typedef struct Linked_list{
 // ===============================================.
 typedef struct LST{
 	List *first;
+	List *curr;
 	int n;
 	List *last;
 } Lst;
@@ -126,7 +130,7 @@ void print_blanko(int y,int x);
 
 void print_tank(int y, int x, TankDesign *tank_type, int *position);
 
-void create_tank(int y, int x, int barrel, TankDesign* tank_type);
+void create_tank(int barrel, TankAll current);
 
 void delete_tank(int y, int x);
 
