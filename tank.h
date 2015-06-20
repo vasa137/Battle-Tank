@@ -27,19 +27,68 @@
 #define y2c 67
 #define x2c 145
 
+
 #define BACKSPACE 8
 #define ENTER '\n'
 #define ESC 27
 // stavke menija
 
+typedef int int3x3[3][3];
+// ====================================================.
+typedef struct Tank_Design{
+	chtype ch;
+	int paint;
+}TankDesign;
+
+typedef struct Tank_Position{
+	int x;
+	int y;
+	int barrel;
+	int projectil_dir;
+	int last_move;
+}TankPosition;
+
+typedef struct Projectile_Position{
+	int x;
+	int y;
+	int projectil_dir;
+}ProjectilePosition;
+
+typedef struct TAnk{
+	TankDesign tankDesign[9];
+	TankPosition tPos;
+	int3x3 visit_grass;
+}Tank;
+
+typedef struct PRojectile{
+	unsigned short mm, pp;
+	ProjectilePosition pPos;
+	int projetPhase;
+}Projectile;
+
+typedef struct Whole_Struct{
+	int tank_exist; // Promeni u zavisnosti od implementacije.
+	int projectile_exist;
+	Tank tank;
+	Projectile projectile;
+}TankAll;
+
+typedef struct Linked_list{
+	TankAll tankAll;
+	struct Linked_list* next;
+}List;
+// ===============================================.
+typedef struct LST{
+	List *first;
+	int n;
+	List *last;
+} Lst;
+
+extern Lst *lst;
+
 extern char meni[][dimx];
 
 extern char map_name[50]; 
-
-typedef struct Tank{
-	chtype ch;
-	int paint;
-} tank;
 
 typedef struct Barrier{
 	int flag;
@@ -57,11 +106,11 @@ extern int bottom[];
 
 extern int visit_grass[3][3];
 
-extern tank special_tank_v[]; 
-extern tank special_tank_h[];
+extern TankDesign special_tank_v[]; 
+extern TankDesign special_tank_h[];
 
-extern tank normal_tank_v[];
-extern tank normal_tank_h[];
+extern TankDesign normal_tank_v[];
+extern TankDesign normal_tank_h[];
 
 void init_colors();
 
@@ -75,13 +124,13 @@ void print_water(int y,int x);
 
 void print_blanko(int y,int x);
 
-void print_tank(int y, int x, tank *tank_type, int *position);
+void print_tank(int y, int x, TankDesign *tank_type, int *position);
 
-void create_tank(int y, int x, int barrel, tank* tank_type);
+void create_tank(int y, int x, int barrel, TankDesign* tank_type);
 
 void delete_tank(int y, int x);
 
-void move_tank(int y, int x, int mov, tank* ver, tank* hor);
+void move_tank(int y, int x, int mov, TankDesign* ver, TankDesign* hor);
 
 int can_move(int y, int x, int barrel);
 
@@ -99,7 +148,7 @@ char move_projectile(int *y, int *x, int projectil_dir, int *check, char *last_o
 
 void projectile(int *py, int*px, int y, int x, int projectil_dir, unsigned short* mm, unsigned short* pp, int *check,char *last_object);
 
-void action(int *y, int *x, tank* ver, tank* hor, int keyPressed, int *check, int *last_move, int *projectil_dir);
+void action(int *y, int *x, TankDesign* ver, TankDesign* hor, int keyPressed, int *check, int *last_move, int *projectil_dir);
 
 void print_object(int y,int x,int c);
 
