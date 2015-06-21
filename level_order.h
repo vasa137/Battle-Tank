@@ -2,6 +2,11 @@
 #define LEVEL_H_INCLUDED
 #include "tank.h"
 
+typedef struct Map
+{
+	chtype mapa[dimx][dimy];
+}map;
+
 extern chtype lvl_matrix[dimx][dimy];
 extern char lvl_meni[][dimx]; // stavke menija
 extern char button[][dimx];
@@ -51,4 +56,10 @@ void lmenu_down(char **book, int *mv, int limit, int *ind, int from);
 int load_maps();
 void load_matrix(char name[]);
 
+void PUSH_unredo(map** unredo, int* n_unredo);
+void copy_matrix(map** unredo, int n_unredo);
+void destroy_undo_redo(map** undo, map **redo, int n_redo, int n_undo);
+
+void _undo_redo(map** pop, map** push, int* n_undo, int* n_redo);
+int POP(map** unredo, int* n_unredo);
 #endif
