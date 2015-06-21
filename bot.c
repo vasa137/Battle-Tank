@@ -11,8 +11,8 @@ void move_bot(int *z, int *t, int *bot_barrel)
                 if ((matrix[a - 4][b - 1] == ' ') && (matrix[a - 4][b - 2] == ' ') && (matrix[a - 4][b - 3] == ' '))
                 {
                         delete_tank(a, b);
-                        create_tank(a - 1, b, bot_barrel1, special_tank_v);
-                        (*z)--;
+						(*z)--;
+                        create_tank(bot_barrel1, lst->curr->tankAll);
                         refresh();
                 }
                 else
@@ -22,8 +22,8 @@ void move_bot(int *z, int *t, int *bot_barrel)
                 if ((matrix[a - 1][b - 4] == ' ') && (matrix[a - 2][b - 4] == ' ') && (matrix[a - 3][b - 4] == ' '))
                 {
                         delete_tank(a, b);
-                        create_tank(a, b - 1, bot_barrel1, special_tank_h);
-                        (*t)--;
+						(*t)--;
+                        create_tank(bot_barrel1, lst->curr->tankAll);
                         refresh();
                 }
                 else
@@ -33,8 +33,8 @@ void move_bot(int *z, int *t, int *bot_barrel)
                 if ((matrix[a - 1][b] == ' ') && (matrix[a - 2][b] == ' ') && (matrix[a - 3][b] == ' '))
                 {
                         delete_tank(a, b);
-                        create_tank(a, b + 1, bot_barrel1, special_tank_h);
-                        (*t)++;
+						(*t)++;
+                        create_tank(bot_barrel1, lst->curr->tankAll);
                         refresh();
                 }
                 else
@@ -44,8 +44,8 @@ void move_bot(int *z, int *t, int *bot_barrel)
                 if ((matrix[a][b - 1] == ' ') && (matrix[a][b - 2] == ' ') && (matrix[a][b - 3] == ' '))
                 {
                         delete_tank(a, b);
-                        create_tank(a + 1, b, bot_barrel1, special_tank_v);
-                        (*z)++;
+						(*z)++;
+                        create_tank(bot_barrel1, lst->curr->tankAll);
                         refresh();
                 }
                 else
@@ -59,12 +59,14 @@ void easy_bot(clock_t *start, int *flag, int *bot_barrel, int *z, int *t)
         end = clock();
         if ((end - (*start)) > 80)
         {
-                if (*flag)
+                if (*flag==1)
                 {
-                        create_tank(*z, *t, *bot_barrel, special_tank_h);
-                        *flag = 0;
+						create_tank(*bot_barrel, lst->curr->tankAll);
+                        *flag = 2;
                 }
-                move_bot(z, t, bot_barrel);
+                else{
+				move_bot(z, t, bot_barrel);
                 *start = clock();
+				}
         }
 }
