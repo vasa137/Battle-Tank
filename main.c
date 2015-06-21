@@ -15,24 +15,16 @@ int left[] = { 2, 5, 8, 1, 4, 7, 0, 3, 6 };
 int right[] = { 6, 3, 0, 7, 4, 1, 8, 5, 2 };
 int bottom[] = { 8, 7, 6, 5, 4, 3, 2, 1, 0 };
 
-int visit_grass[3][3]={0,0,0,0,0,0,0,0,0};
-
 TankDesign special_tank_v[] = { { ACS_VLINE, 1 }, { ACS_VLINE, 1 }, { ACS_VLINE, 1 }, { ACS_VLINE, 1 }, { ACS_BULLET, 5 }, { ACS_VLINE, 1 }, { ACS_DIAMOND, 4 }, { ACS_HLINE, 4 }, { ACS_DIAMOND, 4 } };
 TankDesign special_tank_h[] = { { ACS_HLINE, 1 }, { ACS_HLINE, 1 }, { ACS_HLINE, 1 }, { ACS_HLINE, 1 }, { ACS_BULLET, 5 }, { ACS_HLINE, 1 }, { ACS_DIAMOND, 4 }, { ACS_VLINE, 4 }, { ACS_DIAMOND, 4 } };
 TankDesign normal_tank_v[] = { { 126, 6 }, { ACS_VLINE, 1 }, { 126, 6 }, { ACS_DIAMOND, 2 }, { 79, 7 }, { ACS_DIAMOND, 2 }, { ACS_DIAMOND, 2 }, { ACS_CKBOARD, 8 }, { ACS_DIAMOND, 2 } };
 TankDesign normal_tank_h[] = { { 126, 6 }, { ACS_HLINE, 1 }, { 126, 6 }, { ACS_DIAMOND, 2 }, { 79, 7 }, { ACS_DIAMOND, 2 }, { ACS_DIAMOND, 2 }, { ACS_CKBOARD, 8 }, { ACS_DIAMOND, 2 } };
 
 void main(){
-	unsigned short mm, pp;
 	struct timeb vreme;
-	
 	int keyPressed, i;
-	int flag = 1, flag1 = 1;
-	int z1 = 4, t1 = 50;
 	clock_t start = clock();
-    clock_t start1 = clock();
     clock_t end= clock();
-    clock_t end1 = clock();
 	lst = (Lst*)malloc(sizeof(Lst));
 	lst->first=NULL;
 	lst->curr=NULL;
@@ -41,26 +33,23 @@ void main(){
 	init_curses();
 	alloc_tank();
 	lst->curr=lst->first;
-	create_map(map_name);
+	create_map();
 	main_menu(1);
 	free_tank(lst->curr);
 	alloc_tank();
 	alloc_tank();
-	create_tank(1, lst->first->tankAll);
 	while (1){
 		time_now();
 		if (_kbhit())
 		{
 			keyPressed = getch();
 			lst->curr=lst->first;
-			action(&lst->first->tankAll.tank.tPos.y, &lst->first->tankAll.tank.tPos.x, lst->first->tankAll.tank.tankDesign_v, lst->first->tankAll.tank.tankDesign_h, keyPressed,
-				&lst->first->tankAll.projectile.projectPhase, &lst->first->tankAll.tank.tPos.last_move, &lst->first->tankAll.projectile.pPos.projectil_dir);
+			action(keyPressed);
 		}
 		for (i = 0, lst->curr = lst->first; i < lst->n; i++, lst->curr = lst->curr->next){
-			if (i!=0) easy_bot(&start, &flag, &lst->curr->tankAll.tank.tPos.barrel, &lst->curr->tankAll.tank.tPos.y, &lst->curr->tankAll.tank.tPos.x);
-			if (lst->curr->tankAll.projectile.projectPhase) projectile(&lst->curr->tankAll.projectile.pPos.y, &lst->curr->tankAll.projectile.pPos.x, lst->curr->tankAll.tank.tPos.y, 
-															lst->curr->tankAll.tank.tPos.x,lst->curr->tankAll.projectile.pPos.projectil_dir, &lst->curr->tankAll.projectile.mm,
-															&lst->curr->tankAll.projectile.pp, &lst->curr->tankAll.projectile.projectPhase, &lst->curr->tankAll.projectile.last_object);
+			if (i!=0) easy_bot(&start, &lst->curr->tankAll.tank.position.barrel, &lst->curr->tankAll.tank.position.y, &lst->curr->tankAll.tank.position.x);
+			if (lst->curr->tankAll.projectile.projectPhase) projectile(lst->curr->tankAll.tank.position.y,
+				lst->curr->tankAll.tank.position.x, lst->curr->tankAll.projectile.position.projectil_dir);
 		}
 	}
 }
