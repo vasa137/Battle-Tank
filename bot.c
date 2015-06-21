@@ -53,20 +53,13 @@ void move_bot(int *z, int *t, int *bot_barrel)
         }
 }
  
-void easy_bot(clock_t *start, int *flag, int *bot_barrel, int *z, int *t)
+void easy_bot(clock_t *start, int *bot_barrel, int *z, int *t)
 {
         clock_t end;
         end = clock();
         if ((end - (*start)) > 80)
-        {
-                if (*flag==1)
-                {
-						create_tank(*bot_barrel, lst->curr->tankAll);
-                        *flag = 2;
-                }
-                else{
+		{
 				move_bot(z, t, bot_barrel);
                 *start = clock();
-				}
         }
 }
