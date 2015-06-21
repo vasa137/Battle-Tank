@@ -34,7 +34,7 @@
 
 extern char meni[][dimx];
 
-extern char map_name[50]; 
+extern char map_name[50];
 
 typedef int int3x3[3][3];
 // ====================================================.
@@ -58,6 +58,8 @@ typedef struct Projectile_Position{
 }ProjectilePosition;
 
 typedef struct TAnk{
+	unsigned short mm, pp;
+	int phase;
 	TankDesign *tankDesign_v;
 	TankDesign *tankDesign_h;
 	TankPosition position;
@@ -67,7 +69,7 @@ typedef struct TAnk{
 typedef struct PRojectile{
 	unsigned short mm, pp;
 	ProjectilePosition position;
-	int projectPhase;
+	int phase;
 	char last_object;
 }Projectile;
 
@@ -104,7 +106,7 @@ extern int left[];
 extern int right[];
 extern int bottom[];
 
-extern TankDesign special_tank_v[]; 
+extern TankDesign special_tank_v[];
 extern TankDesign special_tank_h[];
 
 extern TankDesign normal_tank_v[];
@@ -114,15 +116,15 @@ void init_colors();
 
 void init_curses();
 
-void print_brick(int y,int x);
+void print_brick(int y, int x);
 
 void print_grass(int y, int x);
 
-void print_water(int y,int x);
+void print_water(int y, int x);
 
 void print_wall(int y, int x);
 
-void print_blanko(int y,int x);
+void print_blanko(int y, int x);
 
 void print_tank(int y, int x, TankDesign *tank_type, int *position);
 
@@ -138,7 +140,7 @@ void move_tank(int y, int x, int mov);
 
 int can_move(int y, int x, int barrel);
 
-int delay_s(int timeToDelay);
+int delay_s(int timeToDelay, unsigned short mm, unsigned short pp, int phase);
 
 barrier can_fly(int y, int x);
 
@@ -148,15 +150,15 @@ void print_projectile(int y, int x, char object);
 
 List* which_tank(int y, int x);
 
-void collision(int y, int x, int projectil_dir, char object );
+void collision(int y, int x, int projectil_dir, char object);
 
 char move_projectile(int projectil_dir);
 
 void projectile(int y, int x, int projectil_dir);
 
-void action(int keyPressed);
+void action(int keyPressed, TankAll *current);
 
-void print_object(int y,int x,int c);
+void print_object(int y, int x, int c);
 
 void print_border();
 
@@ -165,8 +167,8 @@ void create_map();
 void time_now();
 
 void move_bot(int *z, int *t, int *bot_barrel);
- 
-void easy_bot(clock_t *start, int *bot_barrel, int *z, int *t);
+
+void easy_bot();
 
 void print_border_menu(int y1, int x1, int y2, int x2);
 
@@ -174,7 +176,7 @@ void menu_up(int *mv, int limit, int *ind, int from);
 
 void menu_down(int *mv, int limit, int *ind, int from);
 
-int option_selected(int mv,int mainm);
+int option_selected(int mv, int mainm);
 
 void menu_content(int mainm);
 
