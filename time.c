@@ -1,20 +1,21 @@
 #include "tank.h"
 
-int delay_s(int timeToDelay, unsigned short* mm, unsigned short* pp, int *check){
-	if (*check == 1){    
-		return 1;
-	}
-	if (*mm - *pp > 0){
-		if (*mm - *pp >= timeToDelay)	{
-			return 1;
-		}
-	}
-	else if (*mm - *pp < 0){
-		if (1000 - *pp + *mm >= timeToDelay){
-			return 1;
-		}
-	}
-	return 0;
+int delay_s(int timeToDelay){
+ // Global: var for delay, phase of projectile.
+ if (lst->curr->tankAll.projectile.projectPhase == 1){
+  return 1;
+ }
+ if (lst->curr->tankAll.projectile.mm - lst->curr->tankAll.projectile.pp > 0){
+  if (lst->curr->tankAll.projectile.mm - lst->curr->tankAll.projectile.pp >= timeToDelay) {
+   return 1;
+  }
+ }
+ else if (lst->curr->tankAll.projectile.mm - lst->curr->tankAll.projectile.pp < 0){
+  if (1000 + lst->curr->tankAll.projectile.mm - lst->curr->tankAll.projectile.pp >= timeToDelay){
+   return 1;
+  }
+ }
+ return 0;
 }
 
 void time_now(){
