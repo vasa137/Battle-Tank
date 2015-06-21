@@ -27,7 +27,7 @@ void main(){
 	struct timeb vreme;
 	
 	int keyPressed, i;
-	int bot_barrel = 2, z = 4, t = 62, flag = 1, flag1 = 1, bot_barrel1 = 3;
+	int flag = 1, flag1 = 1;
 	int z1 = 4, t1 = 50;
 	clock_t start = clock();
     clock_t start1 = clock();
@@ -39,17 +39,13 @@ void main(){
 	lst->last=NULL;
 	lst->n=0;
 	init_curses();
+	alloc_tank();
+	lst->curr=lst->first;
 	create_map(map_name);
 	main_menu(1);
+	free_tank(lst->curr);
 	alloc_tank();
-	lst->first->tankAll.tank.tPos.x = 38;
-	lst->first->tankAll.tank.tPos.y = 24;
-	lst->first->tankAll.tank.tPos.barrel = 1;
-	lst->first->tankAll.tank.tPos.last_move = 1; //zato sto tenk stvaramo uspravno.
-	lst->first->tankAll.projectile.projectPhase = 0;
-	lst->first->tankAll.tank.tankDesign_v = special_tank_v;
-	lst->first->tankAll.tank.tankDesign_h = special_tank_h;
-	lst->first->tankAll.projectile.last_object = ' ';
+	alloc_tank();
 	create_tank(1, lst->first->tankAll);
 	while (1){
 		time_now();
@@ -60,9 +56,8 @@ void main(){
 			action(&lst->first->tankAll.tank.tPos.y, &lst->first->tankAll.tank.tPos.x, lst->first->tankAll.tank.tankDesign_v, lst->first->tankAll.tank.tankDesign_h, keyPressed,
 				&lst->first->tankAll.projectile.projectPhase, &lst->first->tankAll.tank.tPos.last_move, &lst->first->tankAll.projectile.pPos.projectil_dir);
 		}
-		//easy_bot(&start, &flag, &bot_barrel, &z, &t);
-		//easy_bot(&start1, &flag1, &bot_barrel1, &z1, &t1);
 		for (i = 0, lst->curr = lst->first; i < lst->n; i++, lst->curr = lst->curr->next){
+			if (i!=0) easy_bot(&start, &flag, &lst->curr->tankAll.tank.tPos.barrel, &lst->curr->tankAll.tank.tPos.y, &lst->curr->tankAll.tank.tPos.x);
 			if (lst->curr->tankAll.projectile.projectPhase) projectile(&lst->curr->tankAll.projectile.pPos.y, &lst->curr->tankAll.projectile.pPos.x, lst->curr->tankAll.tank.tPos.y, 
 															lst->curr->tankAll.tank.tPos.x,lst->curr->tankAll.projectile.pPos.projectil_dir, &lst->curr->tankAll.projectile.mm,
 															&lst->curr->tankAll.projectile.pp, &lst->curr->tankAll.projectile.projectPhase, &lst->curr->tankAll.projectile.last_object);
