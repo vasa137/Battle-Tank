@@ -66,8 +66,8 @@ void reduce_y(int *yu, int xu, int *yd, int xd){
 	if (*yu == *yd) return;
 	attron(COLOR_BLACK);
 	for (i = *yu, j = xd; j <= xu; j++){
-		what_to_print(*yu, j, *yu, j, lvl_matrix[i - 2][j - 2]);
-		what_to_print(*yd, j, *yd, j, lvl_matrix[*yd - 2][j - 2]);
+		what_to_print(*yu, j, *yu, j, lvl_matrix[i - 3][j - 3]);
+		what_to_print(*yd, j, *yd, j, lvl_matrix[*yd - 3][j - 3]);
 	}
 	(*yu)++;
 	(*yd)--;
@@ -80,8 +80,8 @@ void reduce_x(int yu, int *xu, int yd, int *xd){
 	if (*xd == *xu) return;
 	attron(COLOR_BLACK);
 	for (i = yu; i <= yd; i++){
-		what_to_print(i, *xd, i, *xd, lvl_matrix[i - 2][*xd - 2]);
-		what_to_print(i, *xu, i, *xu, lvl_matrix[i - 2][*xu - 2]);
+		what_to_print(i, *xd, i, *xd, lvl_matrix[i - 3][*xd - 3]);
+		what_to_print(i, *xu, i, *xu, lvl_matrix[i - 3][*xu - 3]);
 	}
 	++(*xd);
 	--(*xu);
@@ -136,4 +136,50 @@ void size_resize(int *yu, int *xu, int *yd, int *xd){
 		case 'r': case 'R': return; break;
 		}
 	}
+}
+
+void destroy_undo_redo(map** undo, map **redo, int n_redo, int n_undo){
+	free(redo[0]);
+	free(undo[0]);
+}
+
+
+void copy_matrix(map** unredo, int n_unredo){
+	int i, j;
+	for (i = 0; i < 65; i++)
+		for (j = 0; j < 90; j++){
+		unredo[0][n_unredo].mapa[i][j] = matrix[i][j];
+		}
+}
+
+void PUSH_unredo(map** unredo, int* n_unredo){
+	int max = 30, i;
+	if (*n_unredo == max) {
+		for (i = 0; i <= (*n_unredo - 2); i++) unredo[0][i] = unredo[0][i + 1];
+		--*n_unredo;
+	}
+
+	copy_matrix(unredo, (*n_unredo));
+	++*n_unredo;
+	unredo[0] = (map*)realloc(unredo[0], (*n_unredo + 1)*sizeof(map));
+}
+
+int POP(map** unredo, int* n_unredo){
+	int i = 0, j = 0;
+	if (*n_unredo == 0) return 0;
+	--(*n_unredo);
+	unredo[0] = (map*)realloc(unredo[0], (*n_unredo + 2)*sizeof(map));
+	return 1;
+}
+
+
+void _undo_redo(map** pop, map** push, int* n_pop, int* n_push){
+	int i, j;
+	if (!POP(pop, n_pop)) return;
+	PUSH_unredo(push, n_push);
+	for (i = 0; i < 65; i++)
+		for (j = 0; j < 90; j++)
+			matrix[i][j] = pop[0][*n_pop].mapa[i][j];
+	print_matrix();
+
 }
