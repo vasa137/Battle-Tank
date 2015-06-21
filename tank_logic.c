@@ -40,6 +40,7 @@ void free_tank(List *curr){
 	if (curr == lst->last) lst->last = prev;
 	lstcurrcopy=lst->curr; // da ne brise travu jer globalnim lst->curr brisemo a taj lst->curr je nas tenk, curr je tenk koji se brise
 	lst->curr=curr;
+	delete_projectile(lst->curr->tankAll.projectile.position.y, lst->curr->tankAll.projectile.position.x, lst->curr->tankAll.projectile.last_object);
 	delete_tank(curr->tankAll.tank.position.y, curr->tankAll.tank.position.x);
 	lst->curr=lstcurrcopy;
 	free(curr);
