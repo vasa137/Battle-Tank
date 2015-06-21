@@ -11,7 +11,7 @@ barrier can_fly(int y, int x)
 	case 'g':
 		ret.flag = 2;
 		break;
-	case 'b': case 'e':
+	case 'b': case 'e': case 'c': case 't':
 		ret.flag = 0;
 		break;
 	}
@@ -19,12 +19,21 @@ barrier can_fly(int y, int x)
 	// I jos za tenkove, projektile i ostale stvari.
 }
 
+List* which_tank(int y, int x){
+	List *temp=lst->first;
+	while(temp){
+		if( (y==temp->tankAll.tank.tPos.y || y==temp->tankAll.tank.tPos.y+1 || y==temp->tankAll.tank.tPos.y-1) && (x==temp->tankAll.tank.tPos.x || x==temp->tankAll.tank.tPos.x+1 || x==temp->tankAll.tank.tPos.x-1)) return temp;
+		temp=temp->next;
+	}
+}
+
 void collision(int y, int x, int projectil_dir, char object ){ // saljes mi koordinate udara.
+	List *temp;
 	switch (object){
 	case 'b':
 		switch (projectil_dir){
 		case 1://up 
-			if ((matrix[y - y1b][x - x1b - 1] == 'b') && (matrix[y - y1b + 1][x - x1b - 1] != 'b')) print_blanko(y, x - 1);
+			if (matrix[y - y1b][x - x1b - 1] == 'b' && (matrix[y - y1b + 1][x - x1b - 1] != 'b')) print_blanko(y, x - 1);
 			if (matrix[y - y1b][x - x1b] == 'b') print_blanko(y, x);
 			if (matrix[y - y1b][x - x1b + 1] == 'b' && (matrix[y - y1b + 1][x - x1b + 1] != 'b')) print_blanko(y, x + 1);
 			break;
@@ -44,7 +53,12 @@ void collision(int y, int x, int projectil_dir, char object ){ // saljes mi koor
 			if (matrix[y - y1b][x - x1b + 1] == 'b' && (matrix[y - y1b - 1][x - x1b + 1] != 'b')) print_blanko(y, x + 1);
 			break;
 		}
-	case 'o':; // za botove.
+		break;
+	case 't': 
+		temp=which_tank(y,x);
+		free_tank(temp);
+		break;
+				
 	case 'c':; // za beton, kada budemo imali strukturu.
 	case '*':; // za metak o metak, gledamo razlicite strane i gledamo da li se sudaraju, pazimo na mimoilazenje.
 	}
