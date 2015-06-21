@@ -50,22 +50,22 @@ void action(int keyPressed, TankAll *current){
 	switch (keyPressed)
 	{
 	case KEY_UP: case 1:  current->tank.position.last_move = 1;
-		if (can_move(current->tank.position.y - 2, current->tank.position.x, 1))
+		if (can_move(current->tank.position.y, current->tank.position.x, 1))
 			move_tank(--current->tank.position.y, current->tank.position.x, KEY_UP);
 		else { delete_tank(current->tank.position.y, current->tank.position.x);  create_tank(1, *current); } refresh(); break;
 
 	case KEY_LEFT: case 2: current->tank.position.last_move = 2;
-		if (can_move(current->tank.position.y, current->tank.position.x - 2, 2))
+		if (can_move(current->tank.position.y, current->tank.position.x, 2))
 			move_tank(current->tank.position.y, --current->tank.position.x, KEY_LEFT);
 		else { delete_tank(current->tank.position.y, current->tank.position.x);  create_tank(2, *current); } refresh(); break;
 
 	case KEY_RIGHT: case 3: current->tank.position.last_move = 3;
-		if (can_move(current->tank.position.y, current->tank.position.x + 2, 3))
+		if (can_move(current->tank.position.y, current->tank.position.x, 3))
 			move_tank(current->tank.position.y, ++current->tank.position.x, KEY_RIGHT);
 		else { delete_tank(current->tank.position.y, current->tank.position.x);  create_tank(3, *current); } refresh(); break;
 
 	case KEY_DOWN: case 4:  current->tank.position.last_move = 4;
-		if (can_move(current->tank.position.y + 2, current->tank.position.x, 4))
+		if (can_move(current->tank.position.y, current->tank.position.x, 4))
 			move_tank(++current->tank.position.y, current->tank.position.x, KEY_DOWN);
 		else { delete_tank(current->tank.position.y, current->tank.position.x);  create_tank(4, *current); } refresh(); break;
 
@@ -79,15 +79,23 @@ void action(int keyPressed, TankAll *current){
 int can_move(int y, int x, int barrel) {
 	switch (barrel)
 	{
-	case 1: case 4:
-		if (((matrix[y - y1b][x - x1b - 1] == ' ') || (matrix[y - y1b][x - x1b - 1] == 'g')) &&
-			((matrix[y - y1b][x - x1b] == ' ') || (matrix[y - y1b][x - x1b] == 'g')) &&
-			((matrix[y - y1b][x - x1b + 1] == ' ') || (matrix[y - y1b][x - x1b + 1] == 'g'))) return 1; else return 0;
-
-	case 2: case 3:
-		if (((matrix[y - y1b - 1][x - x1b] == ' ') || (matrix[y - y1b - 1][x - x1b] == 'g')) &&
-			((matrix[y - y1b][x - x1b] == ' ') || (matrix[y - y1b][x - x1b] == 'g')) &&
-			((matrix[y - y1b + 1][x - x1b] == ' ') || (matrix[y - y1b + 1][x - x1b] == 'g'))) return 1; else return 0;
+	case 1: 
+		if (((matrix[y - y1b - 2][x - x1b - 1] == ' ') || (matrix[y - y1b - 2][x - x1b - 1] == 'g')) &&
+			((matrix[y - y1b - 2][x - x1b] == ' ') || (matrix[y - y1b - 2][x - x1b] == 'g')) &&
+			((matrix[y - y1b - 2][x - x1b + 1] == ' ') || (matrix[y - y1b - 2][x - x1b + 1] == 'g'))) return 1; else return 0;
+	case 2:
+		if (((matrix[y - y1b - 1][x - x1b - 2] == ' ') || (matrix[y - y1b - 1][x - x1b - 2] == 'g')) &&
+			((matrix[y - y1b][x - x1b - 2] == ' ') || (matrix[y - y1b][x - x1b - 2] == 'g')) &&
+			((matrix[y - y1b + 1][x - x1b - 2] == ' ') || (matrix[y - y1b + 1][x - x1b - 2] == 'g'))) return 1; else return 0;
+	case 3:
+		if (((matrix[y - y1b - 1][x - x1b + 2] == ' ') || (matrix[y - y1b - 1][x - x1b + 2] == 'g')) &&
+			((matrix[y - y1b][x - x1b + 2] == ' ') || (matrix[y - y1b][x - x1b + 2] == 'g')) &&
+			((matrix[y - y1b + 1][x - x1b + 2] == ' ') || (matrix[y - y1b + 1][x - x1b + 2] == 'g'))) return 1; else return 0;
+	
+	case 4:
+		if (((matrix[y - y1b + 2][x - x1b - 1] == ' ') || (matrix[y - y1b + 2][x - x1b - 1] == 'g')) &&
+			((matrix[y - y1b + 2][x - x1b] == ' ') || (matrix[y - y1b + 2][x - x1b] == 'g')) &&
+			((matrix[y - y1b + 2][x - x1b + 1] == ' ') || (matrix[y - y1b + 2][x - x1b + 1] == 'g'))) return 1; else return 0;
 	}
 }
 
