@@ -13,12 +13,12 @@ void alloc_tank(){
 	else{
 		lst->last->next = novi;
 		novi->tankAll.tank.position.y = 4;
-		novi->tankAll.tank.position.x = 62;
+		novi->tankAll.tank.position.x = 72;
 	}
 	lst->last = novi;
 	lst->n++;
-	novi->tankAll.tank.position.last_move = 1;
-	novi->tankAll.tank.position.barrel = 1;
+	novi->tankAll.tank.position.last_move = 4;
+	novi->tankAll.tank.position.barrel = 4;
 	novi->tankAll.tank.phase = 2;
 	novi->tankAll.projectile.phase = 0;
 	novi->tankAll.tank.tankDesign_v = special_tank_v;
@@ -30,7 +30,7 @@ void alloc_tank(){
 }
 
 void free_tank(List *curr){
-	List *temp = lst->first, *prev = NULL;
+	List *temp = lst->first, *prev = NULL, *lstcurrcopy;
 	while (temp != curr){
 		prev = temp;
 		temp = temp->next;
@@ -38,7 +38,10 @@ void free_tank(List *curr){
 	if (!prev) lst->first = curr->next;
 	else prev->next = curr->next;
 	if (curr == lst->last) lst->last = prev;
+	lstcurrcopy=lst->curr; // da ne brise travu jer globalnim lst->curr brisemo a taj lst->curr je nas tenk, curr je tenk koji se brise
+	lst->curr=curr;
 	delete_tank(curr->tankAll.tank.position.y, curr->tankAll.tank.position.x);
+	lst->curr=lstcurrcopy;
 	free(curr);
 	lst->n--;
 }
@@ -96,7 +99,3 @@ void move_tank(int y, int x, int mov){
 	case KEY_DOWN:  delete_tank(y - 1, x);  create_tank(4, lst->curr->tankAll);  break;
 	}
 }
-
-
-
-
