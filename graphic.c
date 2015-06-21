@@ -2,15 +2,15 @@
 
 void init_colors(){
 	start_color();
-	init_pair(1,  COLOR_WHITE, COLOR_BLACK);
-	init_pair(2,  COLOR_GREEN, COLOR_BLACK);
-	init_pair(3,  COLOR_YELLOW, COLOR_RED);
-	init_pair(4,  COLOR_WHITE, COLOR_YELLOW);
-	init_pair(5,  COLOR_BLACK, COLOR_YELLOW);
-	init_pair(6,  COLOR_BLACK, COLOR_BLACK);
-	init_pair(7,  COLOR_RED, COLOR_RED);
-	init_pair(8,  COLOR_YELLOW, COLOR_BLACK);
-	init_pair(9,  COLOR_RED, COLOR_YELLOW);
+	init_pair(1, COLOR_WHITE, COLOR_BLACK);
+	init_pair(2, COLOR_GREEN, COLOR_BLACK);
+	init_pair(3, COLOR_YELLOW, COLOR_RED);
+	init_pair(4, COLOR_WHITE, COLOR_YELLOW);
+	init_pair(5, COLOR_BLACK, COLOR_YELLOW);
+	init_pair(6, COLOR_BLACK, COLOR_BLACK);
+	init_pair(7, COLOR_RED, COLOR_RED);
+	init_pair(8, COLOR_YELLOW, COLOR_BLACK);
+	init_pair(9, COLOR_RED, COLOR_YELLOW);
 	init_pair(10, COLOR_WHITE, COLOR_BLUE);
 	init_pair(11, COLOR_YELLOW, COLOR_BLUE);
 	init_pair(12, COLOR_CYAN, COLOR_BLUE);
@@ -28,148 +28,131 @@ void init_curses(){
 	resize_term(70, 150);
 }
 
-void print_brick(int y,int x){
+void print_brick(int y, int x){
 	attron(COLOR_PAIR(3));
-	mvaddch(y,x, ACS_PLUS);
+	mvaddch(y, x, ACS_PLUS);
 	attroff(A_BOLD);
-	matrix[y-y1b][x-x1b] = 'b';
+	matrix[y - y1b][x - x1b] = 'b';
 }
 
 void print_grass(int y, int x){
 	attron(COLOR_PAIR(2));
-	mvaddch(y,x,ACS_BOARD);
-	matrix[y-y1b][x-x1b] = 'g';
+	mvaddch(y, x, ACS_BOARD);
+	matrix[y - y1b][x - x1b] = 'g';
 }
 
 void print_water(int y, int x){
 	attron(COLOR_PAIR(12));
-	mvaddch(y,x,ACS_BOARD);
-	matrix[y-y1b][x-x1b] = 'w';
+	mvaddch(y, x, ACS_BOARD);
+	matrix[y - y1b][x - x1b] = 'w';
 }
 
 void print_wall(int y, int x){
 	attron(COLOR_PAIR(13));
-	mvaddch(y, x, ACS_PLUS|A_BOLD);
+	mvaddch(y, x, ACS_PLUS | A_BOLD);
 	matrix[y - y1b][x - x1b] = 'c';
 }
 
-void print_blanko(int y,int x){
+void print_blanko(int y, int x){
 	attron(COLOR_PAIR(6));
-	mvaddch(y,x,' ');
-	matrix[y-y1b][x-x1b] = ' ';
+	mvaddch(y, x, ' ');
+	matrix[y - y1b][x - x1b] = ' ';
 }
 
-void print_red(int y,int x)
+void print_red(int y, int x)
 {
 	attron(COLOR_PAIR(7));
-	mvaddch(y,x,ACS_BOARD);
-	matrix[y-y1b][x-x1b] = 'h';
+	mvaddch(y, x, ACS_BOARD);
+	matrix[y - y1b][x - x1b] = 'h';
 }
 
 void print_blue(int y, int x)
 {
 	attron(COLOR_PAIR(14));
-	mvaddch(y,x,ACS_BOARD);
-	matrix[y-y1b][x-x1b] = 'h';
+	mvaddch(y, x, ACS_BOARD);
+	matrix[y - y1b][x - x1b] = 'h';
 }
 
 void print_white(int y, int x)
 {
 	attron(COLOR_PAIR(13));
-	mvaddch(y,x,ACS_BOARD);
-	matrix[y-y1b][x-x1b] = 'h';
+	mvaddch(y, x, ACS_BOARD);
+	matrix[y - y1b][x - x1b] = 'h';
 }
 
-void print_head(int y,int x)
+void print_head(int y, int x)
 {
 	attron(COLOR_PAIR(6));
-	mvaddch(y,x,ACS_BOARD | A_BOLD);
-	matrix[y-y1b][x-x1b] = 'h';
+	mvaddch(y, x, ACS_BOARD | A_BOLD);
+	matrix[y - y1b][x - x1b] = 'h';
 }
 
 void print_tank(int y, int x, TankDesign *tank_type, int *position)
 {
-	if (matrix[y - 1 - y1b][x - 1 - x1b] == 'g'){
-		lst->curr->tankAll.tank.visit_grass[0][0]=1;
-	}
+	if (matrix[y - 1 - y1b][x - 1 - x1b] == 'g') lst->curr->tankAll.tank.visit_grass[0][0] = 1;
 	else{
-	attron(COLOR_PAIR(tank_type[position[0]].paint));
-	mvaddch(y - 1, x - 1, tank_type[position[0]].ch);
+		attron(COLOR_PAIR(tank_type[position[0]].paint));
+		mvaddch(y - 1, x - 1, tank_type[position[0]].ch);
 	}
 	matrix[y - 1 - y1b][x - 1 - x1b] = 't';
-	//
-	if (matrix[y - 1 - y1b][x - x1b] == 'g'){
-		lst->curr->tankAll.tank.visit_grass[0][1]=1;
-	}
+	
+	if (matrix[y - 1 - y1b][x - x1b] == 'g') lst->curr->tankAll.tank.visit_grass[0][1] = 1;
 	else{
-	attron(COLOR_PAIR(tank_type[position[1]].paint));
-	mvaddch(y - 1, x, tank_type[position[1]].ch);
+		attron(COLOR_PAIR(tank_type[position[1]].paint));
+		mvaddch(y - 1, x, tank_type[position[1]].ch);
 	}
 	matrix[y - 1 - y1b][x - x1b] = 't';
-	//
-	if (matrix[y - 1 - y1b][x + 1 - x1b] == 'g'){
-		lst->curr->tankAll.tank.visit_grass[0][2]=1;
-	}
-	//
+	
+	if (matrix[y - 1 - y1b][x + 1 - x1b] == 'g') lst->curr->tankAll.tank.visit_grass[0][2] = 1;
 	else{
-	attron(COLOR_PAIR(tank_type[position[2]].paint));
-	mvaddch(y - 1, x + 1, tank_type[position[2]].ch);
+		attron(COLOR_PAIR(tank_type[position[2]].paint));
+		mvaddch(y - 1, x + 1, tank_type[position[2]].ch);
 	}
 	matrix[y - 1 - y1b][x + 1 - x1b] = 't';
-	//
-	if (matrix[y - y1b][x - 1 - x1b] == 'g'){
-		lst->curr->tankAll.tank.visit_grass[1][0]=1;
-	}
+	
+	if (matrix[y - y1b][x - 1 - x1b] == 'g') lst->curr->tankAll.tank.visit_grass[1][0] = 1;
 	else{
-	attron(COLOR_PAIR(tank_type[position[3]].paint));
-	mvaddch(y, x - 1, tank_type[position[3]].ch);
+		attron(COLOR_PAIR(tank_type[position[3]].paint));
+		mvaddch(y, x - 1, tank_type[position[3]].ch);
 	}
 	matrix[y - y1b][x - 1 - x1b] = 't';
-	//
-	if (matrix[y - y1b][x - x1b] == 'g'){
-		lst->curr->tankAll.tank.visit_grass[1][1]=1;
-	}
+	
+	if (matrix[y - y1b][x - x1b] == 'g') lst->curr->tankAll.tank.visit_grass[1][1] = 1;
 	else{
-	attron(COLOR_PAIR(tank_type[position[4]].paint));
-	mvaddch(y, x, tank_type[position[4]].ch);
+		attron(COLOR_PAIR(tank_type[position[4]].paint));
+		mvaddch(y, x, tank_type[position[4]].ch);
 	}
 	matrix[y - y1b][x - x1b] = 't';
-	//
-	if (matrix[y - y1b][x + 1 - x1b] == 'g'){
-		lst->curr->tankAll.tank.visit_grass[1][2]=1;
-	}
+	
+	if (matrix[y - y1b][x + 1 - x1b] == 'g') lst->curr->tankAll.tank.visit_grass[1][2] = 1;
 	else{
-	attron(COLOR_PAIR(tank_type[position[5]].paint));
-	mvaddch(y, x + 1, tank_type[position[5]].ch);
+		attron(COLOR_PAIR(tank_type[position[5]].paint));
+		mvaddch(y, x + 1, tank_type[position[5]].ch);
 	}
 	matrix[y - y1b][x + 1 - x1b] = 't';
-	//
-	if (matrix[y + 1 - y1b][x - 1 - x1b] == 'g'){
-		lst->curr->tankAll.tank.visit_grass[2][0]=1;
-	}
+	
+	if (matrix[y + 1 - y1b][x - 1 - x1b] == 'g') lst->curr->tankAll.tank.visit_grass[2][0] = 1;
 	else{
-	attron(COLOR_PAIR(tank_type[position[6]].paint));
-	mvaddch(y + 1, x - 1, tank_type[position[6]].ch);
+		attron(COLOR_PAIR(tank_type[position[6]].paint));
+		mvaddch(y + 1, x - 1, tank_type[position[6]].ch);
 	}
 	matrix[y + 1 - y1b][x - 1 - x1b] = 't';
-	//
-	if (matrix[y + 1 - y1b][x - x1b] == 'g'){
-		lst->curr->tankAll.tank.visit_grass[2][1]=1;
-	}
+
+	if (matrix[y + 1 - y1b][x - x1b] == 'g') lst->curr->tankAll.tank.visit_grass[2][1] = 1;
 	else{
-	attron(COLOR_PAIR(tank_type[position[7]].paint));
-	mvaddch(y + 1, x, tank_type[position[7]].ch);
+		attron(COLOR_PAIR(tank_type[position[7]].paint));
+		mvaddch(y + 1, x, tank_type[position[7]].ch);
 	}
 	matrix[y + 1 - y1b][x - x1b] = 't';
-	//
-	if (matrix[y + 1 - y1b][x + 1 - x1b] == 'g'){
-		lst->curr->tankAll.tank.visit_grass[2][2]=1;
-	}
+
+	if (matrix[y + 1 - y1b][x + 1 - x1b] == 'g') lst->curr->tankAll.tank.visit_grass[2][2] = 1;
 	else{
-	attron(COLOR_PAIR(tank_type[position[8]].paint));
-	mvaddch(y + 1, x + 1, tank_type[position[8]].ch);
+		attron(COLOR_PAIR(tank_type[position[8]].paint));
+		mvaddch(y + 1, x + 1, tank_type[position[8]].ch);
 	}
 	matrix[y + 1 - y1b][x + 1 - x1b] = 't';
+
+
 	refresh();
 }
 
@@ -190,58 +173,58 @@ void create_tank(int barrel, TankAll current)
 
 void delete_tank(int y, int x){
 
-	if(!lst->curr->tankAll.tank.visit_grass[0][0]) print_blanko(y - 1, x - 1); //ako je blanko, to znaci da je u visitu 0!print_blanko(y - 1, x - 1);
+	if (!lst->curr->tankAll.tank.visit_grass[0][0]) print_blanko(y - 1, x - 1); //ako je blanko, to znaci da je u visitu 0!print_blanko(y - 1, x - 1);
 	else{
-	print_grass(y - 1, x - 1);
-	lst->curr->tankAll.tank.visit_grass[0][0]=0;
+		print_grass(y - 1, x - 1);
+		lst->curr->tankAll.tank.visit_grass[0][0] = 0;
 	}
-	refresh();
-	if(!lst->curr->tankAll.tank.visit_grass[0][1]) print_blanko(y - 1, x); 
+	
+	if (!lst->curr->tankAll.tank.visit_grass[0][1]) print_blanko(y - 1, x);
 	else{
-	print_grass(y - 1, x);
-	lst->curr->tankAll.tank.visit_grass[0][1]=0;
+		print_grass(y - 1, x);
+		lst->curr->tankAll.tank.visit_grass[0][1] = 0;
 	}
-	refresh();
-	if(!lst->curr->tankAll.tank.visit_grass[0][2]) print_blanko(y - 1, x + 1);
+	
+	if (!lst->curr->tankAll.tank.visit_grass[0][2]) print_blanko(y - 1, x + 1);
 	else{
-	print_grass(y - 1, x + 1);
-	lst->curr->tankAll.tank.visit_grass[0][2]=0;
+		print_grass(y - 1, x + 1);
+		lst->curr->tankAll.tank.visit_grass[0][2] = 0;
 	}
-	refresh();
-	if(!lst->curr->tankAll.tank.visit_grass[1][0]) print_blanko(y, x - 1);
+	
+	if (!lst->curr->tankAll.tank.visit_grass[1][0]) print_blanko(y, x - 1);
 	else{
-	print_grass(y , x - 1);
-	lst->curr->tankAll.tank.visit_grass[1][0]=0;
+		print_grass(y, x - 1);
+		lst->curr->tankAll.tank.visit_grass[1][0] = 0;
 	}
-	refresh();
-	if(!lst->curr->tankAll.tank.visit_grass[1][1]) print_blanko(y, x);
+	
+	if (!lst->curr->tankAll.tank.visit_grass[1][1]) print_blanko(y, x);
 	else{
-	print_grass(y , x);
-	lst->curr->tankAll.tank.visit_grass[1][1]=0;
+		print_grass(y, x);
+		lst->curr->tankAll.tank.visit_grass[1][1] = 0;
 	}
-	refresh();
-	if(!lst->curr->tankAll.tank.visit_grass[1][2]) print_blanko(y, x + 1);
+	
+	if (!lst->curr->tankAll.tank.visit_grass[1][2]) print_blanko(y, x + 1);
 	else{
-	print_grass(y , x + 1);
-	lst->curr->tankAll.tank.visit_grass[1][2]=0;
+		print_grass(y, x + 1);
+		lst->curr->tankAll.tank.visit_grass[1][2] = 0;
 	}
-	refresh();
-	if(!lst->curr->tankAll.tank.visit_grass[2][0]) print_blanko(y + 1, x - 1);
+	
+	if (!lst->curr->tankAll.tank.visit_grass[2][0]) print_blanko(y + 1, x - 1);
 	else{
-	print_grass(y + 1, x - 1);
-	lst->curr->tankAll.tank.visit_grass[2][0]=0;
+		print_grass(y + 1, x - 1);
+		lst->curr->tankAll.tank.visit_grass[2][0] = 0;
 	}
-	refresh();
-	if(!lst->curr->tankAll.tank.visit_grass[2][1]) print_blanko(y + 1, x);
+	
+	if (!lst->curr->tankAll.tank.visit_grass[2][1]) print_blanko(y + 1, x);
 	else{
-	print_grass(y + 1, x);
-	lst->curr->tankAll.tank.visit_grass[2][1]=0;
+		print_grass(y + 1, x);
+		lst->curr->tankAll.tank.visit_grass[2][1] = 0;
 	}
-	refresh();
-	if(!lst->curr->tankAll.tank.visit_grass[2][2]) print_blanko(y + 1, x + 1);
+	
+	if (!lst->curr->tankAll.tank.visit_grass[2][2]) print_blanko(y + 1, x + 1);
 	else{
-	print_grass(y + 1, x + 1);
-	lst->curr->tankAll.tank.visit_grass[2][2]=0;
+		print_grass(y + 1, x + 1);
+		lst->curr->tankAll.tank.visit_grass[2][2] = 0;
 	}
 
 	refresh();
@@ -249,30 +232,30 @@ void delete_tank(int y, int x){
 
 void delete_projectile(int y, int x, char last_object)
 {
-	if( last_object=='w') print_water(y,x); // umesto if-a moze print object da se pozove on je sam po sebi case
-	else if ( last_object==' ') print_blanko(y,x);
+	if (last_object == 'w') print_water(y, x); // umesto if-a moze print object da se pozove on je sam po sebi case
+	else if (last_object == ' ') print_blanko(y, x);
 }
 
 void print_projectile(int y, int x, char object)
 {
-	if( object == 'w')  attron(COLOR_PAIR(11)); // ako naidje na vodu
-	else if(object == ' ')  attron(COLOR_PAIR(8));
+	if (object == 'w')  attron(COLOR_PAIR(11)); // ako naidje na vodu
+	else if (object == ' ')  attron(COLOR_PAIR(8));
 	mvaddch(y, x, ACS_BULLET | A_BOLD);
 	matrix[y - y1b][x - x1b] = '*';
 }
 
-void print_object(int y,int x,int c){
+void print_object(int y, int x, int c){
 	switch (c)
 	{
-	case 'b': print_brick(y,x);   break;
-	case 'w': print_water(y,x);   break;
-	case 'g': print_grass(y,x);   break;
+	case 'b': print_brick(y, x);   break;
+	case 'w': print_water(y, x);   break;
+	case 'g': print_grass(y, x);   break;
 	case 'c': print_wall(y, x);   break;
-	case '1': print_red(y,x);     break;
-	case '2': print_blue(y,x);    break;
-	case '3': print_white(y,x);   break;
-	case 'h': print_head(y,x);    break;
-	default : print_blanko(y,x);  break;
+	case '1': print_red(y, x);     break;
+	case '2': print_blue(y, x);    break;
+	case '3': print_white(y, x);   break;
+	case 'h': print_head(y, x);    break;
+	default:  print_blanko(y, x);  break;
 	}
 }
 
@@ -313,7 +296,7 @@ void create_map()
 {
 	FILE *map;
 	int c;
-	int y=y1b+1, x=x1b+1; 
+	int y = y1b + 1, x = x1b + 1;
 
 	map = fopen(map_name, "r");
 
@@ -325,7 +308,7 @@ void create_map()
 		if (c != '/')
 		{
 			if (c == '.') c = ' ';
-			print_object(y,x,c);
+			print_object(y, x, c);
 			x++;
 			refresh();
 		}
@@ -348,14 +331,14 @@ void print_commands()
 	mvaddch(55, 124, ACS_RARROW);
 	mvaddch(56, 122, ACS_DARROW);
 
-	mvaddstr(52, 119,"MOVE UP");
-	mvaddstr(55, 110,"MOVE LEFT");
-	mvaddstr(55, 126,"MOVE RIGHT");
-	mvaddstr(58, 118,"MOVE DOWN");
-	attron(COLOR_PAIR(1)|A_REVERSE);
-	mvaddstr(62,112,"        SPACE        ");
-	attroff(COLOR_PAIR(1)|A_REVERSE);
-	mvaddstr(64,120,"SHOOT");
+	mvaddstr(52, 119, "MOVE UP");
+	mvaddstr(55, 110, "MOVE LEFT");
+	mvaddstr(55, 126, "MOVE RIGHT");
+	mvaddstr(58, 118, "MOVE DOWN");
+	attron(COLOR_PAIR(1) | A_REVERSE);
+	mvaddstr(62, 112, "        SPACE        ");
+	attroff(COLOR_PAIR(1) | A_REVERSE);
+	mvaddstr(64, 120, "SHOOT");
 	refresh();
 }
 
