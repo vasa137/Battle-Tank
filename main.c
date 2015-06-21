@@ -29,11 +29,12 @@ void main(){ // Da sredimo main kasnije.
 	lst->last = NULL;
 	lst->n = 0;
 	init_curses();
-	alloc_tank();
-	lst->curr = lst->first;
 	create_map();
+	alloc_tank();
+	lst->curr = lst->first; // ovo mora posle alokacije
 	main_menu(1);
-	free_tank(lst->curr);
+	for (i = 0, lst->curr = lst->first; i < lst->n; i++, lst->curr = lst->curr->next)  
+		free_tank(lst->curr);
 	alloc_tank();
 	alloc_tank();
 	while (1){
