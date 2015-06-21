@@ -2,26 +2,30 @@
 
 void alloc_tank(){
 	List *novi;
+	int i, j;
 	novi = (List*)malloc(sizeof(List));
 	novi->next = NULL;
 	if (lst->first == NULL){
 		lst->first = novi;
-		lst->first->tankAll.tank.tPos.y = 38;
-		lst->first->tankAll.tank.tPos.x = 24;
+		lst->first->tankAll.tank.position.y = 38;
+		lst->first->tankAll.tank.position.x = 24;
 	}
 	else{
 		lst->last->next = novi;
-		novi->tankAll.tank.tPos.y = 4;
-		novi->tankAll.tank.tPos.x = 62;
+		novi->tankAll.tank.position.y = 4;
+		novi->tankAll.tank.position.x = 62;
 	}
 	lst->last = novi;
 	lst->n++;
-	novi->tankAll.tank.tPos.last_move = 1;
-	novi->tankAll.tank.tPos.barrel = 1;
+	novi->tankAll.tank.position.last_move = 1;
+	novi->tankAll.tank.position.barrel = 1;
 	novi->tankAll.projectile.projectPhase = 0;
 	novi->tankAll.tank.tankDesign_v = special_tank_v;
 	novi->tankAll.tank.tankDesign_h = special_tank_h;
 	novi->tankAll.projectile.last_object = ' ';
+	for(i=0; i<3; i++)
+		for (j=0; j<3; j++) novi->tankAll.tank.visit_grass[i][j]=0;
+	create_tank(novi->tankAll.tank.position.barrel, novi->tankAll);
 }
 
 void free_tank(List *curr){
@@ -33,12 +37,12 @@ void free_tank(List *curr){
 	if(!prev) lst->first=curr->next;
 	else prev->next=curr->next;
 	if(curr==lst->last) lst->last=prev;
-	delete_tank(curr->tankAll.tank.tPos.y,curr->tankAll.tank.tPos.x);
+	delete_tank(curr->tankAll.tank.position.y,curr->tankAll.tank.position.x);
 	free(curr);
 	lst->n--;
 }
 
-void move_tank(int y, int x, int mov, TankDesign* ver, TankDesign* hor){
+void move_tank(int y, int x, int mov){
 	switch (mov){
 	case KEY_UP:    delete_tank(y + 1, x);  create_tank(1, lst->curr->tankAll);  break;
 	case KEY_LEFT:  delete_tank(y, x + 1);  create_tank(2, lst->curr->tankAll);  break;
@@ -62,13 +66,25 @@ int can_move(int y, int x, int barrel) {
 	}
 }
 
-void action(int *y, int *x, TankDesign* ver, TankDesign* hor, int keyPressed, int *check, int *last_move, int *projectil_dir){
+void action(int keyPressed){
 	switch (keyPressed)
 	{
-	case KEY_UP:    *last_move = 1; if (can_move(*y - 2, *x, 1)) move_tank(--*y, *x, KEY_UP, ver, hor);    else { delete_tank(*y, *x);  create_tank(1, lst->curr->tankAll); } refresh(); break;
-	case KEY_LEFT:  *last_move = 2; if (can_move(*y, *x - 2, 2)) move_tank(*y, --*x, KEY_LEFT, ver, hor);  else { delete_tank(*y, *x);  create_tank(2, lst->curr->tankAll); } refresh(); break;
-	case KEY_RIGHT: *last_move = 3; if (can_move(*y, *x + 2, 3)) move_tank(*y, ++*x, KEY_RIGHT, ver, hor); else { delete_tank(*y, *x);  create_tank(3, lst->curr->tankAll); } refresh(); break;
-	case KEY_DOWN:  *last_move = 4; if (can_move(*y + 2, *x, 4)) move_tank(++*y, *x, KEY_DOWN, ver, hor);  else { delete_tank(*y, *x);  create_tank(4, lst->curr->tankAll); } refresh(); break;
-	case ' ':       if (!(*check)) { *projectil_dir = *last_move;  *check = 1; } break;
+	case KEY_UP:    lst->first->tankAll.tank.position.last_move = 1; 
+					if (can_move(lst->first->tankAll.tank.position.y - 2, lst->first->tankAll.tank.position.x, 1)) move_tank(--lst->first->tankAll.tank.position.y, lst->first->tankAll.tank.position.x, KEY_UP);
+					else { delete_tank(lst->first->tankAll.tank.position.y, lst->first->tankAll.tank.position.x);  create_tank(1, lst->curr->tankAll); } refresh(); break;
+
+	case KEY_LEFT:  lst->first->tankAll.tank.position.last_move = 2; 
+					if (can_move(lst->first->tankAll.tank.position.y, lst->first->tankAll.tank.position.x - 2, 2)) move_tank(lst->first->tankAll.tank.position.y, --lst->first->tankAll.tank.position.x, KEY_LEFT);
+					else { delete_tank(lst->first->tankAll.tank.position.y, lst->first->tankAll.tank.position.x);  create_tank(2, lst->curr->tankAll); } refresh(); break;
+
+	case KEY_RIGHT: lst->first->tankAll.tank.position.last_move = 3; 
+					if (can_move(lst->first->tankAll.tank.position.y, lst->first->tankAll.tank.position.x + 2, 3)) move_tank(lst->first->tankAll.tank.position.y, ++lst->first->tankAll.tank.position.x, KEY_RIGHT);
+					else { delete_tank(lst->first->tankAll.tank.position.y, lst->first->tankAll.tank.position.x);  create_tank(3, lst->curr->tankAll); } refresh(); break;
+
+	case KEY_DOWN:  lst->first->tankAll.tank.position.last_move = 4; 
+					if (can_move(lst->first->tankAll.tank.position.y + 2, lst->first->tankAll.tank.position.x, 4)) move_tank(++lst->first->tankAll.tank.position.y, lst->first->tankAll.tank.position.x, KEY_DOWN);
+					else { delete_tank(lst->first->tankAll.tank.position.y, lst->first->tankAll.tank.position.x);  create_tank(4, lst->curr->tankAll); } refresh(); break;
+
+	case ' ':       if (!(lst->first->tankAll.projectile.projectPhase)) { lst->first->tankAll.projectile.position.projectil_dir = lst->first->tankAll.tank.position.last_move ;  lst->first->tankAll.projectile.projectPhase = 1; } break;
 	}
 }
