@@ -195,49 +195,49 @@ void delete_tank(int y, int x){
 	print_grass(y - 1, x - 1);
 	visit_grass[0][0]=0;
 	}
-
+	refresh();
 	if(!visit_grass[0][1]) print_blanko(y - 1, x); 
 	else{
 	print_grass(y - 1, x);
 	visit_grass[0][1]=0;
 	}
-
+	refresh();
 	if(!visit_grass[0][2]) print_blanko(y - 1, x + 1);
 	else{
 	print_grass(y - 1, x + 1);
 	visit_grass[0][2]=0;
 	}
-
+	refresh();
 	if(!visit_grass[1][0]) print_blanko(y, x - 1);
 	else{
 	print_grass(y , x - 1);
 	visit_grass[1][0]=0;
 	}
-
+	refresh();
 	if(!visit_grass[1][1]) print_blanko(y, x);
 	else{
 	print_grass(y , x);
 	visit_grass[1][1]=0;
 	}
-
+	refresh();
 	if(!visit_grass[1][2]) print_blanko(y, x + 1);
 	else{
 	print_grass(y , x + 1);
 	visit_grass[1][2]=0;
 	}
-
+	refresh();
 	if(!visit_grass[2][0]) print_blanko(y + 1, x - 1);
 	else{
 	print_grass(y + 1, x - 1);
 	visit_grass[2][0]=0;
 	}
-
+	refresh();
 	if(!visit_grass[2][1]) print_blanko(y + 1, x);
 	else{
 	print_grass(y + 1, x);
 	visit_grass[2][1]=0;
 	}
-
+	refresh();
 	if(!visit_grass[2][2]) print_blanko(y + 1, x + 1);
 	else{
 	print_grass(y + 1, x + 1);
