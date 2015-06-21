@@ -68,7 +68,7 @@ void print_red(int y,int x)
 
 void print_blue(int y, int x)
 {
-	attron(COLOR_PAIR(12));
+	attron(COLOR_PAIR(14));
 	mvaddch(y,x,ACS_BOARD);
 	matrix[y-y1b][x-x1b] = 'h';
 }
@@ -90,7 +90,7 @@ void print_head(int y,int x)
 void print_tank(int y, int x, TankDesign *tank_type, int *position)
 {
 	if (matrix[y - 1 - y1b][x - 1 - x1b] == 'g'){
-		visit_grass[0][0]=1;
+		lst->curr->tankAll.tank.visit_grass[0][0]=1;
 	}
 	else{
 	attron(COLOR_PAIR(tank_type[position[0]].paint));
@@ -99,7 +99,7 @@ void print_tank(int y, int x, TankDesign *tank_type, int *position)
 	matrix[y - 1 - y1b][x - 1 - x1b] = 't';
 	//
 	if (matrix[y - 1 - y1b][x - x1b] == 'g'){
-		visit_grass[0][1]=1;
+		lst->curr->tankAll.tank.visit_grass[0][1]=1;
 	}
 	else{
 	attron(COLOR_PAIR(tank_type[position[1]].paint));
@@ -108,7 +108,7 @@ void print_tank(int y, int x, TankDesign *tank_type, int *position)
 	matrix[y - 1 - y1b][x - x1b] = 't';
 	//
 	if (matrix[y - 1 - y1b][x + 1 - x1b] == 'g'){
-		visit_grass[0][2]=1;
+		lst->curr->tankAll.tank.visit_grass[0][2]=1;
 	}
 	//
 	else{
@@ -118,7 +118,7 @@ void print_tank(int y, int x, TankDesign *tank_type, int *position)
 	matrix[y - 1 - y1b][x + 1 - x1b] = 't';
 	//
 	if (matrix[y - y1b][x - 1 - x1b] == 'g'){
-		visit_grass[1][0]=1;
+		lst->curr->tankAll.tank.visit_grass[1][0]=1;
 	}
 	else{
 	attron(COLOR_PAIR(tank_type[position[3]].paint));
@@ -127,7 +127,7 @@ void print_tank(int y, int x, TankDesign *tank_type, int *position)
 	matrix[y - y1b][x - 1 - x1b] = 't';
 	//
 	if (matrix[y - y1b][x - x1b] == 'g'){
-		visit_grass[1][1]=1;
+		lst->curr->tankAll.tank.visit_grass[1][1]=1;
 	}
 	else{
 	attron(COLOR_PAIR(tank_type[position[4]].paint));
@@ -136,7 +136,7 @@ void print_tank(int y, int x, TankDesign *tank_type, int *position)
 	matrix[y - y1b][x - x1b] = 't';
 	//
 	if (matrix[y - y1b][x + 1 - x1b] == 'g'){
-		visit_grass[1][2]=1;
+		lst->curr->tankAll.tank.visit_grass[1][2]=1;
 	}
 	else{
 	attron(COLOR_PAIR(tank_type[position[5]].paint));
@@ -145,7 +145,7 @@ void print_tank(int y, int x, TankDesign *tank_type, int *position)
 	matrix[y - y1b][x + 1 - x1b] = 't';
 	//
 	if (matrix[y + 1 - y1b][x - 1 - x1b] == 'g'){
-		visit_grass[2][0]=1;
+		lst->curr->tankAll.tank.visit_grass[2][0]=1;
 	}
 	else{
 	attron(COLOR_PAIR(tank_type[position[6]].paint));
@@ -154,7 +154,7 @@ void print_tank(int y, int x, TankDesign *tank_type, int *position)
 	matrix[y + 1 - y1b][x - 1 - x1b] = 't';
 	//
 	if (matrix[y + 1 - y1b][x - x1b] == 'g'){
-		visit_grass[2][1]=1;
+		lst->curr->tankAll.tank.visit_grass[2][1]=1;
 	}
 	else{
 	attron(COLOR_PAIR(tank_type[position[7]].paint));
@@ -163,7 +163,7 @@ void print_tank(int y, int x, TankDesign *tank_type, int *position)
 	matrix[y + 1 - y1b][x - x1b] = 't';
 	//
 	if (matrix[y + 1 - y1b][x + 1 - x1b] == 'g'){
-		visit_grass[2][2]=1;
+		lst->curr->tankAll.tank.visit_grass[2][2]=1;
 	}
 	else{
 	attron(COLOR_PAIR(tank_type[position[8]].paint));
@@ -177,80 +177,80 @@ void create_tank(int barrel, TankAll current)
 {
 	switch (barrel)
 	{
-	case 1: print_tank(current.tank.tPos.y, current.tank.tPos.x, current.tank.tankDesign_v, top);
+	case 1: print_tank(current.tank.position.y, current.tank.position.x, current.tank.tankDesign_v, top);
 		break;
-	case 2: print_tank(current.tank.tPos.y, current.tank.tPos.x, current.tank.tankDesign_h, left);
+	case 2: print_tank(current.tank.position.y, current.tank.position.x, current.tank.tankDesign_h, left);
 		break;
-	case 3: print_tank(current.tank.tPos.y, current.tank.tPos.x, current.tank.tankDesign_h, right);
+	case 3: print_tank(current.tank.position.y, current.tank.position.x, current.tank.tankDesign_h, right);
 		break;
-	case 4: print_tank(current.tank.tPos.y, current.tank.tPos.x, current.tank.tankDesign_v, bottom);
+	case 4: print_tank(current.tank.position.y, current.tank.position.x, current.tank.tankDesign_v, bottom);
 		break;
 	}
 }
 
 void delete_tank(int y, int x){
 
-	if(!visit_grass[0][0]) print_blanko(y - 1, x - 1); //ako je blanko, to znaci da je u visitu 0!print_blanko(y - 1, x - 1);
+	if(!lst->curr->tankAll.tank.visit_grass[0][0]) print_blanko(y - 1, x - 1); //ako je blanko, to znaci da je u visitu 0!print_blanko(y - 1, x - 1);
 	else{
 	print_grass(y - 1, x - 1);
-	visit_grass[0][0]=0;
+	lst->curr->tankAll.tank.visit_grass[0][0]=0;
 	}
 	refresh();
-	if(!visit_grass[0][1]) print_blanko(y - 1, x); 
+	if(!lst->curr->tankAll.tank.visit_grass[0][1]) print_blanko(y - 1, x); 
 	else{
 	print_grass(y - 1, x);
-	visit_grass[0][1]=0;
+	lst->curr->tankAll.tank.visit_grass[0][1]=0;
 	}
 	refresh();
-	if(!visit_grass[0][2]) print_blanko(y - 1, x + 1);
+	if(!lst->curr->tankAll.tank.visit_grass[0][2]) print_blanko(y - 1, x + 1);
 	else{
 	print_grass(y - 1, x + 1);
-	visit_grass[0][2]=0;
+	lst->curr->tankAll.tank.visit_grass[0][2]=0;
 	}
 	refresh();
-	if(!visit_grass[1][0]) print_blanko(y, x - 1);
+	if(!lst->curr->tankAll.tank.visit_grass[1][0]) print_blanko(y, x - 1);
 	else{
 	print_grass(y , x - 1);
-	visit_grass[1][0]=0;
+	lst->curr->tankAll.tank.visit_grass[1][0]=0;
 	}
 	refresh();
-	if(!visit_grass[1][1]) print_blanko(y, x);
+	if(!lst->curr->tankAll.tank.visit_grass[1][1]) print_blanko(y, x);
 	else{
 	print_grass(y , x);
-	visit_grass[1][1]=0;
+	lst->curr->tankAll.tank.visit_grass[1][1]=0;
 	}
 	refresh();
-	if(!visit_grass[1][2]) print_blanko(y, x + 1);
+	if(!lst->curr->tankAll.tank.visit_grass[1][2]) print_blanko(y, x + 1);
 	else{
 	print_grass(y , x + 1);
-	visit_grass[1][2]=0;
+	lst->curr->tankAll.tank.visit_grass[1][2]=0;
 	}
 	refresh();
-	if(!visit_grass[2][0]) print_blanko(y + 1, x - 1);
+	if(!lst->curr->tankAll.tank.visit_grass[2][0]) print_blanko(y + 1, x - 1);
 	else{
 	print_grass(y + 1, x - 1);
-	visit_grass[2][0]=0;
+	lst->curr->tankAll.tank.visit_grass[2][0]=0;
 	}
 	refresh();
-	if(!visit_grass[2][1]) print_blanko(y + 1, x);
+	if(!lst->curr->tankAll.tank.visit_grass[2][1]) print_blanko(y + 1, x);
 	else{
 	print_grass(y + 1, x);
-	visit_grass[2][1]=0;
+	lst->curr->tankAll.tank.visit_grass[2][1]=0;
 	}
 	refresh();
-	if(!visit_grass[2][2]) print_blanko(y + 1, x + 1);
+	if(!lst->curr->tankAll.tank.visit_grass[2][2]) print_blanko(y + 1, x + 1);
 	else{
 	print_grass(y + 1, x + 1);
-	visit_grass[2][2]=0;
+	lst->curr->tankAll.tank.visit_grass[2][2]=0;
 	}
 
 	refresh();
 }
 
-void delete_projectile(int y, int x, char *last_object)
+void delete_projectile(int y, int x, char last_object)
 {
-	if( *last_object=='w') print_water(y,x); // umesto if-a moze print object da se pozove on je sam po sebi case
-	else if ( *last_object==' ') print_blanko(y,x);
+	if( last_object=='w') print_water(y,x); // umesto if-a moze print object da se pozove on je sam po sebi case
+	else if ( last_object==' ') print_blanko(y,x);
 }
 
 void print_projectile(int y, int x, char object)
