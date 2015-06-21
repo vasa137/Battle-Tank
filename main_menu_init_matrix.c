@@ -79,8 +79,7 @@ void delete_menu(int y1, int x1, int y2, int x2){
 
 int main_menu(int mainm){
 	int  xu, xd, yd, mv = 7, ind = 0, tru = 1, limitup=7, limitdown;
-	int bot_barrel = 2, z = 4, t = 62, flag = 1, flag1 = 1, bot_barrel1 = 3;
-	int z1 = 4, t1 = 50;
+	int flag = 1, flag1 = 1;
 	clock_t start = clock();
     clock_t start1 = clock();
     clock_t end= clock();
@@ -111,7 +110,7 @@ int main_menu(int mainm){
 						delete_menu(y1c,x1c,y2c,x2c);
 						if(mainm)
 						{ 
-							delete_tank(z, t);
+							delete_tank(lst->curr->tankAll.tank.tPos.y, lst->curr->tankAll.tank.tPos.x);
 							return 0;
 						}
 						else{
@@ -121,7 +120,7 @@ int main_menu(int mainm){
 					}
 			}
 		}
-		if(mainm) easy_bot(&start, &flag, &bot_barrel, &z, &t); //demo mod za bota
+		if(mainm) easy_bot(&start, &flag, &lst->curr->tankAll.tank.tPos.barrel, &lst->curr->tankAll.tank.tPos.y, &lst->curr->tankAll.tank.tPos.x); //demo mod za bota
 	}
 }
 
@@ -164,3 +163,97 @@ void level_editor(){
 	}
 	
 }
+
+/*
+int option_selected(int mv){
+	switch (mv){
+	case 9: init_matrix(); print_matrix(); c = 'b'; return 0; break;
+	case 11: return load_maps();  break;
+	case 13:  return save_map(); break;
+	case 15: exit(0);  break;
+	case 18: c = 'b'; return 1; break;
+	case 20: c = 'w'; return 1; break;
+	case 22: c = 'w'; return 1; break;
+	case 24: c = 'g'; return 1; break;
+	}
+
+}    //  koji blok je izabran
+
+
+
+
+void menu_content(){
+	int i, j;
+	mvprintw(4, 117, " M E N U : ");
+	attron(COLOR_PAIR(8));
+	mvprintw(9, 113, meni[0]);
+	attroff(COLOR_PAIR(8));
+	mvprintw(11, 113, meni[1]);
+	mvprintw(13, 113, meni[2]);
+	mvprintw(15, 113, meni[3]);
+	refresh();
+} // sadrzaj menija
+
+void delete_menu(int y1, int x1, int y2, int x2){
+	int i, j;
+	for (j = y1; j <= y2; j++)
+		for (i = x1; i <= x2; i++)
+			mvaddch(j, i, ' ');
+	refresh();
+} // brise meni
+
+
+
+void init_colors(){
+	start_color();
+	init_pair(1, COLOR_WHITE, COLOR_BLACK);
+	init_pair(2, COLOR_GREEN, COLOR_BLACK);
+	init_pair(3, COLOR_YELLOW, COLOR_RED);
+	init_pair(4, COLOR_WHITE, COLOR_YELLOW);
+	init_pair(5, COLOR_BLACK, COLOR_YELLOW);
+	init_pair(6, COLOR_BLACK, COLOR_BLACK);
+	init_pair(7, COLOR_RED, COLOR_GREEN);
+	init_pair(8, COLOR_YELLOW, COLOR_BLACK);
+	init_pair(9, COLOR_RED, COLOR_YELLOW);
+	init_pair(10, COLOR_WHITE, COLOR_BLUE);
+	init_pair(11, COLOR_YELLOW, COLOR_BLUE);
+	init_pair(12, COLOR_CYAN, COLOR_BLUE);
+} // boje
+
+void init_curses(){
+	initscr();
+	init_colors();
+	cbreak();
+	noecho();
+	keypad(stdscr, TRUE);
+	curs_set(0);
+	resize_term(70, 150);
+} // pokrece curses
+
+int main_menu(mainm){
+	int x1 = 100, y1 = 2, x2 = 145, y2 = 23, xu, xd, yd, mv = 9, ind = 0, tru = 1;
+	print_border(y1, x1, y2, x2);
+	menu_content();
+	while (tru){
+		switch (getch()){
+		case KEY_UP: menu_up(&mv, 9, &ind, 113);  break;
+		case KEY_DOWN: menu_down(&mv, 15, &ind, 113);  break;
+		case ENTER: delete_menu(y1, x1, y2, x2); 
+		if (tru = option_selected(mv,mainm))
+		{
+			print_border(y1, x1, y2, x2);
+			menu_content();
+			mv = 9;
+			ind = 0;
+
+		}
+		else{
+			
+		}
+		}
+
+	}
+
+}
+
+*/
