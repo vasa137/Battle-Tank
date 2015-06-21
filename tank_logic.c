@@ -6,10 +6,18 @@ void alloc_tank(){
 	novi->next = NULL;
 	if (lst->first == NULL){
 		lst->first = novi;
+		lst->first->tankAll.tank.tPos.x = 38;
+		lst->first->tankAll.tank.tPos.y = 24;
+		lst->first->tankAll.tank.tPos.barrel = 1;
+		lst->first->tankAll.tank.tPos.last_move = 1;
 	}
 	else lst->last->next = novi;
 	lst->last = novi;
 	lst->n++;;
+	novi->tankAll.projectile.projectPhase = 0;
+	novi->tankAll.tank.tankDesign_v = special_tank_v;
+	novi->tankAll.tank.tankDesign_h = special_tank_h;
+	novi->tankAll.projectile.last_object = ' ';
 }
 
 void free_tank(List *curr){
