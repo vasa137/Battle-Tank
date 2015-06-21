@@ -80,22 +80,22 @@ int can_move(int y, int x, int barrel) {
 	switch (barrel)
 	{
 	case 1: 
-		if (((matrix[y - y1b - 2][x - x1b - 1] == ' ') || (matrix[y - y1b - 2][x - x1b - 1] == 'g')) &&
-			((matrix[y - y1b - 2][x - x1b] == ' ') || (matrix[y - y1b - 2][x - x1b] == 'g')) &&
-			((matrix[y - y1b - 2][x - x1b + 1] == ' ') || (matrix[y - y1b - 2][x - x1b + 1] == 'g'))) return 1; else return 0;
+		if (((matrix[y - y1b - 2][x - x1b - 1] == ' ') || (matrix[y - y1b - 2][x - x1b - 1] == 'g') || (matrix[y - y1b - 2][x - x1b - 1] == '*')) &&
+			((matrix[y - y1b - 2][x - x1b] == ' ') || (matrix[y - y1b - 2][x - x1b] == 'g') || (matrix[y - y1b - 2][x - x1b] == '*')) &&
+			((matrix[y - y1b - 2][x - x1b + 1] == ' ') || (matrix[y - y1b - 2][x - x1b + 1] == 'g') || (matrix[y - y1b - 2][x - x1b + 1] == '*'))) return 1; else return 0;
 	case 2:
-		if (((matrix[y - y1b - 1][x - x1b - 2] == ' ') || (matrix[y - y1b - 1][x - x1b - 2] == 'g')) &&
-			((matrix[y - y1b][x - x1b - 2] == ' ') || (matrix[y - y1b][x - x1b - 2] == 'g')) &&
-			((matrix[y - y1b + 1][x - x1b - 2] == ' ') || (matrix[y - y1b + 1][x - x1b - 2] == 'g'))) return 1; else return 0;
+		if (((matrix[y - y1b - 1][x - x1b - 2] == ' ') || (matrix[y - y1b - 1][x - x1b - 2] == 'g') || (matrix[y - y1b - 1][x - x1b - 2] == '*')) &&
+			((matrix[y - y1b][x - x1b - 2] == ' ') || (matrix[y - y1b][x - x1b - 2] == 'g') || (matrix[y - y1b][x - x1b - 2] == '*')) &&
+			((matrix[y - y1b + 1][x - x1b - 2] == ' ') || (matrix[y - y1b + 1][x - x1b - 2] == 'g') || (matrix[y - y1b + 1][x - x1b - 2] == '*'))) return 1; else return 0;
 	case 3:
-		if (((matrix[y - y1b - 1][x - x1b + 2] == ' ') || (matrix[y - y1b - 1][x - x1b + 2] == 'g')) &&
-			((matrix[y - y1b][x - x1b + 2] == ' ') || (matrix[y - y1b][x - x1b + 2] == 'g')) &&
-			((matrix[y - y1b + 1][x - x1b + 2] == ' ') || (matrix[y - y1b + 1][x - x1b + 2] == 'g'))) return 1; else return 0;
+		if (((matrix[y - y1b - 1][x - x1b + 2] == ' ') || (matrix[y - y1b - 1][x - x1b + 2] == 'g') || (matrix[y - y1b - 1][x - x1b + 2] == '*')) &&
+			((matrix[y - y1b][x - x1b + 2] == ' ') || (matrix[y - y1b][x - x1b + 2] == 'g') || (matrix[y - y1b][x - x1b + 2] == '*')) &&
+			((matrix[y - y1b + 1][x - x1b + 2] == ' ') || (matrix[y - y1b + 1][x - x1b + 2] == 'g') || (matrix[y - y1b + 1][x - x1b + 2] == '*'))) return 1; else return 0;
 	
 	case 4:
-		if (((matrix[y - y1b + 2][x - x1b - 1] == ' ') || (matrix[y - y1b + 2][x - x1b - 1] == 'g')) &&
-			((matrix[y - y1b + 2][x - x1b] == ' ') || (matrix[y - y1b + 2][x - x1b] == 'g')) &&
-			((matrix[y - y1b + 2][x - x1b + 1] == ' ') || (matrix[y - y1b + 2][x - x1b + 1] == 'g'))) return 1; else return 0;
+		if (((matrix[y - y1b + 2][x - x1b - 1] == ' ') || (matrix[y - y1b + 2][x - x1b - 1] == 'g') || (matrix[y - y1b + 2][x - x1b - 1] == '*')) &&
+			((matrix[y - y1b + 2][x - x1b] == ' ') || (matrix[y - y1b + 2][x - x1b] == 'g') || (matrix[y - y1b + 2][x - x1b] == '*')) &&
+			((matrix[y - y1b + 2][x - x1b + 1] == ' ') || (matrix[y - y1b + 2][x - x1b + 1] == 'g') || (matrix[y - y1b + 2][x - x1b + 1] == '*'))) return 1; else return 0;
 	}
 }
 
