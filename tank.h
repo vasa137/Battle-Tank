@@ -27,11 +27,14 @@
 #define y2c 67
 #define x2c 145
 
-
 #define BACKSPACE 8
 #define ENTER '\n'
 #define ESC 27
 // stavke menija
+
+extern char meni[][dimx];
+
+extern char map_name[50]; 
 
 typedef int int3x3[3][3];
 // ====================================================.
@@ -39,8 +42,6 @@ typedef struct Tank_Design{
 	chtype ch;
 	int paint;
 }TankDesign;
-
-
 
 typedef struct Tank_Position{
 	int x;
@@ -57,8 +58,8 @@ typedef struct Projectile_Position{
 }ProjectilePosition;
 
 typedef struct TAnk{
-	TankDesign *tankDesign_h;
 	TankDesign *tankDesign_v;
+	TankDesign *tankDesign_h;
 	TankPosition tPos;
 	int3x3 visit_grass;
 }Tank;
@@ -66,12 +67,11 @@ typedef struct TAnk{
 typedef struct PRojectile{
 	unsigned short mm, pp;
 	ProjectilePosition pPos;
-	int projetPhase;
+	int projectPhase;
 	char last_object;
 }Projectile;
 
 typedef struct Whole_Struct{
-	int projectile_exist;
 	Tank tank;
 	Projectile projectile;
 }TankAll;
@@ -84,15 +84,11 @@ typedef struct Linked_list{
 typedef struct LST{
 	List *first;
 	List *curr;
-	int n;
 	List *last;
+	int n;
 } Lst;
 
 extern Lst *lst;
-
-extern char meni[][dimx];
-
-extern char map_name[50]; 
 
 typedef struct Barrier{
 	int flag;
@@ -126,9 +122,15 @@ void print_grass(int y, int x);
 
 void print_water(int y,int x);
 
+void print_wall(int y, int x);
+
 void print_blanko(int y,int x);
 
 void print_tank(int y, int x, TankDesign *tank_type, int *position);
+
+void alloc_tank();
+
+void free_tank(List *curr);
 
 void create_tank(int barrel, TankAll current);
 
@@ -146,6 +148,8 @@ void delete_projectile(int y, int x, char *last_object);
 
 void print_projectile(int y, int x, char object);
 
+List* which_tank(int y, int x);
+
 void collision(int y, int x, int projectil_dir, char object );
 
 char move_projectile(int *y, int *x, int projectil_dir, int *check, char *last_object);
@@ -158,7 +162,7 @@ void print_object(int y,int x,int c);
 
 void print_border();
 
-void create_map();
+void create_map(char map_name[]);
 
 void time_now();
 
@@ -181,5 +185,13 @@ void delete_menu(int y1, int x1, int y2, int x2);
 void print_commands();
 
 int main_menu(int mainm);
+
+void print_red(int y, int x);
+
+void print_blue(int y, int x);
+
+void print_white(int y, int x);
+
+void print_head(int y, int x);
 
 #endif
