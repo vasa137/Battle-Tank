@@ -2,18 +2,20 @@
 
 void init_colors(){
 	start_color();
-	init_pair(1, COLOR_WHITE, COLOR_BLACK);
-	init_pair(2, COLOR_GREEN, COLOR_BLACK);
-	init_pair(3, COLOR_YELLOW , COLOR_RED);
-	init_pair(4, COLOR_WHITE, COLOR_YELLOW);
-	init_pair(5, COLOR_BLACK, COLOR_YELLOW);
-	init_pair(6, COLOR_BLACK, COLOR_BLACK);
-	init_pair(7, COLOR_RED, COLOR_GREEN);
-	init_pair(8, COLOR_YELLOW, COLOR_BLACK);
-	init_pair(9, COLOR_RED, COLOR_YELLOW);
+	init_pair(1,  COLOR_WHITE, COLOR_BLACK);
+	init_pair(2,  COLOR_GREEN, COLOR_BLACK);
+	init_pair(3,  COLOR_YELLOW, COLOR_RED);
+	init_pair(4,  COLOR_WHITE, COLOR_YELLOW);
+	init_pair(5,  COLOR_BLACK, COLOR_YELLOW);
+	init_pair(6,  COLOR_BLACK, COLOR_BLACK);
+	init_pair(7,  COLOR_RED, COLOR_RED);
+	init_pair(8,  COLOR_YELLOW, COLOR_BLACK);
+	init_pair(9,  COLOR_RED, COLOR_YELLOW);
 	init_pair(10, COLOR_WHITE, COLOR_BLUE);
 	init_pair(11, COLOR_YELLOW, COLOR_BLUE);
 	init_pair(12, COLOR_CYAN, COLOR_BLUE);
+	init_pair(13, COLOR_WHITE, COLOR_WHITE);
+	init_pair(14, COLOR_BLUE, COLOR_BLUE);
 }
 
 void init_curses(){
@@ -39,16 +41,50 @@ void print_grass(int y, int x){
 	matrix[y-y1b][x-x1b] = 'g';
 }
 
-void print_water(int y,int x){
+void print_water(int y, int x){
 	attron(COLOR_PAIR(12));
 	mvaddch(y,x,ACS_BOARD);
 	matrix[y-y1b][x-x1b] = 'w';
+}
+
+void print_wall(int y, int x){
+	attron(COLOR_PAIR(13));
+	mvaddch(y, x, ACS_PLUS|A_BOLD);
+	matrix[y - y1b][x - x1b] = 'c';
 }
 
 void print_blanko(int y,int x){
 	attron(COLOR_PAIR(6));
 	mvaddch(y,x,' ');
 	matrix[y-y1b][x-x1b] = ' ';
+}
+
+void print_red(int y,int x)
+{
+	attron(COLOR_PAIR(7));
+	mvaddch(y,x,ACS_BOARD);
+	matrix[y-y1b][x-x1b] = 'h';
+}
+
+void print_blue(int y, int x)
+{
+	attron(COLOR_PAIR(12));
+	mvaddch(y,x,ACS_BOARD);
+	matrix[y-y1b][x-x1b] = 'h';
+}
+
+void print_white(int y, int x)
+{
+	attron(COLOR_PAIR(13));
+	mvaddch(y,x,ACS_BOARD);
+	matrix[y-y1b][x-x1b] = 'h';
+}
+
+void print_head(int y,int x)
+{
+	attron(COLOR_PAIR(6));
+	mvaddch(y,x,ACS_BOARD | A_BOLD);
+	matrix[y-y1b][x-x1b] = 'h';
 }
 
 void print_tank(int y, int x, TankDesign *tank_type, int *position)
@@ -145,9 +181,9 @@ void create_tank(int barrel, TankAll current)
 		break;
 	case 2: print_tank(current.tank.tPos.y, current.tank.tPos.x, current.tank.tankDesign_h, left);
 		break;
-	case 3: print_tank(current.tank.tPos.y, current.tank.tPos.x, current.tank.tankDesign_v, right);
+	case 3: print_tank(current.tank.tPos.y, current.tank.tPos.x, current.tank.tankDesign_h, right);
 		break;
-	case 4: print_tank(current.tank.tPos.y, current.tank.tPos.x, current.tank.tankDesign_h, bottom);
+	case 4: print_tank(current.tank.tPos.y, current.tank.tPos.x, current.tank.tankDesign_v, bottom);
 		break;
 	}
 }
@@ -228,10 +264,15 @@ void print_projectile(int y, int x, char object)
 void print_object(int y,int x,int c){
 	switch (c)
 	{
-	case 'b': print_brick(y,x); break;
-	case 'w': print_water(y,x); break;
-	case 'g': print_grass(y,x); break;
-	default :  print_blanko(y,x); break;
+	case 'b': print_brick(y,x);   break;
+	case 'w': print_water(y,x);   break;
+	case 'g': print_grass(y,x);   break;
+	case 'c': print_wall(y, x);   break;
+	case '1': print_red(y,x);     break;
+	case '2': print_blue(y,x);    break;
+	case '3': print_white(y,x);   break;
+	case 'h': print_head(y,x);    break;
+	default : print_blanko(y,x);  break;
 	}
 }
 
