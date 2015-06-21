@@ -22,7 +22,7 @@ barrier can_fly(int y, int x)
 List* which_tank(int y, int x){
 	List *temp=lst->first;
 	while(temp){
-		if( (y==temp->tankAll.tank.tPos.y || y==temp->tankAll.tank.tPos.y+1 || y==temp->tankAll.tank.tPos.y-1) && (x==temp->tankAll.tank.tPos.x || x==temp->tankAll.tank.tPos.x+1 || x==temp->tankAll.tank.tPos.x-1)) return temp;
+		if( (y==temp->tankAll.tank.position.y || y==temp->tankAll.tank.position.y+1 || y==temp->tankAll.tank.position.y-1) && (x==temp->tankAll.tank.position.x || x==temp->tankAll.tank.position.x+1 || x==temp->tankAll.tank.position.x-1)) return temp;
 		temp=temp->next;
 	}
 }
@@ -65,49 +65,54 @@ void collision(int y, int x, int projectil_dir, char object ){ // saljes mi koor
 
 }
 
-char move_projectile(int *y, int *x, int projectil_dir, int *check, char *last_object) //vraca nam poslednji objekat na putu u slucaju da treba da ga vratimo posle prolaska metka
+char move_projectile(int projectil_dir) //vraca nam poslednji objekat na putu u slucaju da treba da ga vratimo posle prolaska metka.
+/*Global: - delete_projectile: Coordinates of projectile, last object
+		  - can_fly: Coordinates of projectile		
+		  - print_projectile: Coordinates of projectile
+		  - collision: Coordinates of projectile
+		  phase of projectile*/
 {
 	barrier object;
-	if (*check == 2) delete_projectile(*y, *x, last_object);
-	else if (*check == 1) *check = 2; //ako je metak bio u letu brisi ga
-	switch (projectil_dir){ //switch za stranu u koju metak treba da leti
-	
-	case 1: 
-		object=can_fly(*y - 1, *x);
+	if (lst->curr->tankAll.projectile.projectPhase == 2) delete_projectile(lst->curr->tankAll.projectile.position.y, lst->curr->tankAll.projectile.position.x, lst->curr->tankAll.projectile.last_object);
+	else if (lst->curr->tankAll.projectile.projectPhase == 1) lst->curr->tankAll.projectile.projectPhase = 2; //ako je metak bio u letu brisi ga
+	switch (projectil_dir){ //switch za stranu u koju metak treba da leti.
+
+	case 1:
+		object = can_fly(lst->curr->tankAll.projectile.position.y - 1, lst->curr->tankAll.projectile.position.x);
 		switch (object.flag)  // switch za povratnu vrednost can_fly, 1 naisao na prazno polje, 0 nestaje metak ostale vrednosti metak leti ali se ne printa(trava)
 		{
-			case 1: print_projectile(--*y, *x, object.obs); break;
-			case 0: collision(*y-1,*x,projectil_dir,object.obs); *check = 0; break;
-			case 2: --*y; break; //ako naidje na travu samo pomeri metak ali ga ne ispisuj!
-		}
-		break;
-	
-	case 2:	 
-		object=can_fly(*y, *x - 1);
-		switch (object.flag)
-		{
-			case 1: print_projectile(*y, --*x, object.obs); break;
-			case 0: collision(*y,*x-1,projectil_dir,object.obs); *check = 0; break;
-			case 2: --*x; break;
-		}
-		break;
-	case 3:	
-		object=can_fly(*y, *x + 1);
-		switch (object.flag)
-		{
-			case 1: print_projectile(*y, ++*x, object.obs); break;
-			case 0: collision(*y,*x+1,projectil_dir,object.obs); *check = 0; break;
-			case 2: ++*x; break;
+		case 1: print_projectile(--lst->curr->tankAll.projectile.position.y, lst->curr->tankAll.projectile.position.x, object.obs); break;
+		case 0: collision(lst->curr->tankAll.projectile.position.y - 1, lst->curr->tankAll.projectile.position.x, projectil_dir, object.obs); lst->curr->tankAll.projectile.projectPhase = 0; break;
+		case 2: --lst->curr->tankAll.projectile.position.y; break; //ako naidje na travu samo pomeri metak ali ga ne ispisuj!
 		}
 		break;
 
-	case 4: 
-		object=can_fly(*y + 1, *x);
+	case 2:
+		object = can_fly(lst->curr->tankAll.projectile.position.y, lst->curr->tankAll.projectile.position.x - 1);
 		switch (object.flag)
 		{
-			case 1: print_projectile(++*y, *x, object.obs); break;
-			case 0: collision(*y+1,*x,projectil_dir,object.obs); *check = 0; break;
-			case 2: ++*y; break;
+		case 1: print_projectile(lst->curr->tankAll.projectile.position.y, --lst->curr->tankAll.projectile.position.x, object.obs); break;
+		case 0: collision(lst->curr->tankAll.projectile.position.y, lst->curr->tankAll.projectile.position.x - 1, projectil_dir, object.obs); lst->curr->tankAll.projectile.projectPhase = 0; break;
+		case 2: --lst->curr->tankAll.projectile.position.x; break;
+		}
+		break;
+	case 3:
+		object = can_fly(lst->curr->tankAll.projectile.position.y, lst->curr->tankAll.projectile.position.x + 1);
+		switch (object.flag)
+		{
+		case 1: print_projectile(lst->curr->tankAll.projectile.position.y, ++lst->curr->tankAll.projectile.position.x, object.obs); break;
+		case 0: collision(lst->curr->tankAll.projectile.position.y, lst->curr->tankAll.projectile.position.x + 1, projectil_dir, object.obs); lst->curr->tankAll.projectile.projectPhase = 0; break;
+		case 2: ++lst->curr->tankAll.projectile.position.x; break;
+		}
+		break;
+
+	case 4:
+		object = can_fly(lst->curr->tankAll.projectile.position.y + 1, lst->curr->tankAll.projectile.position.x);
+		switch (object.flag)
+		{
+		case 1: print_projectile(++lst->curr->tankAll.projectile.position.y, lst->curr->tankAll.projectile.position.x, object.obs); break;
+		case 0: collision(lst->curr->tankAll.projectile.position.y + 1, lst->curr->tankAll.projectile.position.x, projectil_dir, object.obs); lst->curr->tankAll.projectile.projectPhase = 0; break;
+		case 2: ++lst->curr->tankAll.projectile.position.y; break;
 		}
 		break;
 
@@ -116,24 +121,25 @@ char move_projectile(int *y, int *x, int projectil_dir, int *check, char *last_o
 	return object.obs;
 }
 
-void projectile(int *py, int*px, int y, int x, int projectil_dir, unsigned short* mm, unsigned short* pp, int *check,char *last_object)
-{
+
+void projectile(int y, int x, int projectil_dir){
+	// Global: Coordinates of projectile, var for delay, phase of projectile, last object for projectile.
 	struct timeb vreme;
 	ftime(&vreme);
-	if (*check == 1) // prvo postavljanje checka na 1, samo taj put ulazi u petlju
+	if (lst->curr->tankAll.projectile.projectPhase == 1) // prvo postavljanje checka na 1, samo taj put ulazi u petlju
 	{
 		switch (projectil_dir){       //definisanje pocetnog mesta na kome je cevka
-		case 1:  *py = y - 1;   *px = x;      break;
-		case 2:	 *py = y;       *px = x - 1;  break;
-		case 3:	 *py = y;       *px = x + 1;  break;
-		case 4:  *py = y + 1;   *px = x;      break;
-		} 
-		*pp = *mm = vreme.millitm;
+		case 1:  lst->curr->tankAll.projectile.position.y = y - 1;   lst->curr->tankAll.projectile.position.x = x;      break;
+		case 2:	 lst->curr->tankAll.projectile.position.y = y;       lst->curr->tankAll.projectile.position.x = x - 1;  break;
+		case 3:	 lst->curr->tankAll.projectile.position.y = y;       lst->curr->tankAll.projectile.position.x = x + 1;  break;
+		case 4:  lst->curr->tankAll.projectile.position.y = y + 1;   lst->curr->tankAll.projectile.position.x = x;      break;
+		}
+		lst->curr->tankAll.projectile.pp = lst->curr->tankAll.projectile.mm = vreme.millitm;
 	}
-	*mm = vreme.millitm;
-	if (delay_s(40, mm, pp, check)) { //u prvoj inicijalizaciji last object saljemo bez inicijalizacije jer ga ne koristimo
-		*last_object=move_projectile(py, px, projectil_dir, check, last_object); // u prvom pozivu check ce preci u 2->stanje leta
+	lst->curr->tankAll.projectile.mm = vreme.millitm;
+	if (delay_s(40)) { //u prvoj inicijalizaciji last object saljemo bez inicijalizacije jer ga ne koristimo
+		lst->curr->tankAll.projectile.last_object = move_projectile(projectil_dir); // u prvom pozivu check ce preci u 2->stanje leta
 		ftime(&vreme);
-		*pp = *mm = vreme.millitm;
+		lst->curr->tankAll.projectile.pp = lst->curr->tankAll.projectile.mm = vreme.millitm;
 	}
 }
