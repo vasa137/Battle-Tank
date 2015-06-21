@@ -74,12 +74,7 @@ void delete_menu(int y1, int x1, int y2, int x2){
 } // brise meni
 
 int main_menu(int mainm){
-	int  xu, xd, yd, mv = 7, ind = 0, tru = 1, limitup = 7, limitdown;
-	int flag = 1, flag1 = 1;
-	clock_t start = clock();
-	clock_t start1 = clock();
-	clock_t end = clock();
-	clock_t end1 = clock();
+	int  xu, xd, yd, mv = 7, ind = 0, tru = 1, limitup = 7, limitdown, i;
 	if (mainm){
 		print_border_menu(y1c, x1c, y2c, x2c);
 		print_commands();
@@ -103,7 +98,6 @@ int main_menu(int mainm){
 				else{
 					delete_menu(y1c, x1c, y2c, x2c);
 					if (mainm){
-						delete_tank(lst->curr->tankAll.tank.position.y, lst->curr->tankAll.tank.position.x);
 						return 0;
 					}
 					else{
@@ -113,7 +107,13 @@ int main_menu(int mainm){
 				}
 			}
 		}
-		if (mainm) easy_bot(); //demo mod za bota
+		if (mainm){
+			for (i = 0, lst->curr = lst->first; i < lst->n; i++, lst->curr = lst->curr->next){
+			easy_bot();
+			if (lst->curr->tankAll.projectile.phase) projectile(lst->curr->tankAll.tank.position.y,
+				lst->curr->tankAll.tank.position.x, lst->curr->tankAll.projectile.position.projectil_dir);
+		}
+		}//demo mod za bota
 	}
 }
 
