@@ -35,6 +35,7 @@ void main(){ // Da sredimo main kasnije.
 	main_menu(1);
 	for (i = 0, lst->curr = lst->first; i < lst->n; i++, lst->curr = lst->curr->next)  
 		free_tank(lst->curr);
+	create_map();
 	alloc_tank();
 	alloc_tank();
 	while (1){
