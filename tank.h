@@ -104,8 +104,6 @@ extern int left[];
 extern int right[];
 extern int bottom[];
 
-extern int visit_grass[3][3];
-
 extern TankDesign special_tank_v[]; 
 extern TankDesign special_tank_h[];
 
