@@ -59,6 +59,8 @@ typedef struct Projectile_Position{
 
 typedef struct TAnk{
 	unsigned short mm, pp;
+	unsigned short start, end;
+	int counter;
 	int phase;
 	TankDesign *tankDesign_v;
 	TankDesign *tankDesign_h;
@@ -70,6 +72,7 @@ typedef struct PRojectile{
 	unsigned short mm, pp;
 	ProjectilePosition position;
 	int phase;
+	int counter;
 	char last_object;
 }Projectile;
 
