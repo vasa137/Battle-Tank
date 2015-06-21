@@ -60,13 +60,13 @@ typedef struct Projectile_Position{
 typedef struct TAnk{
 	TankDesign *tankDesign_v;
 	TankDesign *tankDesign_h;
-	TankPosition tPos;
+	TankPosition position;
 	int3x3 visit_grass;
 }Tank;
 
 typedef struct PRojectile{
 	unsigned short mm, pp;
-	ProjectilePosition pPos;
+	ProjectilePosition position;
 	int projectPhase;
 	char last_object;
 }Projectile;
@@ -136,15 +136,15 @@ void create_tank(int barrel, TankAll current);
 
 void delete_tank(int y, int x);
 
-void move_tank(int y, int x, int mov, TankDesign* ver, TankDesign* hor);
+void move_tank(int y, int x, int mov);
 
 int can_move(int y, int x, int barrel);
 
-int delay_s(int timeToDelay, unsigned short* mm, unsigned short* pp, int *check);
+int delay_s(int timeToDelay);
 
 barrier can_fly(int y, int x);
 
-void delete_projectile(int y, int x, char *last_object);
+void delete_projectile(int y, int x, char last_object);
 
 void print_projectile(int y, int x, char object);
 
@@ -152,23 +152,23 @@ List* which_tank(int y, int x);
 
 void collision(int y, int x, int projectil_dir, char object );
 
-char move_projectile(int *y, int *x, int projectil_dir, int *check, char *last_object);
+char move_projectile(int projectil_dir);
 
-void projectile(int *py, int*px, int y, int x, int projectil_dir, unsigned short* mm, unsigned short* pp, int *check,char *last_object);
+void projectile(int y, int x, int projectil_dir);
 
-void action(int *y, int *x, TankDesign* ver, TankDesign* hor, int keyPressed, int *check, int *last_move, int *projectil_dir);
+void action(int keyPressed);
 
 void print_object(int y,int x,int c);
 
 void print_border();
 
-void create_map(char map_name[]);
+void create_map();
 
 void time_now();
 
 void move_bot(int *z, int *t, int *bot_barrel);
  
-void easy_bot(clock_t *start, int *flag, int *bot_barrel, int *z, int *t);
+void easy_bot(clock_t *start, int *bot_barrel, int *z, int *t);
 
 void print_border_menu(int y1, int x1, int y2, int x2);
 
