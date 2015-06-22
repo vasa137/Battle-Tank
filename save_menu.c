@@ -4,6 +4,7 @@ char buffer[20];
 
 void save_in_matrix(int yu, int xu, int yd, int xd, chtype k){
 	int i, j;
+	if (k == 'e') k = '.';
 	for (i = yu; i <= yd; i++)
 		for (j = xd; j <= xu; j++)
 			lvl_matrix[i - 3][j - 3] = k;
@@ -40,7 +41,6 @@ void save_it(){
 	for (j = 0; j < 65; fprintf(file, "/\n"), j++)
 		for (i = 0; i < 90; fprintf(file, "%c", lvl_matrix[j][i]), i++);
 	fclose(file);
-
 }
 
 int save_map(){
@@ -58,12 +58,14 @@ int save_map(){
 	mvprintw(y1 + 11, x1 + 1, " Max. 15 characters(letters & num allowed!)");
 	attroff(COLOR_WHITE | A_REVERSE);
 	refresh();
+	//===================Naming the map====================
+
 	while (tru)
 	{
 
 		switch (Key = getch()){
 		case KEY_UP: case KEY_DOWN: case KEY_LEFT: case KEY_RIGHT:  break;
-		case ENTER:if (buffer[0] == '\0') name_it(); else  tru = check_if_legit(buffer); break;
+		case ENTER:if (buffer[0] == '\0') name_it(); else  tru = check_if_legit(buffer); break; // checks if the name is correctly inputted
 		default: if (j < max) 
 		{ buffer[i++] = Key; buffer[i] = '\0'; mvaddch(y1 + 6, j++, Key); 
 		}; refresh(); break;
@@ -74,18 +76,22 @@ int save_map(){
 		case ESC: delete_menu(y1, x1, y2, x2); return 1; break;
 		}
 	}
-	buffer[i] = '.'; buffer[i + 1] = buffer[i + 3] = 't'; buffer[i + 2] = 'x'; buffer[i + 4] = '\0';
+
+	//==================================================
+	buffer[i] = '.'; buffer[i + 1] = buffer[i + 3] = 't'; buffer[i + 2] = 'x'; buffer[i + 4] = '\0'; // adds .txt extension
 	save_it();
-	if (!(saved_maps = fopen("saved_maps.txt", "r+"))) saved_maps = fopen("saved_maps.txt", "w");
+
+	if (!(saved_maps = fopen("saved_maps.txt", "r+"))) saved_maps = fopen("saved_maps.txt", "w"); // if saved_maps doesn't exist, then create new file
 	i = 0;
 	while ((Key = fgetc(saved_maps)) != EOF){   // does this map already exist in the file?
-		while (Key == buffer[i])
+		while (Key == buffer[i]) 
 		{
 			Key = fgetc(saved_maps);
 			i++;
 		}
 		if (i == strlen(buffer)) break; else i = 0;
 	}
+
 	if (i == strlen(buffer)) fclose(saved_maps); else // if it does->do nothing, if it doesn't, then save it in the file;
 	{
 		fprintf(saved_maps, "%s\n", buffer);
@@ -115,6 +121,4 @@ int save_map(){
 					break;
 		}
 	}
-
-
 }
