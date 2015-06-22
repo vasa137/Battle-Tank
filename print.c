@@ -7,7 +7,7 @@ void print_brick_lvl(int yu, int xu, int yd, int xd){
 		for (i = xd; i <= xu; ++i)
 			mvaddch(yu, i, ACS_PLUS);
 	}
-	attroff(A_BOLD | COLOR_PAIR(3));
+	attroff( COLOR_PAIR(3));
 }
 
 void print_grass_lvl(int yu, int xu, int yd, int xd){
@@ -40,14 +40,41 @@ void print_blanko_lvl(int yu, int xu, int yd, int xd){
 	attroff(COLOR_PAIR(6));
 }
 
-void what_to_print(int yu, int xu, int yd, int xd, chtype k){
+void print_wall_lvl(int yu, int xu, int yd, int xd)
+{
+	int i;
+	attron(COLOR_PAIR(13) | A_BOLD);
+	for (; yu <= yd; yu++){
+		for (i = xd; i <= xu; ++i)
+			mvaddch(yu, i, ACS_PLUS);
+	}
+	attroff(COLOR_PAIR(13) | A_BOLD);
+}
+
+void print_eraser(int yu, int xu, int yd, int xd){
+	int i;
+	attron(COLOR_WHITE | A_REVERSE);
+	for (; yu <= yd; yu++)
+	{
+		for (i = xd; i <= xu; ++i)
+			mvaddch(yu, i, ' ');
+	}
+	attroff(COLOR_WHITE | A_REVERSE);
+	refresh();
+}
+
+
+void what_to_print(int yu, int xu, int yd, int xd, chtype k){ // decides what's going to be shown on the map
 	switch (k){
-	case 'b': print_brick_lvl(yu, xu, yd, xd); break;
-	case 'w': print_water_lvl(yu, xu, yd, xd); break;
-	case 'g': print_grass_lvl(yu, xu, yd, xd); break;
-	default: print_blanko_lvl(yu, xu, yd, xd); break;
+	case 'b': print_brick_lvl(yu, xu, yd, xd);	break;
+	case 'w': print_water_lvl(yu, xu, yd, xd);	break;
+	case 'g': print_grass_lvl(yu, xu, yd, xd);	break;
+	case '.': print_blanko_lvl(yu, xu, yd, xd); break;
+	case 'c': print_wall_lvl(yu, xu, yd, xd);	break;
+	default: print_eraser(yu, xu, yd, xd);		break;
 	}
 }
+
 
 void print_matrix(){
 	int i, j;
