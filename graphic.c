@@ -1,5 +1,17 @@
 #include "tank.h"
 
+/*
+pup-list
+
+162 - clock
+240 - bomba
+216 - stit
+'+' - zivot
+187 - zvezda
+ACS_DARROW- lopata
+*/
+
+
 void init_colors(){
 	start_color();
 	init_pair(1, COLOR_WHITE, COLOR_BLACK);
@@ -16,6 +28,7 @@ void init_colors(){
 	init_pair(12, COLOR_CYAN, COLOR_BLUE);
 	init_pair(13, COLOR_WHITE, COLOR_WHITE);
 	init_pair(14, COLOR_BLUE, COLOR_BLUE);
+	init_pair(15, COLOR_RED, COLOR_BLACK);
 }
 
 void init_curses(){
@@ -26,6 +39,23 @@ void init_curses(){
 	keypad(stdscr, TRUE);
 	curs_set(0);
 	resize_term(70, 150);
+}
+
+void print_powerup(int y, int x, chtype pup)
+{
+	attron(COLOR_PAIR(15) | A_BOLD);
+	mvaddch(y-1,x,ACS_DIAMOND);
+	mvaddch(y,x,pup);
+	attroff(COLOR_PAIR(15) | A_BOLD);
+	attron(COLOR_PAIR(1) | A_BOLD);
+	mvaddch(y-1, x-1, ACS_ULCORNER);
+	mvaddch(y-1, x+1, ACS_URCORNER);
+	mvaddch(y, x-1, ACS_VLINE);
+	mvaddch(y, x+1, ACS_VLINE);
+	mvaddch(y+1, x-1, ACS_LLCORNER);
+	mvaddch(y+1, x, ACS_HLINE);
+	mvaddch(y+1, x+1, ACS_LRCORNER);
+	attroff(COLOR_PAIR(1) | A_BOLD);
 }
 
 void print_brick(int y, int x){
@@ -318,6 +348,36 @@ void create_map()
 		}
 	}
 	fclose(map);
+}
+
+void print_menu_pups()
+{
+	print_powerup(28 , 105 , 216);
+	print_powerup(28 , 112 , '+');
+	print_powerup(28 , 119 , 187);
+	print_powerup(28 , 126 , 240);
+	print_powerup(28 , 133 , 162);
+	print_powerup(28 , 140 , ACS_DARROW);
+	attron(COLOR_PAIR(15)| A_BOLD);
+	mvaddstr(30, 103 ,"Shield");
+	mvaddstr(30, 111 ,"Life");
+	mvaddstr(30, 118 ,"Star");
+	mvaddstr(30, 125 ,"Bomb");
+	mvaddstr(30, 131 ,"Clock");
+	mvaddstr(30, 138 ,"Shovel");
+	mvaddstr(32,119, "Power-ups");
+	attroff(COLOR_PAIR(15)| A_BOLD);
+		/*
+	pup-list
+
+	162 - clock
+	240 - bomba
+	216 - stit
+	'+' - zivot
+	187 - zvezda
+	ACS_DARROW- lopata
+	*/
+
 }
 
 void print_commands()
