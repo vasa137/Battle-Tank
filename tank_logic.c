@@ -77,26 +77,35 @@ void action(int keyPressed, TankAll *current){
 	}
 }
 
-int can_move(int y, int x, int barrel) {
+int can_move(int y, int x, int barrel) { // novo. Ubacio sam proveru powerupova. 
 	switch (barrel)
-	{
-	case 1: 
-		if (((matrix[y - y1b - 2][x - x1b - 1] == ' ') || (matrix[y - y1b - 2][x - x1b - 1] == 'g') || (matrix[y - y1b - 2][x - x1b - 1] == '*')) &&
+	{ 
+	case 1:
+		if (((matrix[y - y1b - 2][x - x1b - 1] == ' ') || (matrix[y - y1b - 2][x - x1b - 1] == 'g') || (matrix[y - y1b - 2][x - x1b - 1] == '*')) && 
 			((matrix[y - y1b - 2][x - x1b] == ' ') || (matrix[y - y1b - 2][x - x1b] == 'g') || (matrix[y - y1b - 2][x - x1b] == '*')) &&
-			((matrix[y - y1b - 2][x - x1b + 1] == ' ') || (matrix[y - y1b - 2][x - x1b + 1] == 'g') || (matrix[y - y1b - 2][x - x1b + 1] == '*'))) return 1; else return 0;
+			((matrix[y - y1b - 2][x - x1b + 1] == ' ') || (matrix[y - y1b - 2][x - x1b + 1] == 'g') || (matrix[y - y1b - 2][x - x1b + 1] == '*'))) return 1;
+		else if (check_powerups(y, x, barrel))	return 1;
+		else return 0;
+		
 	case 2:
 		if (((matrix[y - y1b - 1][x - x1b - 2] == ' ') || (matrix[y - y1b - 1][x - x1b - 2] == 'g') || (matrix[y - y1b - 1][x - x1b - 2] == '*')) &&
 			((matrix[y - y1b][x - x1b - 2] == ' ') || (matrix[y - y1b][x - x1b - 2] == 'g') || (matrix[y - y1b][x - x1b - 2] == '*')) &&
-			((matrix[y - y1b + 1][x - x1b - 2] == ' ') || (matrix[y - y1b + 1][x - x1b - 2] == 'g') || (matrix[y - y1b + 1][x - x1b - 2] == '*'))) return 1; else return 0;
+			((matrix[y - y1b + 1][x - x1b - 2] == ' ') || (matrix[y - y1b + 1][x - x1b - 2] == 'g') || (matrix[y - y1b + 1][x - x1b - 2] == '*'))) return 1;
+		else if (check_powerups(y, x, barrel))	return 1;
+		else return 0;
 	case 3:
 		if (((matrix[y - y1b - 1][x - x1b + 2] == ' ') || (matrix[y - y1b - 1][x - x1b + 2] == 'g') || (matrix[y - y1b - 1][x - x1b + 2] == '*')) &&
 			((matrix[y - y1b][x - x1b + 2] == ' ') || (matrix[y - y1b][x - x1b + 2] == 'g') || (matrix[y - y1b][x - x1b + 2] == '*')) &&
-			((matrix[y - y1b + 1][x - x1b + 2] == ' ') || (matrix[y - y1b + 1][x - x1b + 2] == 'g') || (matrix[y - y1b + 1][x - x1b + 2] == '*'))) return 1; else return 0;
-	
+			((matrix[y - y1b + 1][x - x1b + 2] == ' ') || (matrix[y - y1b + 1][x - x1b + 2] == 'g') || (matrix[y - y1b + 1][x - x1b + 2] == '*'))) return 1;
+		else if (check_powerups(y, x, barrel))	return 1;
+		else return 0;
+
 	case 4:
 		if (((matrix[y - y1b + 2][x - x1b - 1] == ' ') || (matrix[y - y1b + 2][x - x1b - 1] == 'g') || (matrix[y - y1b + 2][x - x1b - 1] == '*')) &&
 			((matrix[y - y1b + 2][x - x1b] == ' ') || (matrix[y - y1b + 2][x - x1b] == 'g') || (matrix[y - y1b + 2][x - x1b] == '*')) &&
-			((matrix[y - y1b + 2][x - x1b + 1] == ' ') || (matrix[y - y1b + 2][x - x1b + 1] == 'g') || (matrix[y - y1b + 2][x - x1b + 1] == '*'))) return 1; else return 0;
+			((matrix[y - y1b + 2][x - x1b + 1] == ' ') || (matrix[y - y1b + 2][x - x1b + 1] == 'g') || (matrix[y - y1b + 2][x - x1b + 1] == '*'))) return 1;
+		else if (check_powerups(y, x, barrel))	return 1;
+		else return 0;
 	}
 }
 
