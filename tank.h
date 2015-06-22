@@ -30,6 +30,8 @@
 #define BACKSPACE 8
 #define ENTER '\n'
 #define ESC 27
+
+#define FREEZE_TIME 20
 // stavke menija
 
 extern char meni[][dimx];
@@ -100,6 +102,19 @@ typedef struct Barrier{
 	char obs;
 } barrier;
 
+typedef struct PowerUps{//   in matrix:
+	unsigned short life; //  - l
+	unsigned short bomb; //  - q
+	unsigned short star; //  - s
+	unsigned short clock; // - a
+	unsigned short shovel;// - y
+	unsigned short shield;// - x
+}Powerups;
+
+extern Powerups powerup;
+
+extern char pUps[];
+
 extern chtype matrix[dimx + 1][dimy + 1];                         // velicina mape
 
 extern chtype element;
@@ -118,6 +133,8 @@ extern TankDesign normal_tank_h[];
 void init_colors();
 
 void init_curses();
+
+void print_powerup(int y, int x, chtype pup);
 
 void print_brick(int y, int x);
 
@@ -175,15 +192,17 @@ void easy_bot();
 
 void print_border_menu(int y1, int x1, int y2, int x2);
 
-void menu_up(int *mv, int limit, int *ind, int from);
+void menu_up(int *mv, int limit, int *ind, int from, int mainm);
 
-void menu_down(int *mv, int limit, int *ind, int from);
+void menu_down(int *mv, int limit, int *ind, int from, int mainm);
 
 int option_selected(int mv, int mainm);
 
 void menu_content(int mainm);
 
 void delete_menu(int y1, int x1, int y2, int x2);
+
+void print_menu_pups();
 
 void print_commands();
 
@@ -196,5 +215,10 @@ void print_blue(int y, int x);
 void print_white(int y, int x);
 
 void print_head(int y, int x);
+
+void init_powerups();
+void update_powerups(char pw);
+int check_powerups(int y, int x, int a);
+void execute_powerups();
 
 #endif
