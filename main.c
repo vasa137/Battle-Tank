@@ -10,6 +10,10 @@ chtype matrix[dimx + 1][dimy + 1];                         // velicina mape
 
 chtype element = 'b';
 
+Powerups powerup;
+
+char pUps[6]={'x','l','s','q','a','y'};
+
 int top[]    = { 0, 1, 2, 3, 4, 5, 6, 7, 8 };
 int left[]   = { 2, 5, 8, 1, 4, 7, 0, 3, 6 };
 int right[]  = { 6, 3, 0, 7, 4, 1, 8, 5, 2 };
@@ -30,6 +34,7 @@ void main(){ // Da sredimo main kasnije.
 	lst->n = 0;
 	init_curses();
 	create_map();
+	refresh();
 	alloc_tank();
 	lst->curr = lst->first; // ovo mora posle alokacije
 	main_menu(1);
