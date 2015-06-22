@@ -1,22 +1,59 @@
 #include "tank.h"
 
-void alloc_tank(){
+int free_place(int place){ //place=0 ispitaj sva mesta
+	int i,j,k,flag;
+	spawn_place splace[3]={ {4,20}, {4,56}, {4,72} };
+	if (place==0){
+		for(k=0;k<3;k++){
+			flag=0;
+		for( i=splace[k].y-1 ; i<=splace[k].y+1 ; i++){
+			for(j=splace[k].x-1 ; j<=splace[k].x+1; j++){
+				if(matrix[i-y1b][j-x1b]!= ' ')
+				{
+					flag=1;
+					break;
+				}
+			}
+			if(flag) break;
+		}
+		if(!flag) return k+1;
+	}
+	return 0;
+	}
+	else{
+		for( i=splace[place-1].y-1 ; i<=splace[place-1].y+1 ; i++){
+			for(j=splace[place-1].x-1 ; j<=splace[place-1].x+1; j++){
+				if(matrix[i-y1b][j-x1b]!= ' ')
+				{
+					return 0;
+				}
+			}
+		}
+		return place;
+	}
+}
+
+void alloc_tank(int place){ //place=0 za nas tenk
 	List *novi;
+	int rez;
+	spawn_place splace[3]={ {4,20}, {4,56}, {4,72} };
 	int i, j;
 	novi = (List*)malloc(sizeof(List));
 	novi->next = NULL;
-	if (lst->first == NULL){
-		lst->first = novi;
+	lst->n++;
+	if (lst->first == NULL) lst->first = novi;
+	else lst->last->next = novi;
+
+	if(place==0){
 		lst->first->tankAll.tank.position.y = 38;// Pocetne koordinate za nas tenk, zameniti sa konstantama.
 		lst->first->tankAll.tank.position.x = 24;
 	}
 	else{
-		lst->last->next = novi;
-		novi->tankAll.tank.position.y = 4;
-		novi->tankAll.tank.position.x = 72;
+		if(!(rez=free_place(lst->n % 3 + 1)))
+		{ novi->tankAll.tank.position.y = splace[place-1].y; novi->tankAll.tank.position.x = splace[place-1].x; }
+		else { novi->tankAll.tank.position.y =splace[rez-1].y; novi->tankAll.tank.position.x = splace[rez-1].x; }
 	}
 	lst->last = novi;
-	lst->n++;
 	novi->tankAll.tank.position.last_move = 4;
 	novi->tankAll.tank.position.barrel = 4;
 	novi->tankAll.tank.phase = 2;
@@ -40,7 +77,7 @@ void free_tank(List *curr){
 	if (curr == lst->last) lst->last = prev;
 	lstcurrcopy=lst->curr; // da ne brise travu jer globalnim lst->curr brisemo a taj lst->curr je nas tenk, curr je tenk koji se brise
 	lst->curr=curr;
-	delete_projectile(lst->curr->tankAll.projectile.position.y, lst->curr->tankAll.projectile.position.x, lst->curr->tankAll.projectile.last_object);
+	if(lst->curr->tankAll.projectile.phase==2) delete_projectile(lst->curr->tankAll.projectile.position.y, lst->curr->tankAll.projectile.position.x, lst->curr->tankAll.projectile.last_object);
 	delete_tank(curr->tankAll.tank.position.y, curr->tankAll.tank.position.x);
 	lst->curr=lstcurrcopy;
 	free(curr);
