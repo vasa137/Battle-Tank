@@ -7,6 +7,14 @@ typedef struct Map
 	chtype mapa[dimx][dimy];
 }map;
 
+typedef struct Score
+{
+	char name[6];
+	double score;
+	struct Score* next;
+}score;
+
+
 extern chtype lvl_matrix[dimx][dimy];
 extern char lvl_meni[][dimx]; // stavke menija
 extern char button[][dimx];
@@ -28,6 +36,9 @@ void print_brick_lvl(int yu, int xu, int yd, int xd);
 void print_grass_lvl(int yu, int xu, int yd, int xd);
 void print_water_lvl(int yu, int xu, int yd, int xd);
 void print_blanko_lvl(int yu, int xu, int yd, int xd);
+void print_eraser(int yu, int xu, int yd, int xd);
+void print_wall_lvl(int yu, int xu, int yd, int xd);
+
 
 void what_to_print(int yu, int xu, int yd, int xd, chtype k);
 
