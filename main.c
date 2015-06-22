@@ -26,35 +26,57 @@ TankDesign normal_tank_h[]  = { { 126, 6 }, { ACS_HLINE, 1 }, { 126, 6 }, { ACS_
 
 void main(){ // Da sredimo main kasnije.
 	struct timeb vreme;
-	int keyPressed, i;
+	int keyPressed, i, rez, l;
+	
+
+	Levels *level[10];
+	Levels level1[] = { { 0, 0, 1 }, { 1, 2, 1 }, { 0, 15, 1 }, { 1, 20, 1 }, { 0, 30, 1 } };
+	Levels level2[] = { { 0, 0, 1 }, { 1, 2, 1 }, { 0, 15, 1 }, { 1, 20, 2 }, { 1, 30, 2 }, { 0, 35, 2 }, { 0, 37, 2 } };
+	Levels level3[] = { { 0, 0, 1 }, { 1, 2, 2 }, { 1, 15, 2 }, { 1, 20, 2 }, { 1, 30, 3 }, { 0, 35, 3 }, { 0, 37, 3 } };
+	clock_t start_level, ;
+	int lvl[]={5,7,7}, br ;
+	level[0] = level1;
+	level[1] = level2;
+	level[2] = level3;
+	
 	lst = (Lst*)malloc(sizeof(Lst));
 	lst->first = NULL;
-	lst->curr = NULL;
-	lst->last = NULL;
+		lst->curr = NULL;
+		lst->last = NULL;
 	lst->n = 0;
 	init_curses();
 	create_map();
 	refresh();
-	alloc_tank();
+	alloc_tank(0);
 	lst->curr = lst->first; // ovo mora posle alokacije
 	main_menu(1);
 	for (i = 0, lst->curr = lst->first; i < lst->n; i++, lst->curr = lst->curr->next)  
 		free_tank(lst->curr);
-	create_map();
-	alloc_tank();
-	alloc_tank();
-	while (1){
-		time_now();
-		if (_kbhit())
-		{
-			keyPressed = getch();
-			lst->curr = lst->first;
-			action(keyPressed, &lst->first->tankAll);
-		}
-		for (i = 0, lst->curr = lst->first; i < lst->n; i++, lst->curr = lst->curr->next){
-			if (i != 0) easy_bot();
-			if (lst->curr->tankAll.projectile.phase) projectile(lst->curr->tankAll.tank.position.y,
-				lst->curr->tankAll.tank.position.x, lst->curr->tankAll.projectile.position.projectil_dir);
+
+	for(l=0; l<3;l++){
+		start_level=clock();
+		br=0;
+		lst->first = NULL;
+		lst->curr = NULL;
+		lst->last = NULL;
+		create_map();
+		alloc_tank(0);
+		while (1){
+			time_now();
+			if(br < lvl[l] && (( (rez=free_place(0)) && ( ((clock()-start_level)*1000/CLOCKS_PER_SEC)>level[l][br].time*1000 )) || (lst->n==1)) )
+			{ alloc_tank(rez); br++;}
+			if (_kbhit())
+			{
+				keyPressed = getch();
+				lst->curr = lst->first;
+				action(keyPressed, &lst->first->tankAll);
+			}
+			for (i = 0, lst->curr = lst->first; i < lst->n; i++, lst->curr = lst->curr->next){
+				if (i != 0) easy_bot();
+				if (lst->curr->tankAll.projectile.phase) projectile(lst->curr->tankAll.tank.position.y,
+					lst->curr->tankAll.tank.position.x, lst->curr->tankAll.projectile.position.projectil_dir);
+			}
+			if(lst->n==1 && br>=lvl[l]) { free_tank(lst->first);break;}
 		}
 	}
 }
