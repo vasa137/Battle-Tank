@@ -30,8 +30,10 @@ char move_projectile(int projectil_dir) //vraca nam poslednji objekat na putu u 
 phase of projectile*/
 {
 	barrier object;
-	if (lst->curr->tankAll.projectile.phase == 2)
+	if (lst->curr->tankAll.projectile.phase == 2){
 		delete_projectile(lst->curr->tankAll.projectile.position.y, lst->curr->tankAll.projectile.position.x, lst->curr->tankAll.projectile.last_object);
+		refresh(); 
+	}
 	else if (lst->curr->tankAll.projectile.phase == 1) lst->curr->tankAll.projectile.phase = 2; //ako je metak bio u letu brisi ga
 	switch (projectil_dir){ //switch za stranu u koju metak treba da leti.
 
