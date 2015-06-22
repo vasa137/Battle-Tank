@@ -111,6 +111,17 @@ typedef struct PowerUps{//   in matrix:
 	unsigned short shield;// - x
 }Powerups;
 
+typedef struct Spawn_place{
+	int y;
+	int x;
+} spawn_place;
+
+typedef struct LEvels{
+	int kind;
+	int time;
+	int smart;
+}Levels;
+
 extern Powerups powerup;
 
 extern char pUps[];
@@ -134,6 +145,8 @@ void init_colors();
 
 void init_curses();
 
+int free_place(int place);
+
 void print_powerup(int y, int x, chtype pup);
 
 void print_brick(int y, int x);
@@ -148,7 +161,7 @@ void print_blanko(int y, int x);
 
 void print_tank(int y, int x, TankDesign *tank_type, int *position);
 
-void alloc_tank();
+void alloc_tank(int place);
 
 void free_tank(List *curr);
 
