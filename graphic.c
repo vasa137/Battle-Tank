@@ -1,17 +1,5 @@
 #include "tank.h"
 
-/*
-pup-list
-
-162 - clock
-240 - bomba
-216 - stit
-'+' - zivot
-187 - zvezda
-ACS_DARROW- lopata
-*/
-
-
 void init_colors(){
 	start_color();
 	init_pair(1, COLOR_WHITE, COLOR_BLACK);
@@ -21,7 +9,7 @@ void init_colors(){
 	init_pair(5, COLOR_BLACK, COLOR_YELLOW);
 	init_pair(6, COLOR_BLACK, COLOR_BLACK);
 	init_pair(7, COLOR_RED, COLOR_RED);
-	init_pair(8, COLOR_YELLOW, COLOR_BLACK);
+	init_pair(8, COLOR_YELLOW, COLOR_GREEN);
 	init_pair(9, COLOR_RED, COLOR_YELLOW);
 	init_pair(10, COLOR_WHITE, COLOR_BLUE);
 	init_pair(11, COLOR_YELLOW, COLOR_BLUE);
@@ -29,6 +17,12 @@ void init_colors(){
 	init_pair(13, COLOR_WHITE, COLOR_WHITE);
 	init_pair(14, COLOR_BLUE, COLOR_BLUE);
 	init_pair(15, COLOR_RED, COLOR_BLACK);
+	init_pair(16, COLOR_MAGENTA, COLOR_BLACK);
+	init_pair(17, COLOR_GREEN, COLOR_YELLOW);
+	init_pair(18, COLOR_YELLOW, COLOR_BLACK);
+	init_pair(19, COLOR_CYAN, COLOR_BLACK);
+	init_pair(20, COLOR_BLUE, COLOR_BLACK);
+
 }
 
 void init_curses(){
@@ -41,20 +35,39 @@ void init_curses(){
 	resize_term(70, 150);
 }
 
-void print_powerup(int y, int x, chtype pup)
-{
-	attron(COLOR_PAIR(15) | A_BOLD);
-	mvaddch(y-1,x,ACS_DIAMOND);
-	mvaddch(y,x,pup);
-	attroff(COLOR_PAIR(15) | A_BOLD);
+/*
+          tip  char za stampanje
+
+	life   - l  ACS_PLUS
+	bomb   - q  164
+	star   - s  187
+	clock  - a  162
+	shovel - y  ACS_DARROW
+	shield - x  ACS_BLOCK
+*/
+void print_powerup(int y, int x, chtype pup, char kind){
+// koordinate powerupa, karakter za stampanje, vrsta powerupa.
+	int A;
+	switch (kind){
+	case 'l': A = 20; break;
+	case 'q': A = 15; break;
+	case 's': A = 2;  break;
+	case 'a': A = 16; break;
+	case 'y': A = 18; break;
+	case 'x': A = 19; break;
+	}
+	attron(COLOR_PAIR(A) | A_BOLD);
+	mvaddch(y - 1, x, ACS_DIAMOND);
+	mvaddch(y, x, pup);
+	attroff(COLOR_PAIR(A) | A_BOLD);
 	attron(COLOR_PAIR(1) | A_BOLD);
-	mvaddch(y-1, x-1, ACS_ULCORNER);
-	mvaddch(y-1, x+1, ACS_URCORNER);
-	mvaddch(y, x-1, ACS_VLINE);
-	mvaddch(y, x+1, ACS_VLINE);
-	mvaddch(y+1, x-1, ACS_LLCORNER);
-	mvaddch(y+1, x, ACS_HLINE);
-	mvaddch(y+1, x+1, ACS_LRCORNER);
+	mvaddch(y - 1, x - 1, ACS_ULCORNER);
+	mvaddch(y - 1, x + 1, ACS_URCORNER);
+	mvaddch(y, x - 1, ACS_VLINE);
+	mvaddch(y, x + 1, ACS_VLINE);
+	mvaddch(y + 1, x - 1, ACS_LLCORNER);
+	mvaddch(y + 1, x, ACS_HLINE);
+	mvaddch(y + 1, x + 1, ACS_LRCORNER);
 	attroff(COLOR_PAIR(1) | A_BOLD);
 }
 
@@ -125,42 +138,42 @@ void print_tank(int y, int x, TankDesign *tank_type, int *position)
 		mvaddch(y - 1, x - 1, tank_type[position[0]].ch);
 	}
 	matrix[y - 1 - y1b][x - 1 - x1b] = 't';
-	
+
 	if (matrix[y - 1 - y1b][x - x1b] == 'g') lst->curr->tankAll.tank.visit_grass[0][1] = 1;
 	else{
 		attron(COLOR_PAIR(tank_type[position[1]].paint));
 		mvaddch(y - 1, x, tank_type[position[1]].ch);
 	}
 	matrix[y - 1 - y1b][x - x1b] = 't';
-	
+
 	if (matrix[y - 1 - y1b][x + 1 - x1b] == 'g') lst->curr->tankAll.tank.visit_grass[0][2] = 1;
 	else{
 		attron(COLOR_PAIR(tank_type[position[2]].paint));
 		mvaddch(y - 1, x + 1, tank_type[position[2]].ch);
 	}
 	matrix[y - 1 - y1b][x + 1 - x1b] = 't';
-	
+
 	if (matrix[y - y1b][x - 1 - x1b] == 'g') lst->curr->tankAll.tank.visit_grass[1][0] = 1;
 	else{
 		attron(COLOR_PAIR(tank_type[position[3]].paint));
 		mvaddch(y, x - 1, tank_type[position[3]].ch);
 	}
 	matrix[y - y1b][x - 1 - x1b] = 't';
-	
+
 	if (matrix[y - y1b][x - x1b] == 'g') lst->curr->tankAll.tank.visit_grass[1][1] = 1;
 	else{
 		attron(COLOR_PAIR(tank_type[position[4]].paint));
 		mvaddch(y, x, tank_type[position[4]].ch);
 	}
 	matrix[y - y1b][x - x1b] = 't';
-	
+
 	if (matrix[y - y1b][x + 1 - x1b] == 'g') lst->curr->tankAll.tank.visit_grass[1][2] = 1;
 	else{
 		attron(COLOR_PAIR(tank_type[position[5]].paint));
 		mvaddch(y, x + 1, tank_type[position[5]].ch);
 	}
 	matrix[y - y1b][x + 1 - x1b] = 't';
-	
+
 	if (matrix[y + 1 - y1b][x - 1 - x1b] == 'g') lst->curr->tankAll.tank.visit_grass[2][0] = 1;
 	else{
 		attron(COLOR_PAIR(tank_type[position[6]].paint));
@@ -208,49 +221,49 @@ void delete_tank(int y, int x){
 		print_grass(y - 1, x - 1);
 		lst->curr->tankAll.tank.visit_grass[0][0] = 0;
 	}
-	
+
 	if (!lst->curr->tankAll.tank.visit_grass[0][1]) print_blanko(y - 1, x);
 	else{
 		print_grass(y - 1, x);
 		lst->curr->tankAll.tank.visit_grass[0][1] = 0;
 	}
-	
+
 	if (!lst->curr->tankAll.tank.visit_grass[0][2]) print_blanko(y - 1, x + 1);
 	else{
 		print_grass(y - 1, x + 1);
 		lst->curr->tankAll.tank.visit_grass[0][2] = 0;
 	}
-	
+
 	if (!lst->curr->tankAll.tank.visit_grass[1][0]) print_blanko(y, x - 1);
 	else{
 		print_grass(y, x - 1);
 		lst->curr->tankAll.tank.visit_grass[1][0] = 0;
 	}
-	
+
 	if (!lst->curr->tankAll.tank.visit_grass[1][1]) print_blanko(y, x);
 	else{
 		print_grass(y, x);
 		lst->curr->tankAll.tank.visit_grass[1][1] = 0;
 	}
-	
+
 	if (!lst->curr->tankAll.tank.visit_grass[1][2]) print_blanko(y, x + 1);
 	else{
 		print_grass(y, x + 1);
 		lst->curr->tankAll.tank.visit_grass[1][2] = 0;
 	}
-	
+
 	if (!lst->curr->tankAll.tank.visit_grass[2][0]) print_blanko(y + 1, x - 1);
 	else{
 		print_grass(y + 1, x - 1);
 		lst->curr->tankAll.tank.visit_grass[2][0] = 0;
 	}
-	
+
 	if (!lst->curr->tankAll.tank.visit_grass[2][1]) print_blanko(y + 1, x);
 	else{
 		print_grass(y + 1, x);
 		lst->curr->tankAll.tank.visit_grass[2][1] = 0;
 	}
-	
+
 	if (!lst->curr->tankAll.tank.visit_grass[2][2]) print_blanko(y + 1, x + 1);
 	else{
 		print_grass(y + 1, x + 1);
@@ -266,11 +279,15 @@ void delete_projectile(int y, int x, char last_object)
 	else if (last_object == ' ') print_blanko(y, x);
 }
 
-void print_projectile(int y, int x, char object)
+void print_projectile(int y, int x, char object, int our)
 {
 	if (object == 'w')  attron(COLOR_PAIR(11)); // ako naidje na vodu
-	else if (object == ' ')  attron(COLOR_PAIR(8));
-	mvaddch(y, x, ACS_BULLET | A_BOLD);
+	else if (object == ' ')  attron(COLOR_PAIR(1));
+	if (our){
+		if (stars() == 4) mvaddch(y, x, 164 | A_ALTCHARSET | A_BOLD);
+		else mvaddch(y, x, ACS_DIAMOND | A_BOLD);
+	}
+	else mvaddch(y, x, ACS_DIAMOND | A_BOLD);
 	matrix[y - y1b][x - x1b] = '*';
 }
 
@@ -280,7 +297,7 @@ void print_object(int y, int x, int c){
 	case 'b': print_brick(y, x);   break;
 	case 'w': print_water(y, x);   break;
 	case 'g': print_grass(y, x);   break;
-	case 'c': print_wall(y, x);    break;
+	case 'c': print_wall(y, x);   break;
 	case '1': print_red(y, x);     break;
 	case '2': print_blue(y, x);    break;
 	case '3': print_white(y, x);   break;
@@ -322,49 +339,63 @@ void print_border()
 	refresh();
 }
 
-void create_map(char *map_name)
+void create_map()
 {
 	FILE *map;
+	int c;
 	int y = y1b + 1, x = x1b + 1;
-	int i, j;
-	map = fopen(map_name, "rb");
-	print_border();  //okvir
-	for(i=y;i<y2b;i++){
-		fread(matrix[i-y1b]+x-x1b,sizeof(char),89,map);
-	}
-	for (i = y-2; i < y2b-2;i++)
-		for(j = x-x1b;j<x2b-2;j++){
-	what_to_print(i+2,j+2,i+2,j+2,matrix[i][j]);
-	if(matrix[i][j]=='.') matrix[i][j]=' ';
-		}
-	fclose(map);
-	refresh();
-}
 
+	map = fopen(map_name, "r");
+
+	print_border();  //okvir
+
+	while ((c = fgetc(map)) != EOF)
+	{
+		if (c == '\n') continue;
+		if (c != '/')
+		{
+			if (c == '.') c = ' ';
+			print_object(y, x, c);
+			x++;
+			refresh();
+		}
+		else {
+			y++;
+			x = x1b + 1;
+		}
+	}
+	fclose(map);
+}
+//life   - l
+//bomb   - q
+//star   - s
+//clock  - a
+//shovel - y
+//shield - x
 void print_menu_pups()
 {
-	print_powerup(28 , 105 , 216);
-	print_powerup(28 , 112 , '+');
-	print_powerup(28 , 119 , 187);
-	print_powerup(28 , 126 , 240);
-	print_powerup(28 , 133 , 162);
-	print_powerup(28 , 140 , ACS_DARROW);
-	attron(COLOR_PAIR(15)| A_BOLD);
-	mvaddstr(30, 103 ,"Shield");
-	mvaddstr(30, 111 ,"Life");
-	mvaddstr(30, 118 ,"Star");
-	mvaddstr(30, 125 ,"Bomb");
-	mvaddstr(30, 131 ,"Clock");
-	mvaddstr(30, 138 ,"Shovel");
-	mvaddstr(32,119, "Power-ups");
-	attroff(COLOR_PAIR(15)| A_BOLD);
-		/*
+	print_powerup(28, 105, ACS_BLOCK, 'x');
+	print_powerup(28, 112, ACS_PLUS, 'l');
+	print_powerup(28, 119, 187, 's');
+	print_powerup(28, 126, 164, 'q');
+	print_powerup(28, 133, 162, 'a');
+	print_powerup(28, 140, ACS_DARROW, 'y');
+	attron(COLOR_PAIR(15) | A_BOLD);
+	mvaddstr(30, 103, "Shield");
+	mvaddstr(30, 111, "Life");
+	mvaddstr(30, 118, "Star");
+	mvaddstr(30, 125, "Bomb");
+	mvaddstr(30, 131, "Clock");
+	mvaddstr(30, 138, "Shovel");
+	mvaddstr(32, 119, "Power-ups");
+	attroff(COLOR_PAIR(15) | A_BOLD);
+	/*
 	pup-list
 
 	162 - clock
-	240 - bomba
-	216 - stit
-	'+' - zivot
+	164 - bomba
+	ACS_BLOCK - stit
+	ACS_PLUS - zivot
 	187 - zvezda
 	ACS_DARROW- lopata
 	*/
