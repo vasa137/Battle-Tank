@@ -1,9 +1,10 @@
 #include "tank.h"
 
-void start_level(clock_t *start_lvl_time, int *l, int *br){
+void start_level(clock_t *start_lvl_time, int *l, int *br, unsigned long int *random_pup_gen,long int* random_element_gen){
 	char lvlprint[31];
 	char lvl_num[3];
-
+	*random_pup_gen=0;
+	* random_element_gen=0;
 	strcpy(lvlprint, "level");
 	sprintf(lvl_num, "%d", *l + 1);
 	strcat(lvlprint, lvl_num);
@@ -17,7 +18,7 @@ void start_level(clock_t *start_lvl_time, int *l, int *br){
 	lst->first = NULL;
 	lst->curr = NULL;
 	lst->last = NULL;
-	strcpy(map_name, "dobraje.txt");
+	strcpy(map_name, "putIN.dat");
 	create_map(map_name);
 	alloc_tank(0);
 }
