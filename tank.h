@@ -133,7 +133,7 @@ extern Powerups powerup;
 
 extern char pUps[];
 
-extern chtype matrix[dimx + 1][dimy + 1];                         // velicina mape
+extern char matrix[dimx + 1][dimy + 1];                         // velicina mape
 
 extern chtype element;
 
@@ -156,7 +156,7 @@ extern TankDesign brat_tank_h[];
 void init_colors();
 void init_curses();
 
-void start_level(clock_t *start_level, int *l, int *br);//
+void start_level(clock_t *start_lvl_time, int *l, int *br, unsigned long int *random_pup_gen,long int* random_element_gen);//
 void fire_rate_assessment(int keyPressed);//
 void execute_our_tank();//
 void execute_bots();//
@@ -194,7 +194,7 @@ void action(int keyPressed, TankAll *current);
 
 void print_object(int y, int x, int c);
 void print_border();
-void create_map();
+void create_map(char *map_name);
 void time_now();
 void print_border_menu(int y1, int x1, int y2, int x2);
 
@@ -217,7 +217,7 @@ int stars();
 void init_powerups();
 void update_powerups(char pw);
 int check_powerups(int y, int x, int a);
-void execute_powerups(clock_t *pw_shield_start, clock_t *pw_clock_start, clock_t *pw_shovel_start);
+void execute_powerups(clock_t *pw_shield_start, clock_t *pw_clock_start, clock_t *pw_shovel_start, unsigned long int*random_pup_gen);
 
 void easy_bot();
 void medium_bot();
