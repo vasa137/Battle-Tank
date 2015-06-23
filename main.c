@@ -1,9 +1,10 @@
 #include "tank.h"
 
 void main(){ // Da sredimo main kasnije.
-	struct timeb vreme;
-	int i, rez, l, idx, star, sret;
+	int i, rez, l;
 	int br;
+	long int random_element_gen;
+	unsigned long int random_pup_gen;
 	clock_t start_lvl_time, pw_shield_start, pw_clock_start, pw_shovel_start;
 	Levels *level[10];
 	Levels **LEVEL[3];
@@ -21,9 +22,11 @@ void main(){ // Da sredimo main kasnije.
 		free_tank(lst->curr);// demo mode off.
 
 	for (l = 0; l<3; l++){ // Begin.
-		start_level(&start_lvl_time, &l, &br);
+		start_level(&start_lvl_time, &l, &br, &random_pup_gen, &random_element_gen);
 		while (1){
-			execute_powerups(&pw_shield_start, &pw_clock_start, &pw_shovel_start);
+			random_element_gen++; 
+			if (random_element_gen == 280000) random_element_gen = 0,rand_gen();
+			execute_powerups(&pw_shield_start, &pw_clock_start, &pw_shovel_start, &random_pup_gen);
 			should_spawn_bot(&start_lvl_time, &rez, &br, l, level);
 			if (_kbhit())	execute_our_tank();
 			execute_bots();
