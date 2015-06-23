@@ -4,13 +4,19 @@ void load_matrix(char name[]){
 	FILE *file;
 	int i = 0, j = 0;
 	char key;
-	file = fopen(name, "r");
-	while ((key = fgetc(file)) != EOF)
+	if (!(file = fopen(name, "rb")))
+	{
+		init_matrix();
+		return;
+	}
+	/*while ((key = fgetc(file)) != EOF)
 		{
 		if (key == '/') i++;
 		if (key == '\n') { j = 0; continue; }
 		lvl_matrix[i][j++] = key;
 		}	
+		*/
+	while (fread(lvl_matrix[i++], sizeof(char), dimy-1, file) != 0);
 	fclose(file);
 	
 }
