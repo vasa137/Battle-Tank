@@ -63,8 +63,8 @@ void alloc_tank(int place){ //place=0 za nas tenk
 	novi->tankAll.tank.position.barrel = 4;
 	novi->tankAll.tank.phase = 2;
 	novi->tankAll.projectile[0].phase = 0;
-	novi->tankAll.tank.tankDesign_v = special_tank_v;
-	novi->tankAll.tank.tankDesign_h = special_tank_h;
+	novi->tankAll.tank.tankDesign_v = brat_tank_v;
+	novi->tankAll.tank.tankDesign_h = brat_tank_h;
 	novi->tankAll.projectile[0].last_object = ' ';
 	for (i = 0; i<3; i++)
 		for (j = 0; j<3; j++) novi->tankAll.tank.visit_grass[i][j] = 0;
