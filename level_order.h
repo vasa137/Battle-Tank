@@ -4,18 +4,17 @@
 
 typedef struct Map
 {
-	chtype mapa[dimx][dimy];
+	char mapa[dimx][dimy];
 }map;
 
 typedef struct Score
 {
-	char name[6];
-	double score;
+	chtype name[10];
+	long long int score;
 	struct Score* next;
 }score;
 
-
-extern chtype lvl_matrix[dimx][dimy];
+extern char lvl_matrix[dimx][dimy];
 extern char lvl_meni[][dimx]; // stavke menija
 extern char button[][dimx];
 extern char buffer[20];
@@ -38,7 +37,7 @@ void print_water_lvl(int yu, int xu, int yd, int xd);
 void print_blanko_lvl(int yu, int xu, int yd, int xd);
 void print_eraser(int yu, int xu, int yd, int xd);
 void print_wall_lvl(int yu, int xu, int yd, int xd);
-
+void print_head_lvl(int yu, int xu, int yd, int xd);
 
 void what_to_print(int yu, int xu, int yd, int xd, chtype k);
 
@@ -73,4 +72,16 @@ void destroy_undo_redo(map** undo, map **redo, int n_redo, int n_undo);
 
 void _undo_redo(map** pop, map** push, int* n_undo, int* n_redo);
 int POP(map** unredo, int* n_unredo);
+
+int read_high_scores();
+long long int RSA_D(double checksum);
+FILE* create_scoreboard_n_check(FILE* hs, score* best);
+int read_high_scores();
+void destroy_scoreboard(score* best);
+int show_scores(score* zurzeit, int j, long long int t);
+void new_high_score(long long int s);
+
+void rand_gen();
+void rand_pup_gen();
+int check_if_free(int y, int x);
 #endif
