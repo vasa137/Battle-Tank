@@ -4,9 +4,9 @@ Lst *lst;
 
 char meni[][dimx] = { " New Game ", " Load Game ", " Settings ", " Map Editor ", " Play Custom map", " High Scores ", " Exit " };
 
-char map_name[50] = "dobraje.txt";
+char map_name[50] = "putIN.dat";
 
-chtype matrix[dimx + 1][dimy + 1];                         // velicina mape
+char matrix[dimx + 1][dimy + 1];                         // velicina mape
 
 chtype element = 'b';
 
@@ -51,3 +51,11 @@ TankDesign brat_tank_v[] = { { ACS_BOARD, 8 }, { ACS_VLINE | A_BOLD, 1 }, { ACS_
 TankDesign brat_tank_h[] = { { ACS_BOARD, 8 }, { ACS_HLINE | A_BOLD, 1 }, { ACS_BOARD, 8 },
 { ACS_HLINE | A_BOLD, 18 }, { ACS_CKBOARD, 2 }, { ACS_HLINE | A_BOLD, 18 },
 { ACS_BOARD, 8 }, { ACS_VLINE | A_BOLD, 18 }, { ACS_BOARD, 8 } };
+
+TankDesign novi_tank_v[]    = { { ACS_VLINE | A_BOLD, 15  }, { ACS_VLINE | A_BOLD, 15 }, { ACS_VLINE | A_BOLD, 15 }, 
+			  				     {ACS_BOARD, 8 }, { ACS_VLINE | A_BOLD, 15}, { ACS_BOARD, 8  }, 
+								{ ACS_BOARD, 8 }, { ACS_DIAMOND | A_BOLD, 21  }, { ACS_BOARD, 8 } };
+
+TankDesign novi_tank_h[]    = { { ACS_HLINE | A_BOLD, 15   }, { ACS_HLINE | A_BOLD, 15 }, { ACS_HLINE | A_BOLD, 15  },
+								{ ACS_BOARD, 8}, { ACS_HLINE | A_BOLD, 15}, { ACS_BOARD, 8 }, 
+								{ ACS_BOARD, 8 }, { ACS_DIAMOND | A_BOLD, 21  }, { ACS_BOARD, 8 } };
