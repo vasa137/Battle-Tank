@@ -28,7 +28,7 @@ int option_selected(int mv, int mainm){ // mainm ako smo u glavnom meniju
 	case 7:      if (mainm) return 0;												 else { init_matrix(); print_matrix(); element = 'b'; return 0; } break;
 	case 9:	 	 if (!mainm)														 return load_maps();                                              break;
 	case 11:     if (!mainm)														 return save_map();                                               break;
-	case 13:     if (mainm)	{ level_editor(); print_border_menu(y1c, x1c, y2c, x2c); print_commands(); create_map(); return 1; }	 else return 0;   break;
+	case 13:     if (mainm)	{ level_editor(); print_border_menu(y1c, x1c, y2c, x2c); print_commands(); create_map(map_name); return 1; }	 else return 0;   break;
 	case 15:																																		  break;
 	case 17:																																		  break;
 	case 19:     if (mainm) { system("cls"); exit(0); }																								  break;
@@ -118,8 +118,8 @@ int main_menu(int mainm){
 		if (mainm){
 			for (i = 0, lst->curr = lst->first; i < lst->n; i++, lst->curr = lst->curr->next){
 			easy_bot();
-			if (lst->curr->tankAll.projectile.phase) projectile(lst->curr->tankAll.tank.position.y,
-				lst->curr->tankAll.tank.position.x, lst->curr->tankAll.projectile.position.projectil_dir);
+			if (lst->curr->tankAll.projectile[0].phase) projectile(lst->curr->tankAll.tank.position.y,
+				lst->curr->tankAll.tank.position.x, lst->curr->tankAll.projectile[0].position.projectil_dir);
 		}
 		}//demo mod za bota
 	}
