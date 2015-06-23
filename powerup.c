@@ -3,7 +3,7 @@
 void init_powerups(){
 	powerup.life = 1;
 	powerup.bomb = 0;
-	powerup.star = 0;
+	powerup.star = 2;
 	powerup.clock = 0;
 	powerup.shovel = 0;
 	powerup.shield = 0;
@@ -58,23 +58,68 @@ int check_powerups(int y, int x, int a){
 	}
 }
 
-void execute_powerups(){
-	int i;
-	List *current;
+void execute_powerups(clock_t *pw_shield_start, clock_t *pw_clock_start, clock_t *pw_shovel_start){
+	int i, j, check ;
+	List *current,*temp;
 	if (powerup.bomb){
-		for (current = lst->first->next; current != NULL; current = current->next)
-			free_tank(current);
+		for (current = lst->first->next; current != NULL; ){
+			check=0;
+			for (i = 0; i < 3; i++) // proverava da li je u travi.
+				for (j = 0; j < 3; j++)
+					if(current->tankAll.tank.visit_grass[i][j])
+					{ check = 1; break; }
+			if (!check){
+				temp=current; 
+				current=current->next;
+				free_tank(temp);
+			}// ako nije u travi brise ga.
+			else current=current->next;
+		}
 		powerup.bomb = 0;
 	}
 
-	if (powerup.clock){ // ostalo se obavlja u delay_s.
-		for (current = lst->first->next; current != NULL; current = current->next)
+	if (powerup.clock){ // if unutar delay-a za botove, ali to cu promeniti kad dodju normalni.
+		if (powerup.clock == 1){
+			*pw_clock_start = clock();
+			powerup.clock = 2;
+			for (current = lst->first->next; current != NULL; current = current->next)
 			current->tankAll.tank.phase = 5;
+		}
+		if (((clock()-*pw_clock_start)*1000/CLOCKS_PER_SEC) > 5000){
+			for (current = lst->first->next; current != NULL; current = current->next)
+				current->tankAll.tank.phase = 2;
+			powerup.clock = 0;
+		}	
 	}
 
 	if (powerup.shovel){
-		// stampaj beton oko baze. 
+		if (powerup.shovel == 1){
+			*pw_clock_start = clock();
+			// stampaj beton oko baze.
+			powerup.shovel = 2;
+		}
+		if (((clock()-*pw_shovel_start)*1000/CLOCKS_PER_SEC) > 5000){
+			// brisi beton oko baze.
+			powerup.shovel = 0;
+		}
 	}
-	// shield cemo namestiti kad namestimo skidanje zivota pogotkom.
+	
+	if (powerup.shield){ // imam if u funkciji collision: if (!((temp == lst->first) && powerup.shield)) free_tank(temp);
+		if (powerup.shield == 1){
+			*pw_shield_start = clock();
+			powerup.shield = 2;
+		}
+		if (((clock()-*pw_shield_start)*1000/CLOCKS_PER_SEC) > 10000){
+			powerup.shield = 0;
+		}
+	}
+}
 
+int stars()
+{
+	switch(powerup.star){
+	case 0: return 1;
+	case 1: return 2;
+	case 2: case 3: return 4;
+	}
 }
