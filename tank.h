@@ -36,7 +36,7 @@
 
 extern char meni[][dimx];
 
-extern char map_name[50];
+extern char map_name[31];
 
 typedef int int3x3[3][3];
 // ====================================================.
@@ -63,6 +63,8 @@ typedef struct TAnk{
 	unsigned short mm, pp;
 	unsigned short start, end;
 	int counter;
+	int counter1;
+	int time;
 	int phase;
 	TankDesign *tankDesign_v;
 	TankDesign *tankDesign_h;
@@ -80,7 +82,7 @@ typedef struct PRojectile{
 
 typedef struct Whole_Struct{
 	Tank tank;
-	Projectile projectile;
+	Projectile* projectile;
 }TankAll;
 
 typedef struct Linked_list{
@@ -126,9 +128,11 @@ extern Powerups powerup;
 
 extern char pUps[];
 
-extern chtype matrix[dimx + 1][dimy + 1];                         // velicina mape
+extern char matrix[dimx + 1][dimy + 1];                         // velicina mape
 
 extern chtype element;
+
+extern int pridx;
 
 extern int top[];
 extern int left[];
@@ -195,7 +199,7 @@ void print_object(int y, int x, int c);
 
 void print_border();
 
-void create_map();
+void create_map(char* map_name);
 
 void time_now();
 
@@ -229,9 +233,14 @@ void print_white(int y, int x);
 
 void print_head(int y, int x);
 
+int stars();
 void init_powerups();
 void update_powerups(char pw);
 int check_powerups(int y, int x, int a);
-void execute_powerups();
+void execute_powerups(clock_t *pw_shield_start, clock_t *pw_clock_start, clock_t *pw_shovel_start);
+
+void medium_bot();
+int hit_tank(int y, int x);
+void shoot();
 
 #endif
