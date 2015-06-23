@@ -153,6 +153,9 @@ extern TankDesign normal_tank_h[];
 extern TankDesign brat_tank_v[];
 extern TankDesign brat_tank_h[];
 
+extern TankDesign novi_tank_v[];
+extern TankDesign novi_tank_h[];
+
 void init_colors();
 void init_curses();
 
