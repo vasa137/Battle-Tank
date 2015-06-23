@@ -280,7 +280,7 @@ void print_object(int y, int x, int c){
 	case 'b': print_brick(y, x);   break;
 	case 'w': print_water(y, x);   break;
 	case 'g': print_grass(y, x);   break;
-	case 'c': print_wall(y, x);   break;
+	case 'c': print_wall(y, x);    break;
 	case '1': print_red(y, x);     break;
 	case '2': print_blue(y, x);    break;
 	case '3': print_white(y, x);   break;
@@ -322,32 +322,23 @@ void print_border()
 	refresh();
 }
 
-void create_map()
+void create_map(char *map_name)
 {
 	FILE *map;
-	int c;
 	int y = y1b + 1, x = x1b + 1;
-
-	map = fopen(map_name, "r");
-
+	int i, j;
+	map = fopen(map_name, "rb");
 	print_border();  //okvir
-
-	while ((c = fgetc(map)) != EOF)
-	{
-		if (c == '\n') continue;
-		if (c != '/')
-		{
-			if (c == '.') c = ' ';
-			print_object(y, x, c);
-			x++;
-			refresh();
-		}
-		else {
-			y++;
-			x = x1b + 1;
-		}
+	for(i=y;i<y2b;i++){
+		fread(matrix[i-y1b]+x-x1b,sizeof(char),89,map);
 	}
+	for (i = y-2; i < y2b-2;i++)
+		for(j = x-x1b;j<x2b-2;j++){
+	what_to_print(i+2,j+2,i+2,j+2,matrix[i][j]);
+	if(matrix[i][j]=='.') matrix[i][j]=' ';
+		}
 	fclose(map);
+	refresh();
 }
 
 void print_menu_pups()
