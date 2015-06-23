@@ -9,7 +9,7 @@ int lvl_can_move(int yu, int xu, int yd, int xd, int num){
 	}
 }  // ispituje mogucnost kretanje u zadatom smeru(zidovi mape ogranicavaju kretanje)
 
-void move_up2x2(int yu, int xu, int yd, char xd){
+void move_up2x2(int yu, int xu, int yd, int xd){
 	int i, j;
 	for (j = yd, i = xd; i <= xu; i++)
 		what_to_print(j, i, j, i, lvl_matrix[j - 3][i - 3]);
@@ -109,10 +109,10 @@ void menu_up(int *mv, int limit, int *ind, int from, int mainm){
 	int i;
 	if (*mv == limit) return;
 	*mv = *mv - 2;
-	attron(COLOR_PAIR(8)|A_BOLD);
+	attron(COLOR_PAIR(8)| A_BOLD);
 	if(mainm) mvprintw(*mv, from, meni[--(*ind)]); //koji meni printa
 	else mvprintw(*mv, from, lvl_meni[--(*ind)]);
-	attroff(COLOR_PAIR(8)|A_BOLD);
+	attroff(COLOR_PAIR(8)| A_BOLD);
 	if(mainm) mvprintw(*mv + 2, from, meni[*ind + 1]);
 	else mvprintw(*mv + 2, from, lvl_meni[*ind + 1]);
 	refresh();
@@ -122,10 +122,10 @@ void menu_down(int *mv, int limit, int *ind, int from, int mainm){
 	int i;
 	if (*mv == limit) return;
 	*mv = *mv + 2;
-	attron(COLOR_PAIR(8)|A_BOLD);
+	attron(COLOR_PAIR(8)| A_BOLD);
 	if(mainm) mvprintw(*mv, from, meni[++(*ind)]);
 	else mvprintw(*mv, from, lvl_meni[++(*ind)]);
-	attroff(COLOR_PAIR(8)|A_BOLD);
+	attroff(COLOR_PAIR(8)| A_BOLD);
 	if(mainm) mvprintw(*mv - 2, from, meni[*ind - 1]);
 	else mvprintw(*mv - 2, from, lvl_meni[*ind - 1]);
 	refresh();
@@ -144,6 +144,7 @@ void size_resize(int *yu, int *xu, int *yd, int *xd){
 }
 
 void destroy_undo_redo(map** undo, map **redo, int n_redo, int n_undo){
+	if ((!redo[0]) && (!undo[0])) return;
 	free(redo[0]);
 	free(undo[0]);
 }
@@ -159,6 +160,7 @@ void copy_matrix(map** unredo, int n_unredo){
 
 void PUSH_unredo(map** unredo, int* n_unredo){
 	int max = 30, i;
+	if (!unredo[0]) return;
 	if (*n_unredo == max) {
 		for (i = 0; i <= (*n_unredo - 2); i++) unredo[0][i] = unredo[0][i + 1];
 		--*n_unredo;
@@ -189,40 +191,4 @@ void _undo_redo(map** pop, map** push, int* n_pop, int* n_push){
 
 }
 
-double RSA_D()
-{
-	double d = 2753; // p = 61; q = 53;
-
-
-
-}
-void read_high_scores()
-{
-	FILE* hs;
-	score *best = NULL, *zurzeit = NULL, *prev = NULL;
-	int i;
-	double checksum = 0;
-	if (!(hs = fopen("high_scores.dat", "r"))) return; // if it doesn't exist, just go back :)
-	fread(&checksum, sizeof(double), 1, hs); // this check for possible unauthorized changes in high scores
-	// =======Reads the binary file that contains high scores======
-
-	while (!feof(hs))
-	{
-		zurzeit = (score*)calloc(1, sizeof(score));
-		fread(zurzeit->name, sizeof(char), 5, hs);
-		zurzeit->name[5] = '\0';
-		fread(&zurzeit->score, sizeof(double), 1, hs);
-		checksum += zurzeit->score;
-		if (best = NULL) best = zurzeit;
-		else
-			prev->next = zurzeit;
-		prev = zurzeit;
-	}
-
-	// ===========================================================
-
-
-
-
-
-}
+ 
