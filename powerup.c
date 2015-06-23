@@ -58,9 +58,11 @@ int check_powerups(int y, int x, int a){
 	}
 }
 
-void execute_powerups(clock_t *pw_shield_start, clock_t *pw_clock_start, clock_t *pw_shovel_start){
+void execute_powerups(clock_t *pw_shield_start, clock_t *pw_clock_start, clock_t *pw_shovel_start, unsigned long int*random_pup_gen){
 	int i, j, check ;
 	List *current,*temp;
+	random_pup_gen++;
+	if (*random_pup_gen == 777000) *random_pup_gen = 0, rand_pup_gen();
 	if (powerup.bomb){
 		for (current = lst->first->next; current != NULL; ){
 			check=0;
