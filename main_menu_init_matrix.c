@@ -1,12 +1,29 @@
 #include "tank.h"
 
-chtype lvl_matrix[dimx][dimy];
+char lvl_matrix[dimx][dimy];
 
 char lvl_meni[][dimx] = { " Create New Map ", " Load Map ", " Save Map As", " Exit ", " Yes ", " No " }; // stavke menija
 
 char button[][dimx] = { " ESC : Return to menu ", " R : Turn resizing on/off ", " W : Change element to water ", " B : Change element to brick", " G : Change element to grass ",
 " SPACE : Save element on map ", " E : Eraser", " Z : Undo", " X : Redo", " SPACE : Save element on map  ", " ESC : Return to menu ", " C : Concrete "
  };
+
+void init_matrix(){
+ int i, j;
+ for (i = 0; i < 65; i++)
+  for (j = 0; j < 90; j++){
+   lvl_matrix[i][j] = '.';
+  }
+ save_in_matrix(61, 50, 61, 40, 'b');
+ for (i = 62; i < dimy; i++)
+ {
+  save_in_matrix(i, 50, i, 40, 'b');
+  save_in_matrix(i, 49, i, 41, 'h');
+ }
+ save_in_matrix(63, 48, 63, 42, '1');
+ save_in_matrix(64, 48, 64, 42, '2');
+ save_in_matrix(65, 48, 65, 42, '3');
+}
 
 void buttons(){
  int y1 = 47, y2 = 67;
@@ -15,17 +32,10 @@ void buttons(){
   mvprintw(y1, x1, button[i++]);
 }
 
-void init_matrix(){
-	int i, j;
-	for (i = 0; i < 65; i++)
-		for (j = 0; j < 90; j++){
-			lvl_matrix[i][j] = '.';
-		}
-}
 
 int option_selected(int mv, int mainm){ // mainm ako smo u glavnom meniju
 	switch (mv){
-	case 7:      if (mainm) return 0;												 else { init_matrix(); print_matrix(); element = 'b'; return 0; } break;
+	case 7:      if (mainm) return 0;                                                else { init_matrix(); print_matrix(); buffer[0] = '\0'; element = 'b'; return 0; } break;
 	case 9:	 	 if (!mainm)														 return load_maps();                                              break;
 	case 11:     if (!mainm)														 return save_map();                                               break;
 	case 13:     if (mainm)	{ level_editor(); print_border_menu(y1c, x1c, y2c, x2c); print_commands(); create_map(map_name); return 1; }	 else return 0;   break;
@@ -117,6 +127,7 @@ int main_menu(int mainm){
 		}
 		if (mainm){
 			for (i = 0, lst->curr = lst->first; i < lst->n; i++, lst->curr = lst->curr->next){
+			time_now();
 			easy_bot();
 			if (lst->curr->tankAll.projectile[0].phase) projectile(lst->curr->tankAll.tank.position.y,
 				lst->curr->tankAll.tank.position.x, lst->curr->tankAll.projectile[0].position.projectil_dir);
@@ -137,7 +148,7 @@ void level_editor(){
 	element = 'b';
 	print_border_menu(2, 2, dimx + 2, dimy + 2); // screen dimensions
 	while (1){
-		if (!main_menu(0)) { delete_menu(55, 95, 67, 120); return; } // enter the menu
+		if (!main_menu(0)) {  delete_menu(55, 95, 67, 120); delete_menu(47, 95, 67, 130); return; } // enter the menu } // enter the menu
 		tru = 1;
 		n_undo = n_redo = 0;
 		undo = (map*)calloc(1, sizeof(map));
@@ -146,8 +157,7 @@ void level_editor(){
 		yd = yu = 32;
 		xd = xu = 32;
 		what_to_print(yu, xu, yd, xd, element);
-		while (tru){
-				
+		while (tru){	
 			switch (getch()){ // kretanje po mapi i cuvanje elementa na mapi// biranje elementa//menjanje dimenzija elementa
 			case KEY_UP:   if (lvl_can_move(yu, xu, yd, xd, 1))		move_up2x2(yu--, xu, yd--, xd);								break;
 			case KEY_DOWN: if (lvl_can_move(yu, xu, yd, xd, 2))		move_down2x2(yu++, xu, yd++, xd);							break;
