@@ -31,7 +31,7 @@
 #define ENTER '\n'
 #define ESC 27
 
-#define PW_DURATION 7000
+#define PW_DURATION 7000 // Vidi da li si ovo.
 // stavke menija
 
 extern char meni[][dimx];
@@ -39,12 +39,13 @@ extern char meni[][dimx];
 extern char map_name[50];
 
 typedef int int3x3[3][3];
-// ====================================================.
+
 typedef struct Tank_Design{
 	chtype ch;
 	int paint;
 }TankDesign;
 
+// ====================================================.
 typedef struct Tank_Position{
 	int x;
 	int y;
@@ -124,10 +125,11 @@ typedef struct LEvels{
 	int smart;
 }Levels;
 
-extern Levels level1[];
-extern Levels level2[];
-extern Levels level3[];
-extern int lvl[];
+extern M, N; // !
+
+extern HIGH_SCORE; // !
+
+extern int *botsInLevel[]; // !
 
 extern Powerups powerup;
 
@@ -159,11 +161,13 @@ extern TankDesign novi_tank_h[];
 void init_colors();
 void init_curses();
 
-void start_level(clock_t *start_lvl_time, int *l, int *br, unsigned long int *random_pup_gen,long int* random_element_gen);//
-void fire_rate_assessment(int keyPressed);//
-void execute_our_tank();//
-void execute_bots();//
-void demo_mode();//
+void print_border_side_menu(int y1, int x1, int y2, int x2, int C);
+
+void start_level(clock_t *start_lvl_time, int *l, int *br, unsigned long int *random_pup_gen, long int* random_element_gen);
+void fire_rate_assessment(int keyPressed);
+void execute_our_tank();
+void execute_bots();
+void demo_mode();
 void should_spawn_bot(clock_t *start_lvl_time, int *rez, int *br, int l, Levels *level[]);//
 
 int free_place(int place);
@@ -227,5 +231,54 @@ void medium_bot();
 int hit_tank(int y, int x);
 void shoot();
 void move_bot(int *z, int *t, int *bot_barrel);
+//============================================================================= na dole.
+void show_number(int y, int x, int numI[5][3], chtype C);
+void print_tank_status(int y, int x, TankDesign *tank_type, int *position);
+void delete_bots_left();
+void print_bots_left(int EMH, int LVL);
+void print_number(int y, int x, int number);
+void counter_spec(int y, int x);
+void print_high_score();
+void print_border_side_menu(int y1, int x1, int y2, int x2, int C);
+
+extern Levels Level1_e[];
+extern Levels Level2_e[];
+extern Levels Level3_e[];
+extern Levels Level4_e[];
+extern Levels Level5_e[];
+extern Levels Level6_e[];
+extern Levels Level7_e[];
+extern Levels Level8_e[];
+extern Levels Level9_e[];
+extern Levels Level10_e[];
+extern Levels Level1_m[];
+extern Levels Level2_m[];
+extern Levels Level3_m[];
+extern Levels Level4_m[];
+extern Levels Level5_m[];
+extern Levels Level6_m[];
+extern Levels Level7_m[];
+extern Levels Level8_m[];
+extern Levels Level9_m[];
+extern Levels Level10_m[];
+extern Levels Level1_h[];
+extern Levels Level2_h[];
+extern Levels Level3_h[];
+extern Levels Level4_h[];
+extern Levels Level5_h[];
+extern Levels Level6_h[];
+extern Levels Level7_h[];
+extern Levels Level8_h[];
+extern Levels Level9_h[];
+extern Levels Level10_h[];
+
+extern Levels **LEVEL[];
+extern Levels *levelEasy[];
+extern Levels *levelMedium[];
+extern Levels *levelHard[];
+
+extern int Easy[];
+extern int Medium[];
+extern int Hard[];
 
 #endif
