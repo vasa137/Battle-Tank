@@ -1,11 +1,11 @@
 #include "tank.h"
 
-void start_level(clock_t *start_lvl_time, int *l, int *br, unsigned long int *random_pup_gen,long int* random_element_gen){
+void start_level(clock_t *start_lvl_time, int *l, int *br, unsigned long int *random_pup_gen, long int* random_element_gen){
 	char lvlprint[31];
 	char lvl_num[3];
 	Levels tank_struct;
-	*random_pup_gen=0;
-	* random_element_gen=0;
+	*random_pup_gen = 0;
+	*random_element_gen = 0;
 	strcpy(lvlprint, "level");
 	sprintf(lvl_num, "%d", *l + 1);
 	strcat(lvlprint, lvl_num);
@@ -19,22 +19,22 @@ void start_level(clock_t *start_lvl_time, int *l, int *br, unsigned long int *ra
 	lst->first = NULL;
 	lst->curr = NULL;
 	lst->last = NULL;
-	lst->n=0;
-	Plst->first= NULL;
-	Plst->last= NULL;
+	lst->n = 0;
+	Plst->first = NULL;
+	Plst->last = NULL;
 	strcpy(map_name, "level");
-	strcat(map_name,lvl_num);
-	strcat(map_name,".map");
+	strcat(map_name, lvl_num);
+	strcat(map_name, ".map");
 	create_map(map_name);
-	tank_struct.kind=-1;
-	tank_struct.smart=0;
+	tank_struct.kind = -1;
+	tank_struct.smart = 0;
 
 	print_border_side_menu(2, x1m, 25, x2m, 3); // bots left.
 	print_bots_left(); // saljes tezinu izabranu u podesavanjima( Easy-0 medium-1 hard-2) LVL(koji je nivo).  NOVO!
 	print_border_side_menu(27, x1m + 20, 36, x2m, 4);// high score counter.
 	print_border_side_menu(58, x1m, 67, x2m, 4); // pw disclaimer.
 	print_menu_pups(61);
-	alloc_tank(0,tank_struct);
+	alloc_tank(0, tank_struct);
 }
 
 void fire_rate_assessment(int keyPressed){
@@ -54,15 +54,34 @@ void fire_rate_assessment(int keyPressed){
 	else { pridx = 0; if ((!(lst->first->tankAll.projectile[pridx].phase))) action(keyPressed, &lst->first->tankAll); }
 }
 
-void execute_our_tank(){
+void execute_our_tank(unsigned short *mm, unsigned short *pp, int *phase, int *lastKey){
+	struct timeb vreme;
 	int keyPressed;
+	ftime(&vreme);
 	keyPressed = getch();
+	if (keyPressed != *lastKey){
+		*phase = 1;
+		*lastKey = keyPressed;
+	}
 	lst->curr = lst->first;
 	if (keyPressed == ' '){
 		fire_rate_assessment(keyPressed); // for different powerup stars.
 	}
-	else action(keyPressed, &lst->first->tankAll);
+
+	else {
+		if (*phase == 1){ action(keyPressed, &lst->first->tankAll); *mm = *pp = vreme.millitm; *phase = 2; }
+		else{
+			ftime(&vreme);
+			*mm = vreme.millitm;
+			if (delay_s(100, *mm, *pp, *phase)){
+				action(keyPressed, &lst->first->tankAll);
+				*mm = *pp = vreme.millitm;
+			}
+		}
+	}
 }
+
+
 
 void execute_bots(){
 	int i;
@@ -71,14 +90,15 @@ void execute_bots(){
 		if (i != 0){
 			pridx = 0; // vodi racuna da ne bi slao bilo koji pridx!
 			switch (lst->curr->tankAll.tank.diff){   // ovo treba da se poveze da se pusti bot Ne znam gde da stavim
-				case 1: easy_bot(); break;
-				case 2: medium_bot(); break;
-				case 3: hard_bot(); break;
+			case 1: easy_bot(); break;
+			case 2: medium_bot(); break;
+			case 3: hard_bot(); break;
 			}
-			if (lst->curr->tankAll.projectile[0].phase){ projectile(lst->curr->tankAll.tank.position.y,
-				lst->curr->tankAll.tank.position.x, lst->curr->tankAll.projectile[0].position.projectil_dir);
+			if (lst->curr->tankAll.projectile[0].phase){
+				projectile(lst->curr->tankAll.tank.position.y,
+					lst->curr->tankAll.tank.position.x, lst->curr->tankAll.projectile[0].position.projectil_dir);
 			}
-			if(!strcmp(map_name,"gameover.map")) return;
+			if (!strcmp(map_name, "gameover.map")) return;
 		}
 		else{
 			for (pridx = 0; pridx < 4; pridx++)
@@ -94,11 +114,11 @@ void demo_mode(){
 	lst->curr = NULL;
 	lst->last = NULL;
 	lst->n = 0;
-	strcpy(map_name,"dobraje.map");
+	strcpy(map_name, "dobraje.map");
 	create_map(map_name);
-	tank_struct.kind=0;
-	tank_struct.smart=1;
-	alloc_tank(0,tank_struct);
+	tank_struct.kind = 0;
+	tank_struct.smart = 1;
+	alloc_tank(0, tank_struct);
 	lst->curr = lst->first; // ovo mora posle alokacije
 }
 
