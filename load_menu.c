@@ -21,6 +21,15 @@ void load_matrix(char name[]){
 	
 }
 
+void free_book(char** book)
+{
+	int i = 0;
+	while (book[i])
+	{
+		free(book[i++]);
+	}
+}
+
 int print_a_page(char **book, int c_page, int limitdown, int limitup, int per_page)
 {
 	int i, j = limitup;
@@ -47,7 +56,7 @@ void lmenu_up(char **book, int *mv, int limit, int *ind, int from)
 	attron(COLOR_PAIR(8));
 	mvprintw(*mv, from, "%s  ", book[--(*ind)]);
 	attroff(COLOR_PAIR(8));
-	mvprintw(*mv + 2, from, "%s ", book[*ind + 1]);
+	mvprintw(*mv + 2, from, "%s  ", book[*ind + 1]);
 	refresh();
 
 }
@@ -58,21 +67,23 @@ void lmenu_down(char **book, int *mv, int limit, int *ind, int from)
 	if (*mv == limit) return;
 	*mv = *mv + 2;
 	attron(COLOR_PAIR(8));
-	mvprintw(*mv, from, "%s ", book[++(*ind)]);
+	mvprintw(*mv, from, "%s  ", book[++(*ind)]);
 	attroff(COLOR_PAIR(8));
-	mvprintw(*mv - 2, from, "%s ", book[*ind - 1]);
+	mvprintw(*mv - 2, from, "%s  ", book[*ind - 1]);
 	refresh();
 } // kretanje po meniju
 
-int load_maps(){
+int load_maps(int decide){
 	char **book = (char**)calloc(1, sizeof(char*));
 	FILE *saved_maps; 
 	int pages, num = 0, per_page = 10, c_page = 1;
 	int x1 = 100, y1 = 2, x2 = 145, y2 = 45;
 	int limitup = 8, limitdown = 28, mv = 8, i = 0, j = 6;
 	int from = 113;
-	if(!(saved_maps = fopen("saved_maps.txt", "r"))) return 1;
-	while (!feof(saved_maps))
+	if(!(saved_maps = fopen("saved_maps.txt", "r"))) return 1; // if the file doesn't exist, return
+
+
+	while (!feof(saved_maps)) // inserts every map name into an array
 	{
 		book[num] = (char*)calloc(20, sizeof(char));
 		fscanf(saved_maps, "%s", book[num++]);
@@ -80,7 +91,11 @@ int load_maps(){
 		book = (char**)realloc(book, (num + 1)*sizeof(char*));
 		book[num] = NULL;
 	}
-	if (num == 0) return 1;
+	if (num == 0) {
+		free_book(book);  //delete array
+		return 1;
+	}// if there aren't any saved maps, return
+
 
 	fclose(saved_maps);
 	pages = (num - 1) / per_page + 1;
@@ -104,7 +119,11 @@ int load_maps(){
 			case KEY_RIGHT: if (c_page < pages) {
 				delete_menu(5, 101, 38, 144);  j = print_a_page(book, ++c_page, limitdown, limitup, per_page) - 2; mv = 8; i = (c_page - 1)*per_page;
 			} break;
-			case ENTER: strcpy(buffer, book[i]); load_matrix(book[i]); print_matrix();  delete_menu(y1, x1, y2, x2); return 0; break;
+			case ENTER: if (decide) { strcpy(buffer, book[i]); load_matrix(book[i]); print_matrix(); free_book(book);  delete_menu(y1, x1, y2, x2); return 0; }
+						else { create_map(book[i]); free_book(book); delete_menu(y1, x1, y2, x2); return 0; }
+
+
+				break;
 			case ESC: delete_menu(y1, x1, y2, x2); return 1; break;
 			}
 
