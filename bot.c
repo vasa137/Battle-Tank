@@ -189,6 +189,22 @@ int distance(int x1, int y1, int x2, int y2, int x3, int y3)
 
 //dimy = 40 - 50
 //dimx = 61 - 66
+void move_bot_barrel()
+{
+ int a, b, c, d;
+ a = !can_move(lst->curr->tankAll.tank.position.y, lst->curr->tankAll.tank.position.x, 1);
+ b = !can_move(lst->curr->tankAll.tank.position.y, lst->curr->tankAll.tank.position.x, 2);
+ c = !can_move(lst->curr->tankAll.tank.position.y, lst->curr->tankAll.tank.position.x, 3);
+ d = !can_move(lst->curr->tankAll.tank.position.y, lst->curr->tankAll.tank.position.x, 4);
+ if (a && b && c)
+  lst->curr->tankAll.tank.position.barrel = 4;
+ else if (a && b && d)
+  lst->curr->tankAll.tank.position.barrel = 3;
+ else if (a && c && d)
+  lst->curr->tankAll.tank.position.barrel = 2;
+ else if (b && c && d)
+  lst->curr->tankAll.tank.position.barrel = 1;
+}
 
 void hard_bot()
 {
@@ -274,7 +290,7 @@ void hard_bot()
 			}
 			lst->curr->tankAll.tank.time = x;
 		}
-		//move_bot_barrel();
+		move_bot_barrel();
 
 		lst->curr->tankAll.tank.mm = vreme.millitm;
 		if (delay_s(250, lst->curr->tankAll.tank.mm, lst->curr->tankAll.tank.pp, lst->curr->tankAll.tank.phase))
