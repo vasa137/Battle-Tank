@@ -22,7 +22,7 @@ void init_colors(){
 	init_pair(18, COLOR_YELLOW, COLOR_BLACK);
 	init_pair(19, COLOR_CYAN, COLOR_BLACK);
 	init_pair(20, COLOR_BLUE, COLOR_BLACK);
-	init_pair(21, COLOR_RED,COLOR_GREEN);
+	init_pair(21, COLOR_RED, COLOR_GREEN);
 }
 
 void init_curses(){
@@ -94,6 +94,8 @@ void print_head(int y, int x)
 	matrix[y - y1b][x - x1b] = 'h';
 }
 
+
+
 void print_tank(int y, int x, TankDesign *tank_type, int *position)
 {
 	if (matrix[y - 1 - y1b][x - 1 - x1b] == 'g') lst->curr->tankAll.tank.visit_grass[0][0] = 1;
@@ -102,42 +104,42 @@ void print_tank(int y, int x, TankDesign *tank_type, int *position)
 		mvaddch(y - 1, x - 1, tank_type[position[0]].ch);
 	}
 	matrix[y - 1 - y1b][x - 1 - x1b] = 't';
-	
+
 	if (matrix[y - 1 - y1b][x - x1b] == 'g') lst->curr->tankAll.tank.visit_grass[0][1] = 1;
 	else{
 		attron(COLOR_PAIR(tank_type[position[1]].paint));
 		mvaddch(y - 1, x, tank_type[position[1]].ch);
 	}
 	matrix[y - 1 - y1b][x - x1b] = 't';
-	
+
 	if (matrix[y - 1 - y1b][x + 1 - x1b] == 'g') lst->curr->tankAll.tank.visit_grass[0][2] = 1;
 	else{
 		attron(COLOR_PAIR(tank_type[position[2]].paint));
 		mvaddch(y - 1, x + 1, tank_type[position[2]].ch);
 	}
 	matrix[y - 1 - y1b][x + 1 - x1b] = 't';
-	
+
 	if (matrix[y - y1b][x - 1 - x1b] == 'g') lst->curr->tankAll.tank.visit_grass[1][0] = 1;
 	else{
 		attron(COLOR_PAIR(tank_type[position[3]].paint));
 		mvaddch(y, x - 1, tank_type[position[3]].ch);
 	}
 	matrix[y - y1b][x - 1 - x1b] = 't';
-	
+
 	if (matrix[y - y1b][x - x1b] == 'g') lst->curr->tankAll.tank.visit_grass[1][1] = 1;
 	else{
 		attron(COLOR_PAIR(tank_type[position[4]].paint));
 		mvaddch(y, x, tank_type[position[4]].ch);
 	}
 	matrix[y - y1b][x - x1b] = 't';
-	
+
 	if (matrix[y - y1b][x + 1 - x1b] == 'g') lst->curr->tankAll.tank.visit_grass[1][2] = 1;
 	else{
 		attron(COLOR_PAIR(tank_type[position[5]].paint));
 		mvaddch(y, x + 1, tank_type[position[5]].ch);
 	}
 	matrix[y - y1b][x + 1 - x1b] = 't';
-	
+
 	if (matrix[y + 1 - y1b][x - 1 - x1b] == 'g') lst->curr->tankAll.tank.visit_grass[2][0] = 1;
 	else{
 		attron(COLOR_PAIR(tank_type[position[6]].paint));
@@ -185,49 +187,49 @@ void delete_tank(int y, int x){
 		print_grass(y - 1, x - 1);
 		lst->curr->tankAll.tank.visit_grass[0][0] = 0;
 	}
-	
+
 	if (!lst->curr->tankAll.tank.visit_grass[0][1]) print_blanko(y - 1, x);
 	else{
 		print_grass(y - 1, x);
 		lst->curr->tankAll.tank.visit_grass[0][1] = 0;
 	}
-	
+
 	if (!lst->curr->tankAll.tank.visit_grass[0][2]) print_blanko(y - 1, x + 1);
 	else{
 		print_grass(y - 1, x + 1);
 		lst->curr->tankAll.tank.visit_grass[0][2] = 0;
 	}
-	
+
 	if (!lst->curr->tankAll.tank.visit_grass[1][0]) print_blanko(y, x - 1);
 	else{
 		print_grass(y, x - 1);
 		lst->curr->tankAll.tank.visit_grass[1][0] = 0;
 	}
-	
+
 	if (!lst->curr->tankAll.tank.visit_grass[1][1]) print_blanko(y, x);
 	else{
 		print_grass(y, x);
 		lst->curr->tankAll.tank.visit_grass[1][1] = 0;
 	}
-	
+
 	if (!lst->curr->tankAll.tank.visit_grass[1][2]) print_blanko(y, x + 1);
 	else{
 		print_grass(y, x + 1);
 		lst->curr->tankAll.tank.visit_grass[1][2] = 0;
 	}
-	
+
 	if (!lst->curr->tankAll.tank.visit_grass[2][0]) print_blanko(y + 1, x - 1);
 	else{
 		print_grass(y + 1, x - 1);
 		lst->curr->tankAll.tank.visit_grass[2][0] = 0;
 	}
-	
+
 	if (!lst->curr->tankAll.tank.visit_grass[2][1]) print_blanko(y + 1, x);
 	else{
 		print_grass(y + 1, x);
 		lst->curr->tankAll.tank.visit_grass[2][1] = 0;
 	}
-	
+
 	if (!lst->curr->tankAll.tank.visit_grass[2][2]) print_blanko(y + 1, x + 1);
 	else{
 		print_grass(y + 1, x + 1);
@@ -299,27 +301,26 @@ void print_border()
 	refresh();
 }
 
-void create_map(char *map_name)
-{
+void create_map(char *map_name){
 	FILE *map;
 	int y = y1b + 1, x = x1b + 1;
 	int i, j;
 	map = fopen(map_name, "rb");
 	print_border();  //okvir
-	for(i=y;i<y2b;i++){
-		fread(matrix[i-y1b]+x-x1b,sizeof(char),89,map);
+	for (i = y; i<y2b; i++){
+		fread(matrix[i - y1b] + x - x1b, sizeof(char), 89, map);
 	}
-	for (i = y-2; i < y2b-2;i++)
-		for(j = x-x1b;j<x2b-2;j++){
-	what_to_print(i+2,j+2,i+2,j+2,matrix[i][j]);
-	if(matrix[i][j]=='.') matrix[i][j]=' ';
+	for (i = y - 2; i < y2b - 2; i++)
+		for (j = x - x1b; j<x2b - 2; j++){
+			what_to_print(i + 2, j + 2, i + 2, j + 2, matrix[i][j]);
+			if (matrix[i][j] == '.') matrix[i][j] = ' ';
 		}
 	fclose(map);
 	refresh();
 }
 
 void print_powerup(int y, int x, chtype pup, char kind){
-// koordinate powerupa, karakter za stampanje, vrsta powerupa.
+	// koordinate powerupa, karakter za stampanje, vrsta powerupa.
 	int A;
 	switch (kind){
 	case 'l': A = 20; break;
@@ -344,22 +345,22 @@ void print_powerup(int y, int x, chtype pup, char kind){
 	attroff(COLOR_PAIR(1) | A_BOLD);
 }
 
-void print_menu_pups()
+void print_menu_pups(int y)
 {
-	print_powerup(28, 105, ACS_BLOCK, 'x');
-	print_powerup(28, 112, ACS_PLUS, 'l');
-	print_powerup(28, 119, 187, 's');
-	print_powerup(28, 126, 164, 'q');
-	print_powerup(28, 133, 162, 'a');
-	print_powerup(28, 140, ACS_DARROW, 'y');
+	print_powerup(y, 105, ACS_BLOCK, 'x');
+	print_powerup(y, 112, ACS_PLUS, 'l');
+	print_powerup(y, 119, 187, 's');
+	print_powerup(y, 126, 164, 'q');
+	print_powerup(y, 133, 162, 'a');
+	print_powerup(y, 140, ACS_DARROW, 'y');
 	attron(COLOR_PAIR(15) | A_BOLD);
-	mvaddstr(30, 103, "Shield");
-	mvaddstr(30, 111, "Life");
-	mvaddstr(30, 118, "Star");
-	mvaddstr(30, 125, "Bomb");
-	mvaddstr(30, 131, "Clock");
-	mvaddstr(30, 138, "Shovel");
-	mvaddstr(32, 119, "Power-ups");
+	mvaddstr(y + 2, 103, "Shield");
+	mvaddstr(y + 2, 111, "Life");
+	mvaddstr(y + 2, 118, "Star");
+	mvaddstr(y + 2, 125, "Bomb");
+	mvaddstr(y + 2, 131, "Clock");
+	mvaddstr(y + 2, 138, "Shovel");
+	mvaddstr(y + 4, 119, "Power-ups");
 	attroff(COLOR_PAIR(15) | A_BOLD);
 	/*
 	pup-list
@@ -373,6 +374,8 @@ void print_menu_pups()
 	*/
 
 }
+
+
 
 void print_commands()
 {
@@ -418,4 +421,209 @@ void print_border_menu(int y1, int x1, int y2, int x2)
 	refresh();
 	attroff(COLOR_PAIR(10));
 }  // granice/okvir mape/menija
+//======================================================================= odavde pa do dole.
+void print_border_side_menu(int y1, int x1, int y2, int x2, int C)
+{
+	int i;
+	attron(COLOR_PAIR(C)); // dodaj atribut za boju
+	mvaddch(y1, x1, ACS_ULCORNER);
+	mvaddch(y2, x1, ACS_LLCORNER);
+	mvaddch(y1, x2, ACS_URCORNER);
+	mvaddch(y2, x2, ACS_LRCORNER);
+	for (i = y1 + 1; i<y2; i++)
+	{
+		mvaddch(i, x1, ACS_PLUS);
+		mvaddch(i, x2, ACS_PLUS);
+	}
 
+	for (i = x1 + 1; i<x2; i++)
+	{
+		mvaddch(y1, i, ACS_PLUS);
+		mvaddch(y2, i, ACS_PLUS);
+	}
+	refresh();
+	attroff(COLOR_PAIR(C));
+}  // granice/okvir mape/menija
+
+void show_number(int y, int x, int numI[5][3], chtype C){
+	int i, j;
+
+	for (i = 0; i < 5; i++){
+		for (j = 0; j < 3; j++){
+
+			if (numI[i][j]) {
+				attron(COLOR_PAIR(10));
+				mvaddch(y + i, x + j, C);
+				attroff(COLOR_PAIR(10));
+			}
+			else{
+				attron(COLOR_PAIR(1));
+				mvaddch(y + i, x + j, ' ');
+				attroff(COLOR_PAIR(1));
+			}
+		}
+	}
+}
+
+void print_tank_status(int y, int x, TankDesign *tank_type, int *position){
+	attron(COLOR_PAIR(tank_type[position[0]].paint));
+	mvaddch(y - 1, x - 1, tank_type[position[0]].ch);
+
+	attron(COLOR_PAIR(tank_type[position[1]].paint));
+	mvaddch(y - 1, x, tank_type[position[1]].ch);
+
+	attron(COLOR_PAIR(tank_type[position[2]].paint));
+	mvaddch(y - 1, x + 1, tank_type[position[2]].ch);
+
+	attron(COLOR_PAIR(tank_type[position[3]].paint));
+	mvaddch(y, x - 1, tank_type[position[3]].ch);
+
+	attron(COLOR_PAIR(tank_type[position[4]].paint));
+	mvaddch(y, x, tank_type[position[4]].ch);
+
+	attron(COLOR_PAIR(tank_type[position[5]].paint));
+	mvaddch(y, x + 1, tank_type[position[5]].ch);
+
+	attron(COLOR_PAIR(tank_type[position[6]].paint));
+	mvaddch(y + 1, x - 1, tank_type[position[6]].ch);
+
+	attron(COLOR_PAIR(tank_type[position[7]].paint));
+	mvaddch(y + 1, x, tank_type[position[7]].ch);
+
+	attron(COLOR_PAIR(tank_type[position[8]].paint));
+	mvaddch(y + 1, x + 1, tank_type[position[8]].ch);
+
+	refresh();
+}
+
+void delete_bots_left(){
+	int i, j, y, x;
+	int xCord[] = { 105, 112, 119, 126, 133, 140 };
+	int yCord[] = { 5, 12, 19 };
+
+	if (M == -1) { M = 5; N--; }
+	y = yCord[N] - 1; x = xCord[M] - 1;
+	attron(COLOR_PAIR(1));
+	for (i = y; i < y + 3; i++)
+		for (j = x; j < x + 3; j++)
+			mvaddch(i, j, ' ');
+	attroff(COLOR_PAIR(1));
+	refresh();
+
+	M--;
+}
+
+void print_bots_left(int EMH, int LVL){// EMH - easy(0), medium(1), hard(2) LVL - koji nivo
+	int i, j, bot = -1, n, m;
+	TankDesign *style;
+	int xCord[] = { 105, 112, 119, 126, 133, 140 };
+	int yCord[] = { 5, 12, 19 };
+
+	if (LEVEL[EMH][LVL][bot].kind) style = special_tank_v;
+	else style = normal_tank_v;
+
+
+	for (i = 0; i < 3; i++){
+		for (j = 0; j < 6; j++){
+			bot++;
+			if (LEVEL[EMH][LVL][bot].kind) style = special_tank_v;
+			else style = normal_tank_v;
+
+			if (bot < botsInLevel[EMH][LVL])
+				print_tank_status(yCord[i], xCord[j], style, top);
+		}
+	}
+	N = botsInLevel[EMH][LVL] / 6; M = botsInLevel[EMH][LVL] % 6 - 1;
+	for (i = botsInLevel[EMH][LVL]; i > 0; i--){
+		delete_bots_left();
+		Sleep(1000);
+	}
+
+}
+
+void print_number(int y, int x, int number){
+	int num1[][3] = { { 0, 0, 1 }, { 0, 1, 1 }, { 1, 0, 1 }, { 0, 0, 1 }, { 0, 0, 1 } };
+	int num2[][3] = { { 1, 1, 1 }, { 0, 0, 1 }, { 1, 1, 1 }, { 1, 0, 0 }, { 1, 1, 1 } };
+	int num3[][3] = { { 1, 1, 1 }, { 0, 0, 1 }, { 1, 1, 1 }, { 0, 0, 1 }, { 1, 1, 1 } };
+	int num4[][3] = { { 1, 0, 1 }, { 1, 0, 1 }, { 1, 1, 1 }, { 0, 0, 1 }, { 0, 0, 1 } };
+	int num5[][3] = { { 1, 1, 1 }, { 1, 0, 0 }, { 1, 1, 1 }, { 0, 0, 1 }, { 1, 1, 1 } };
+	int num6[][3] = { { 1, 1, 1 }, { 1, 0, 0 }, { 1, 1, 1 }, { 1, 0, 1 }, { 1, 1, 1 } };
+	int num7[][3] = { { 1, 1, 1 }, { 1, 0, 1 }, { 0, 0, 1 }, { 0, 0, 1 }, { 0, 0, 1 } };
+	int num8[][3] = { { 1, 1, 1 }, { 1, 0, 1 }, { 1, 1, 1 }, { 1, 0, 1 }, { 1, 1, 1 } };
+	int num9[][3] = { { 1, 1, 1 }, { 1, 0, 1 }, { 1, 1, 1 }, { 0, 0, 1 }, { 1, 1, 1 } };
+	int num0[][3] = { { 1, 1, 1 }, { 1, 0, 1 }, { 1, 0, 1 }, { 1, 0, 1 }, { 1, 1, 1 } };
+
+	chtype C = ACS_BLOCK; // OVDE BRZO MENJAMO ISPIS BROJEVA.
+
+	switch (number){
+	case 1: show_number(y, x, num1, C);	break;
+	case 2: show_number(y, x, num2, C);	break;
+	case 3: show_number(y, x, num3, C);	break;
+	case 4: show_number(y, x, num4, C);	break;
+	case 5: show_number(y, x, num5, C);	break;
+	case 6: show_number(y, x, num6, C);	break;
+	case 7: show_number(y, x, num7, C);	break;
+	case 8: show_number(y, x, num8, C);	break;
+	case 9: show_number(y, x, num9, C);	break;
+	case 0: show_number(y, x, num0, C);	break;
+	}
+	refresh();
+
+}
+
+void counter_spec(int y, int x){
+	int i;
+	for (i = 0; i < 10; i++){
+		print_number(y, x, i);
+		refresh();
+		Sleep(1000);
+	}
+}
+
+void print_high_score(){
+	int I, II, III, IV;
+	HIGH_SCORE = 2344;
+	if (HIGH_SCORE < 10){
+		I = HIGH_SCORE;
+		print_number(29, 138, I);
+	}
+
+	else if (HIGH_SCORE > 10 && HIGH_SCORE < 100){
+		II = HIGH_SCORE / 10;
+		I = HIGH_SCORE % 10;
+
+		print_number(29, 138, I);
+		print_number(29, 134, II);
+	}
+	else if (HIGH_SCORE > 100 && HIGH_SCORE < 1000){
+		III = HIGH_SCORE / 100;
+		II = (HIGH_SCORE % 100) / 10;
+		I = (HIGH_SCORE % 100) % 10;
+
+		print_number(29, 138, I);
+		print_number(29, 134, II);
+		print_number(29, 130, III);
+	}
+	else if (HIGH_SCORE > 1000 && HIGH_SCORE < 10000){
+		IV = HIGH_SCORE / 1000;
+		III = (HIGH_SCORE % 1000) / 100;
+		II = ((HIGH_SCORE % 1000) % 100) / 10;
+		I = ((HIGH_SCORE % 1000) % 100) % 10;
+
+		print_number(29, 138, I);
+		print_number(29, 134, II);
+		print_number(29, 130, III);
+		print_number(29, 126, IV);
+	}
+	else if (HIGH_SCORE > 10000){
+		IV = 9;
+		III = 9;
+		II = 9;
+		I = 9;
+
+		print_number(29, 138, I);
+		print_number(29, 134, II);
+		print_number(29, 130, III);
+		print_number(29, 126, IV);
+	}
+}
