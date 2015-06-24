@@ -33,10 +33,10 @@ int free_place(int place){ //place=0 ispitaj sva mesta
 	}
 }
 
-void alloc_tank(int place){ //place=0 za nas tenk
+void alloc_tank(int place,Levels tank_struct){ //place=0 za nas tenk
 	List *novi;
 	int rez;
-	spawn_place splace[3] = { { 4, 20 }, { 4, 56 }, { 4, 72 } };
+	spawn_place splace[3] = { { 5, 5 }, { 5, 47 }, { 5, 89 } };
 	int i, j;
 	novi = (List*)malloc(sizeof(List));
 	novi->next = NULL;
@@ -45,8 +45,12 @@ void alloc_tank(int place){ //place=0 za nas tenk
 	else lst->last->next = novi;
 
 	if (place == 0){
-		lst->first->tankAll.tank.position.y = 38;// Pocetne koordinate za nas tenk, zameniti sa konstantama.
-		lst->first->tankAll.tank.position.x = 24;
+		lst->first->tankAll.tank.position.y = 65;// Pocetne koordinate za nas tenk, zameniti sa konstantama.
+		lst->first->tankAll.tank.position.x = 38;
+		lst->first->tankAll.tank.position.last_move = 1;
+		lst->first->tankAll.tank.position.barrel = 1;
+		lst->first->tankAll.tank.tankDesign_v=novi_tank_v;
+		lst->first->tankAll.tank.tankDesign_h=novi_tank_h;
 		lst->first->tankAll.projectile=(Projectile*) malloc(4*sizeof(Projectile));
 		for(i=1;i<4;i++) { novi->tankAll.projectile[i].phase = 0; novi->tankAll.projectile[i].last_object = ' '; }
 	}
@@ -57,23 +61,33 @@ void alloc_tank(int place){ //place=0 za nas tenk
 		}
 		else { novi->tankAll.tank.position.y = splace[rez - 1].y; novi->tankAll.tank.position.x = splace[rez - 1].x; }
 		novi->tankAll.projectile = (Projectile *) malloc (sizeof(Projectile));
+		switch(tank_struct.kind){
+			case 0:  novi->tankAll.tank.tankDesign_v=normal_tank_v; novi->tankAll.tank.tankDesign_h=normal_tank_h; break;
+			case 1:  novi->tankAll.tank.tankDesign_v=special_tank_v; novi->tankAll.tank.tankDesign_h=special_tank_h; break;
+		}
+		novi->tankAll.tank.position.last_move = 4;
+		novi->tankAll.tank.position.barrel = 4;
 	}
+	novi->tankAll.tank.type=tank_struct.kind;
+	novi->tankAll.tank.diff=tank_struct.smart;
 	lst->last = novi;
-	novi->tankAll.tank.position.last_move = 4;
-	novi->tankAll.tank.position.barrel = 4;
 	novi->tankAll.tank.phase = 2;
 	novi->tankAll.projectile[0].phase = 0;
-	novi->tankAll.tank.tankDesign_v = brat_tank_v;
-	novi->tankAll.tank.tankDesign_h = brat_tank_h;
 	novi->tankAll.projectile[0].last_object = ' ';
+
+	
+
 	for (i = 0; i<3; i++)
 		for (j = 0; j<3; j++) novi->tankAll.tank.visit_grass[i][j] = 0;
 	create_tank(novi->tankAll.tank.position.barrel, novi->tankAll);
+	
 }
 
 void free_tank(List *curr){
+	chtype possibility[6] = { ACS_BLOCK, ACS_PLUS, 187, 164, 162, ACS_DARROW };
+	int pos, j ,i;
 	List *temp = lst->first, *prev = NULL, *lstcurrcopy;
-	while (temp != curr){
+	while (temp && temp != curr){
 		prev = temp;
 		temp = temp->next;
 	}
@@ -82,9 +96,21 @@ void free_tank(List *curr){
 	if (curr == lst->last) lst->last = prev;
 	lstcurrcopy = lst->curr; // da ne brise travu jer globalnim lst->curr brisemo a taj lst->curr je nas tenk, curr je tenk koji se brise
 	lst->curr = curr;
-	if (lst->curr->tankAll.projectile[pridx].phase == 2) delete_projectile(lst->curr->tankAll.projectile[pridx].position.y, lst->curr->tankAll.projectile[pridx].position.x, lst->curr->tankAll.projectile[pridx].last_object);
+	if (lst->curr->tankAll.projectile[pridx].phase == 2){
+		delete_projectile(lst->curr->tankAll.projectile[pridx].position.y, lst->curr->tankAll.projectile[pridx].position.x, lst->curr->tankAll.projectile[pridx].last_object);
+		lst->curr->tankAll.projectile[pridx].phase=0;
+	}
 	delete_tank(curr->tankAll.tank.position.y, curr->tankAll.tank.position.x);
 	lst->curr = lstcurrcopy;
+	if(curr->tankAll.tank.type==1){ // ako je tenk specijalan
+		srand(time(NULL));
+		pos=rand() % ((5 + 1));
+		alloc_powerup(pUps[pos],curr->tankAll.tank.position.y,curr->tankAll.tank.position.x);
+		print_powerup(curr->tankAll.tank.position.y,curr->tankAll.tank.position.x,possibility[pos],pUps[pos]);
+		for (j = curr->tankAll.tank.position.y; j < (curr->tankAll.tank.position.y + 2); j++)
+		 for (i = curr->tankAll.tank.position.x; i < (curr->tankAll.tank.position.x + 2); i++)
+				matrix[j - y1b][i - x1b] = pUps[pos];
+	}
 	free(curr);
 	lst->n--;
 }
@@ -159,4 +185,17 @@ void move_tank(int y, int x, int mov){
 	case KEY_RIGHT: delete_tank(y, x - 1);  create_tank(3, lst->curr->tankAll);  break;
 	case KEY_DOWN:  delete_tank(y - 1, x);  create_tank(4, lst->curr->tankAll);  break;
 	}
+}
+
+void delete_tank_list(){
+	List *temp;
+	while(lst->first)
+	{
+		temp=lst->first;
+		lst->first=lst->first->next;
+		free(temp);
+	}
+	lst->last=lst->curr=NULL;
+	lst->n=0;
+	free(lst);
 }
