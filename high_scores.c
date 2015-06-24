@@ -1,5 +1,3 @@
-
-
 #include "tank.h"
 
 
@@ -21,6 +19,9 @@ unsigned long long int RSA_E(long long int sum)
 	rez = (unsigned long long int)pow(sum, e) % n;
 	return rez;
 }
+
+
+
 
 FILE* create_scoreboard_n_check(FILE* hs, score** best)
 {
@@ -88,39 +89,7 @@ void destroy_scoreboard(score* best)
 		free(zurzeit);
 	}
 }
-int read_high_scores()
-{
-	FILE* hs;
-	score *best = NULL, *zurzeit = NULL;
-	int i, j;
-	int x1 = 100, y1 = 2, x2 = 145, y2 = 45;
 
-	attron(COLOR_PAIR(10));
-	mvaddstr(y1 + 3, x1 + 12, "H I G H  S C O R E S :");
-	attroff(COLOR_PAIR(10));
-
-	print_border_menu(y1, x1, y2, x2);
-	delete_menu(y1c, x1c, y2c, x2c);
-
-	if (!(hs = fopen("high_scores.dat", "rb")))		  return 1; // if it doesn't exist, just go back :)
-	if (!( create_scoreboard_n_check(hs, &best))) return 1; // creates scoreboard
-
-	zurzeit = best;
-
-
-	j = y1 + 7;
-	show_scores(best, j, NULL); // prints scores on the menu
-	destroy_scoreboard(best); // destroys the list of scores
-
-	while (1) // until the users hits a button enter || ESC, he'll be able to see scores
-	{
-		switch (getch())
-		{
-		case ENTER: case ESC: delete_menu(y1, x1, y2, x2);  return 1; break;
-		default:													  break;
-		}
-	}
-}
 
 
 score* insert_n_h(score** best, long long int s) // new high score is added to the list of top scores
@@ -144,6 +113,12 @@ score* insert_n_h(score** best, long long int s) // new high score is added to t
 
 }
 
+
+
+
+
+
+
 void new_high_score(long long int s)
 {
 	FILE* hs;
@@ -151,12 +126,9 @@ void new_high_score(long long int s)
 	chtype Key;
 	char name[10];
 	long long int sum = 0, checksum = 0;
-	
 	int i = 0, tru, j = 114, row;
 	int min = 114, max = 123;
 	int x1 = 100, y1 = 2, x2 = 145, y2 = 45;
-	s = 1250;
-
 	if (!(hs = fopen("high_scores.dat", "rb"))) hs = fopen("high_scores.dat", "wb"); // if it doesnt exist;
 	else{
 		if (!(hs = create_scoreboard_n_check(hs, &best))) return 1;
@@ -231,3 +203,38 @@ void new_high_score(long long int s)
 }
 
 // ===========================================================
+
+
+int read_high_scores()
+{
+	FILE* hs;
+	score *best = NULL, *zurzeit = NULL;
+	int i, j;
+	int x1 = 100, y1 = 2, x2 = 145, y2 = 45;
+
+	attron(COLOR_PAIR(10));
+	mvaddstr(y1 + 3, x1 + 12, "H I G H  S C O R E S :");
+	attroff(COLOR_PAIR(10));
+
+	print_border_menu(y1, x1, y2, x2);
+	delete_menu(y1c, x1c, y2c, x2c);
+
+	if (!(hs = fopen("high_scores.dat", "rb")))		  return 1; // if it doesn't exist, just go back :)
+	if (!(create_scoreboard_n_check(hs, &best))) return 1; // creates scoreboard
+
+	zurzeit = best;
+
+
+	j = y1 + 7;
+	show_scores(best, j, NULL); // prints scores on the menu
+	destroy_scoreboard(best); // destroys the list of scores
+
+	while (1) // until the users hits a button enter || ESC, he'll be able to see scores
+	{
+		switch (getch())
+		{
+		case ENTER: case ESC: delete_menu(y1, x1, y2, x2);  return 1; break;
+		default:													  break;
+		}
+	}
+}
