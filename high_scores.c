@@ -219,8 +219,12 @@ int read_high_scores()
 	print_border_menu(y1, x1, y2, x2);
 	delete_menu(y1c, x1c, y2c, x2c);
 
-	if (!(hs = fopen("high_scores.dat", "rb")))		  return 1; // if it doesn't exist, just go back :)
-	if (!(create_scoreboard_n_check(hs, &best))) return 1; // creates scoreboard
+	if (!(hs = fopen("high_scores.dat", "rb")))	{
+		delete_menu(y1, x1, y2, x2);	  return 1;
+	} // if it doesn't exist, just go back :)
+	if (!(create_scoreboard_n_check(hs, &best))){
+		delete_menu(y1, x1, y2, x2); return 1;
+	} // creates scoreboard
 
 	zurzeit = best;
 
