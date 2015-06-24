@@ -19,6 +19,7 @@ void main(){ // Da sredimo main kasnije.
 		for (LVL = 0; LVL<10; LVL++){ // Begin.
 			start_level(&start_lvl_time, &LVL, &br, &random_pup_gen, &random_element_gen);
 			while (1){
+				time_now();
 				print_high_score();
 				random_element_gen++; 
 				if (random_element_gen == 280000) random_element_gen = 0,rand_gen();
