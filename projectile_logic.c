@@ -172,6 +172,7 @@ void collision(int y, int x, int projectil_dir, char object){ // saljes mi koord
 			else{
 				delete_tank(lst->first->tankAll.tank.position.y,lst->first->tankAll.tank.position.x);
 				strcpy(map_name,"gameover.map");
+				new_high_score(HIGH_SCORE);
 				create_map(map_name);
 				_sleep(2300);
 				powerup.life--;
