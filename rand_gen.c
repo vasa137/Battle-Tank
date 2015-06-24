@@ -61,6 +61,7 @@ void rand_pup_gen()
 		
 		if (check_if_free(h, w))
 		{
+			alloc_powerup(pUps[pos], h, w);
 			print_powerup(h, w, possibility[pos], pUps[pos]);
 			for (j = (h - 1); j < (h + 2); j++)
 				for (i = (w - 1); i < (w + 2); i++)
