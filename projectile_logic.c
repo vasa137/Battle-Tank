@@ -16,8 +16,8 @@ void projectile(int y, int x, int projectil_dir){
 	}
 	else lst->curr->tankAll.projectile[pridx].mm = vreme.millitm;
 	if (delay_s(40, lst->curr->tankAll.projectile[pridx].mm, lst->curr->tankAll.projectile[pridx].pp, lst->curr->tankAll.projectile[pridx].phase)) { //u prvoj inicijalizaciji last object saljemo bez inicijalizacije jer ga ne koristimo
-		lst->curr->tankAll.projectile[pridx].last_object = move_projectile(projectil_dir); 
-		if (lst->curr->tankAll.projectile[pridx].phase == 1) if (lst->curr->tankAll.projectile[pridx].last_object!='t') lst->curr->tankAll.projectile[pridx].phase = 2;// u prvom pozivu check ce preci u 2->stanje leta
+		lst->curr->tankAll.projectile[pridx].last_object = move_projectile(projectil_dir);
+		if (lst->curr->tankAll.projectile[pridx].phase == 1) if (lst->curr->tankAll.projectile[pridx].last_object != 't') lst->curr->tankAll.projectile[pridx].phase = 2;// u prvom pozivu check ce preci u 2->stanje leta
 		ftime(&vreme);
 		lst->curr->tankAll.projectile[pridx].pp = lst->curr->tankAll.projectile[pridx].mm = vreme.millitm;
 	}
@@ -88,7 +88,7 @@ phase of projectile*/
 
 barrier can_fly(int y, int x)
 {
-	barrier ret; 
+	barrier ret;
 	List * temp;
 	int i;//return
 	ret.obs = matrix[y - y1b][x - x1b];
@@ -96,22 +96,22 @@ barrier can_fly(int y, int x)
 	case ' ': case 'w':
 		ret.flag = 1;
 		break;
-	case 'g': 
+	case 'g':
 		ret.flag = 2;
 		break;
-	case 'b': case 'e': case 'c': case 't': case 'x': case 'h' : case 'l': case 's': case 'q': case 'a' : case 'y':
+	case 'b': case 'e': case 'c': case 't': case 'x': case 'h': case 'l': case 's': case 'q': case 'a': case 'y':
 		ret.flag = 0;
 		break;
-	case '*':   
-		temp=NULL;
-		for(i=0;i<4;i++) { if(lst->first->tankAll.projectile[i].phase==2) if ((y == lst->first->tankAll.projectile[i].position.y) && (x==lst->first->tankAll.projectile[i].position.x)) temp=lst->first;}
-		if(temp==lst->first && lst->first==lst->curr){
-			ret.obs='t';
-			ret.flag=3;
+	case '*':
+		temp = NULL;
+		for (i = 0; i<4; i++) { if (lst->first->tankAll.projectile[i].phase == 2) if ((y == lst->first->tankAll.projectile[i].position.y) && (x == lst->first->tankAll.projectile[i].position.x)) temp = lst->first; }
+		if (temp == lst->first && lst->first == lst->curr){
+			ret.obs = 't';
+			ret.flag = 3;
 			break;      //brute force
 		}
 		else
-		ret.flag=0;
+			ret.flag = 0;
 		break;
 	}
 	return ret;
@@ -146,85 +146,85 @@ void collision(int y, int x, int projectil_dir, char object){ // saljes mi koord
 			if (matrix[y - y1b][x - x1b + 1] == 'b' && (matrix[y - y1b - 1][x - x1b + 1] != 'b')) print_blanko(y, x + 1);
 			break;
 		}
-		
+
 		break;
 	case 't':
 		temp = which_tank(y, x);
-		if((lst->curr!=lst->first) && (temp!=lst->first)) break; // friendly-fire
-		if(temp==lst->first){
+		if ((lst->curr != lst->first) && (temp != lst->first)) break; // friendly-fire
+		if (temp == lst->first){
 			if (powerup.shield) break;
 			if (powerup.life>1){
-				delete_tank(lst->first->tankAll.tank.position.y,lst->first->tankAll.tank.position.x);
+				delete_tank(lst->first->tankAll.tank.position.y, lst->first->tankAll.tank.position.x);
 				lst->first->tankAll.tank.position.y = 65;// Pocetne koordinate za nas tenk, zameniti sa konstantama.
 				lst->first->tankAll.tank.position.x = 24;
 				lst->first->tankAll.tank.position.last_move = 1;
 				lst->first->tankAll.tank.position.barrel = 1;
-				for(i=1;i<4;i++) { 
+				for (i = 1; i<4; i++) {
 					if (lst->curr->tankAll.projectile[pridx].phase == 2){
-					delete_projectile(lst->curr->tankAll.projectile[i].position.y, lst->curr->tankAll.projectile[i].position.x, lst->curr->tankAll.projectile[i].last_object);
-				}	
-				lst->first->tankAll.projectile[i].phase = 0; 
-				lst->first->tankAll.projectile[i].last_object = ' ';
+						delete_projectile(lst->curr->tankAll.projectile[i].position.y, lst->curr->tankAll.projectile[i].position.x, lst->curr->tankAll.projectile[i].last_object);
+					}
+					lst->first->tankAll.projectile[i].phase = 0;
+					lst->first->tankAll.projectile[i].last_object = ' ';
 				}
-				create_tank(1,lst->first->tankAll);
+				create_tank(1, lst->first->tankAll);
 				powerup.life--;
 			}
 			else{
-				delete_tank(lst->first->tankAll.tank.position.y,lst->first->tankAll.tank.position.x);
-				strcpy(map_name,"gameover.map");
+				delete_tank(lst->first->tankAll.tank.position.y, lst->first->tankAll.tank.position.x);
+				strcpy(map_name, "gameover.map");
 				new_high_score(HIGH_SCORE);
 				create_map(map_name);
-				_sleep(2300);
+				Sleep(2300);
 				powerup.life--;
 				break;
 			}
 		}
 		else free_tank(temp);
 		break;
-	case 'x': case 'l': case 's': case 'q': case 'a' : case 'y':
-		pom=which_powerup(y,x);
+	case 'x': case 'l': case 's': case 'q': case 'a': case 'y':
+		pom = which_powerup(y, x);
 		free_powerup(pom);
 		break;
 	case 'c':
-		if(lst->curr->tankAll.tank.type==1){
+		if (lst->curr->tankAll.tank.type == 1){
 			switch (projectil_dir){
-		case 1://up 
-			if (matrix[y - y1b][x - x1b - 1] == 'c' && (matrix[y - y1b + 1][x - x1b - 1] != 'c')) print_blanko(y, x - 1);
-			if (matrix[y - y1b][x - x1b] == 'c') print_blanko(y, x);
-			if (matrix[y - y1b][x - x1b + 1] == 'c' && (matrix[y - y1b + 1][x - x1b + 1] != 'c')) print_blanko(y, x + 1);
-			break;
-		case 2: // left.
-			if ((matrix[y - y1b - 1][x - x1b] == 'c') && (matrix[y - y1b - 1][x - x1b + 1] != 'c')) print_blanko(y - 1, x);
-			if (matrix[y - y1b][x - x1b] == 'c') print_blanko(y, x);
-			if ((matrix[y - y1b + 1][x - x1b] == 'c') && (matrix[y - y1b + 1][x - x1b + 1] != 'c'))print_blanko(y + 1, x);
-			break;
-		case 3: //right.
-			if ((matrix[y - y1b - 1][x - x1b] == 'c') && (matrix[y - y1b - 1][x - x1b - 1] != 'c')) print_blanko(y - 1, x);
-			if (matrix[y - y1b][x - x1b] == 'c') print_blanko(y, x);
-			if ((matrix[y - y1b + 1][x - x1b] == 'c') && (matrix[y - y1b + 1][x - x1b - 1] != 'c')) print_blanko(y + 1, x);
-			break;
-		case 4:
-			if ((matrix[y - y1b][x - x1b - 1] == 'c') && (matrix[y - y1b - 1][x - x1b - 1] != 'c')) print_blanko(y, x - 1);
-			if (matrix[y - y1b][x - x1b] == 'c') print_blanko(y, x);
-			if (matrix[y - y1b][x - x1b + 1] == 'c' && (matrix[y - y1b - 1][x - x1b + 1] != 'c')) print_blanko(y, x + 1);
-			break;
+			case 1://up 
+				if (matrix[y - y1b][x - x1b - 1] == 'c' && (matrix[y - y1b + 1][x - x1b - 1] != 'c')) print_blanko(y, x - 1);
+				if (matrix[y - y1b][x - x1b] == 'c') print_blanko(y, x);
+				if (matrix[y - y1b][x - x1b + 1] == 'c' && (matrix[y - y1b + 1][x - x1b + 1] != 'c')) print_blanko(y, x + 1);
+				break;
+			case 2: // left.
+				if ((matrix[y - y1b - 1][x - x1b] == 'c') && (matrix[y - y1b - 1][x - x1b + 1] != 'c')) print_blanko(y - 1, x);
+				if (matrix[y - y1b][x - x1b] == 'c') print_blanko(y, x);
+				if ((matrix[y - y1b + 1][x - x1b] == 'c') && (matrix[y - y1b + 1][x - x1b + 1] != 'c'))print_blanko(y + 1, x);
+				break;
+			case 3: //right.
+				if ((matrix[y - y1b - 1][x - x1b] == 'c') && (matrix[y - y1b - 1][x - x1b - 1] != 'c')) print_blanko(y - 1, x);
+				if (matrix[y - y1b][x - x1b] == 'c') print_blanko(y, x);
+				if ((matrix[y - y1b + 1][x - x1b] == 'c') && (matrix[y - y1b + 1][x - x1b - 1] != 'c')) print_blanko(y + 1, x);
+				break;
+			case 4:
+				if ((matrix[y - y1b][x - x1b - 1] == 'c') && (matrix[y - y1b - 1][x - x1b - 1] != 'c')) print_blanko(y, x - 1);
+				if (matrix[y - y1b][x - x1b] == 'c') print_blanko(y, x);
+				if (matrix[y - y1b][x - x1b + 1] == 'c' && (matrix[y - y1b - 1][x - x1b + 1] != 'c')) print_blanko(y, x + 1);
+				break;
+			}
 		}
-	}
-	break; // za beton, kada budemo imali strukturu.
+		break; // za beton, kada budemo imali strukturu.
 	case '*':
-		pridxcopy=pridx;
-		temp=which_projectile(y,x);
-		if(lst->curr!=temp){
-			delete_projectile(temp->tankAll.projectile[pridx].position.y,temp->tankAll.projectile[pridx].position.x,temp->tankAll.projectile[pridx].last_object);
-			temp->tankAll.projectile[pridx].phase=0;
+		pridxcopy = pridx;
+		temp = which_projectile(y, x);
+		if (lst->curr != temp){
+			delete_projectile(temp->tankAll.projectile[pridx].position.y, temp->tankAll.projectile[pridx].position.x, temp->tankAll.projectile[pridx].last_object);
+			temp->tankAll.projectile[pridx].phase = 0;
 		}// za metak o metak, gledamo razlicite strane i gledamo da li se sudaraju, pazimo na mimoilazenje.
-		pridx=pridxcopy;
+		pridx = pridxcopy;
 		break;
 
 	case 'h':
-		strcpy(map_name,"gameover.map");
-				create_map(map_name);
-				_sleep(2300);
+		strcpy(map_name, "gameover.map");
+		create_map(map_name);
+		Sleep(2300);
 		break;
 	}
 
@@ -242,9 +242,9 @@ List* which_tank(int y, int x){
 List * which_projectile(int y, int x){
 	List *temp = lst->first;
 	while (temp){
-		if(temp!=lst->curr){
-		if(temp==lst->first){ for(pridx=0;pridx<4;pridx++) if(temp->tankAll.projectile[pridx].phase==2) if ((y == temp->tankAll.projectile[pridx].position.y) && (x==temp->tankAll.projectile[pridx].position.x)) return temp;}
-		else { pridx=0 ;  if(temp->tankAll.projectile[pridx].phase==2)  if ((y == temp->tankAll.projectile[0].position.y) && (x==temp->tankAll.projectile[0].position.x)) return temp; }
+		if (temp != lst->curr){
+			if (temp == lst->first){ for (pridx = 0; pridx<4; pridx++) if (temp->tankAll.projectile[pridx].phase == 2) if ((y == temp->tankAll.projectile[pridx].position.y) && (x == temp->tankAll.projectile[pridx].position.x)) return temp; }
+			else { pridx = 0;  if (temp->tankAll.projectile[pridx].phase == 2)  if ((y == temp->tankAll.projectile[0].position.y) && (x == temp->tankAll.projectile[0].position.x)) return temp; }
 		}
 		temp = temp->next;
 	}
