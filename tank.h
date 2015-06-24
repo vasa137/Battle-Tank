@@ -31,7 +31,7 @@
 #define ENTER '\n'
 #define ESC 27
 
-#define PW_DURATION 7000 // Vidi da li si ovo.
+#define PW_DURATION 7000
 // stavke menija
 
 extern char meni[][dimx];
@@ -39,13 +39,12 @@ extern char meni[][dimx];
 extern char map_name[50];
 
 typedef int int3x3[3][3];
-
+// ====================================================.
 typedef struct Tank_Design{
 	chtype ch;
 	int paint;
 }TankDesign;
 
-// ====================================================.
 typedef struct Tank_Position{
 	int x;
 	int y;
@@ -67,6 +66,8 @@ typedef struct TAnk{
 	int counter1;
 	int time;
 	int phase;
+	int type;
+	int diff;
 	TankDesign *tankDesign_v;
 	TankDesign *tankDesign_h;
 	TankPosition position;
@@ -100,6 +101,19 @@ typedef struct LST{
 
 extern Lst *lst;
 
+typedef struct Powerup_List{
+	char type;
+	int position_y,position_x;
+	struct Powerup_List * next;
+} Powerup_list;
+
+typedef struct PowerupLST{
+	Powerup_list *first;
+	Powerup_list *last;
+} Poweruplst;
+
+extern Poweruplst* Plst;
+
 typedef struct Barrier{
 	int flag;
 	char obs;
@@ -125,11 +139,11 @@ typedef struct LEvels{
 	int smart;
 }Levels;
 
-extern M, N; // !
+extern Levels Level1_e[];
+extern Levels Level2_e[];
+extern Levels Level3_e[];
 
-extern HIGH_SCORE; // !
-
-extern int *botsInLevel[]; // !
+extern int HIGH_SCORE,M,N;
 
 extern Powerups powerup;
 
@@ -161,13 +175,11 @@ extern TankDesign novi_tank_h[];
 void init_colors();
 void init_curses();
 
-void print_border_side_menu(int y1, int x1, int y2, int x2, int C);
-
-void start_level(clock_t *start_lvl_time, int *l, int *br, unsigned long int *random_pup_gen, long int* random_element_gen);
-void fire_rate_assessment(int keyPressed);
-void execute_our_tank();
-void execute_bots();
-void demo_mode();
+void start_level(clock_t *start_lvl_time, int *l, int *br, unsigned long int *random_pup_gen,long int* random_element_gen);//
+void fire_rate_assessment(int keyPressed);//
+void execute_our_tank();//
+void execute_bots();//
+void demo_mode();//
 void should_spawn_bot(clock_t *start_lvl_time, int *rez, int *br, int l, Levels *level[]);//
 
 int free_place(int place);
@@ -180,13 +192,14 @@ void print_wall(int y, int x);
 void print_blanko(int y, int x);
 void print_tank(int y, int x, TankDesign *tank_type, int *position);
 
-void alloc_tank(int place);
+void alloc_tank(int place,Levels tank_struct);
 void free_tank(List *curr);
 void create_tank(int barrel, TankAll current);
 void delete_tank(int y, int x);
 void move_tank(int y, int x, int mov);
 int can_move(int y, int x, int barrel);
 List* which_tank(int y, int x);
+void delete_tank_list();
 
 int delay_s(int timeToDelay, unsigned short mm, unsigned short pp, int phase);
 
@@ -198,6 +211,7 @@ void collision(int y, int x, int projectil_dir, char object);
 char move_projectile(int projectil_dir);
 void projectile(int y, int x, int projectil_dir);
 void action(int keyPressed, TankAll *current);
+List * which_projectile(int y, int x);
 
 void print_object(int y, int x, int c);
 void print_border();
@@ -211,7 +225,7 @@ int option_selected(int mv, int mainm);
 int main_menu(int mainm);
 void delete_menu(int y1, int x1, int y2, int x2);
 
-void print_menu_pups();
+void print_menu_pups(int);
 void print_commands();
 void menu_content(int mainm);
 
@@ -224,14 +238,18 @@ int stars();
 void init_powerups();
 void update_powerups(char pw);
 int check_powerups(int y, int x, int a);
-void execute_powerups(clock_t *pw_shield_start, clock_t *pw_clock_start, clock_t *pw_shovel_start, unsigned long int*random_pup_gen);
+void execute_powerups(clock_t *pw_shield_start, clock_t *pw_clock_start, clock_t *pw_shovel_start, unsigned long int* random_pup_gen);
+void alloc_powerup(chtype type,int y, int x); //
+void free_powerup(Powerup_list* curr); //
+Powerup_list * which_powerup(int y, int x);
+void delete_powerup_list();
 
 void easy_bot();
 void medium_bot();
 int hit_tank(int y, int x);
 void shoot();
 void move_bot(int *z, int *t, int *bot_barrel);
-//============================================================================= na dole.
+
 void show_number(int y, int x, int numI[5][3], chtype C);
 void print_tank_status(int y, int x, TankDesign *tank_type, int *position);
 void delete_bots_left();
@@ -277,8 +295,9 @@ extern Levels *levelEasy[];
 extern Levels *levelMedium[];
 extern Levels *levelHard[];
 
+extern int *botsInLevel[]; 
+
 extern int Easy[];
 extern int Medium[];
 extern int Hard[];
-
 #endif
