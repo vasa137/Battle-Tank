@@ -88,7 +88,7 @@ int save_map(){
 
 	//==================================================
 
-	buffer[i] = '.'; buffer[i + 1] = 'd'; buffer[i + 2] = 'a'; buffer[i + 3] = 't'; buffer[i + 4] = '\0'; // adds .dat extension
+	buffer[i] = '.'; buffer[i + 1] = 'm'; buffer[i + 2] = 'a'; buffer[i + 3] = 'p'; buffer[i + 4] = '\0'; // adds .dat extension
 	save_it();
 
 
@@ -132,6 +132,4 @@ int save_map(){
 					break;
 		}
 	}
-
-
 }
