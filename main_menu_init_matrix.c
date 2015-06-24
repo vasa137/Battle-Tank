@@ -6,42 +6,41 @@ char lvl_meni[][dimx] = { " Create New Map ", " Load Map ", " Save Map As", " Ex
 
 char button[][dimx] = { " ESC : Return to menu ", " R : Turn resizing on/off ", " W : Change element to water ", " B : Change element to brick", " G : Change element to grass ",
 " SPACE : Save element on map ", " E : Eraser", " Z : Undo", " X : Redo", " SPACE : Save element on map  ", " ESC : Return to menu ", " C : Concrete "
-};
+ };
 
 void init_matrix(){
-	int i, j;
-	for (i = 0; i < 65; i++)
-		for (j = 0; j < 90; j++){
-			lvl_matrix[i][j] = '.';
-		}
-	save_in_matrix(61, 50, 61, 40, 'b');
-	for (i = 62; i < dimy; i++)
-	{
-		save_in_matrix(i, 50, i, 40, 'b');
-		save_in_matrix(i, 49, i, 41, 'h');
-	}
-	save_in_matrix(63, 48, 63, 42, '1');
-	save_in_matrix(64, 48, 64, 42, '2');
-	save_in_matrix(65, 48, 65, 42, '3');
+ int i, j;
+ for (i = 0; i < 65; i++)
+  for (j = 0; j < 90; j++){
+   lvl_matrix[i][j] = '.';
+  }
+ save_in_matrix(61, 50, 61, 40, 'b');
+ for (i = 62; i < dimy; i++)
+ {
+  save_in_matrix(i, 50, i, 40, 'b');
+  save_in_matrix(i, 49, i, 41, 'h');
+ }
+ save_in_matrix(63, 48, 63, 42, '1');
+ save_in_matrix(64, 48, 64, 42, '2');
+ save_in_matrix(65, 48, 65, 42, '3');
 }
 
 void buttons(){
-	int y1 = 47, y2 = 67;
-	int x1 = 95, i = 0, x2 = 120;
-	for (; y1 <= y2; y1 += 2)
-		mvprintw(y1, x1, button[i++]);
+ int y1 = 47, y2 = 67;
+ int x1 = 95, i = 0, x2 = 120;
+ for (; y1 <= y2; y1 += 2)
+  mvprintw(y1, x1, button[i++]);
 }
 
 
 int option_selected(int mv, int mainm){ // mainm ako smo u glavnom meniju
 	switch (mv){
 	case 7:      if (mainm) return 0;                                                else { init_matrix(); print_matrix(); buffer[0] = '\0'; element = 'b'; return 0; } break;
-	case 9:	 	 if (!mainm)														 return load_maps();                                              break;
+	case 9:	 	 if (!mainm)														 return load_maps(1);                                              break;
 	case 11:     if (!mainm)														 return save_map();                                               break;
-	case 13:     if (mainm)	{ level_editor(); print_border_menu(y1c, x1c, y2c, x2c); print_commands(); create_map(map_name); return 1; }
-				 else return 0;   break;
+	case 13:     if (mainm)	{ level_editor(); print_border_menu(y1c, x1c, y2c, x2c); print_commands(); create_map(map_name); return 1; }	 else return 0;   break;
 	case 15:																																		  break;
-	case 17:																																		  break;
+	case 17:	 if (mainm) load_maps(0); break;																																  break;
 	case 19:     if (mainm) { system("cls"); exit(0); }																								  break;
 	}
 
@@ -53,9 +52,9 @@ void menu_content(int mainm){
 		attron(COLOR_PAIR(10));
 		mvprintw(4, 117, " M E N U : ");
 		attroff(COLOR_PAIR(10));
-		attron(COLOR_PAIR(8) | A_BOLD);
+		attron(COLOR_PAIR(8)|A_BOLD);
 		mvprintw(7, 117, meni[0]);
-		attroff(COLOR_PAIR(8) | A_BOLD);
+		attroff(COLOR_PAIR(8)|A_BOLD);
 		mvprintw(9, 117, meni[1]);
 		mvprintw(11, 117, meni[2]);
 		mvprintw(13, 117, meni[3]);
@@ -65,9 +64,9 @@ void menu_content(int mainm){
 	}
 	else{
 		mvprintw(4, 117, " LEVEL EDITOR : ");
-		attron(COLOR_PAIR(8) | A_BOLD);
+		attron(COLOR_PAIR(8)|A_BOLD);
 		mvprintw(7, 117, lvl_meni[0]);
-		attroff(COLOR_PAIR(8) | A_BOLD);
+		attroff(COLOR_PAIR(8)|A_BOLD);
 		mvprintw(9, 117, lvl_meni[1]);
 		mvprintw(11, 117, lvl_meni[2]);
 		mvprintw(13, 117, lvl_meni[3]);
@@ -90,12 +89,12 @@ int main_menu(int mainm){
 	if (mainm){
 		print_border_side_menu(y1c - 11, x1c, y2c - 23, x2c, 3); // pw disclaimer izmenio!
 		print_menu_pups(38); // Izmenio!
-		print_border_side_menu(y1c, x1c, y2c, x2c, 3);// !
+		print_border_side_menu(y1c, x1c, y2c, x2c, 3);
 		print_commands();
 	}
 	if (!mainm) limitdown = 13;
 	else limitdown = 19;
-	print_border_side_menu(y1m, x1m, y2m, x2m, 3);
+	print_border_menu(y1m, x1m, y2m, x2m);
 	menu_content(mainm);
 	while (tru){
 		if (_kbhit()){
@@ -103,7 +102,7 @@ int main_menu(int mainm){
 			case KEY_UP: menu_up(&mv, limitup, &ind, 117, mainm);		 break;
 			case KEY_DOWN: menu_down(&mv, limitdown, &ind, 117, mainm);  break;
 			case ENTER:
-				delete_menu(y1c - 11, x1c, y2c - 23, x2c); // vidi jos
+				delete_menu(y1c-21,x1c,y2c-34,x2c); // vidi jos
 				delete_menu(y1m, x1m, y2m, x2m);  /*delete command menu*/
 				if (tru = option_selected(mv, mainm)){
 					print_border_menu(y1m, x1m, y2m, x2m);
@@ -114,13 +113,13 @@ int main_menu(int mainm){
 				else{
 					delete_menu(y1c, x1c, y2c, x2c);
 					if (mainm)
-					{
+					 {
 						return 0;
 					}
 					else
 					{
 						if (mv == limitup) return 1; //za Create new map
-						else if ((mv == 11) || (mv == 9)) return 1;
+						else if ((mv == 11) || (mv ==9)) return 1;
 						return 0;
 					}
 				}
@@ -128,11 +127,11 @@ int main_menu(int mainm){
 		}
 		if (mainm){
 			for (i = 0, lst->curr = lst->first; i < lst->n; i++, lst->curr = lst->curr->next){
-				time_now();
-				easy_bot();
-				if (lst->curr->tankAll.projectile[0].phase) projectile(lst->curr->tankAll.tank.position.y,
-					lst->curr->tankAll.tank.position.x, lst->curr->tankAll.projectile[0].position.projectil_dir);
-			}
+			time_now();
+			easy_bot();
+			if (lst->curr->tankAll.projectile[0].phase) projectile(lst->curr->tankAll.tank.position.y,
+				lst->curr->tankAll.tank.position.x, lst->curr->tankAll.projectile[0].position.projectil_dir);
+		}
 		}//demo mod za bota
 	}
 }
@@ -149,7 +148,7 @@ void level_editor(){
 	element = 'b';
 	print_border_menu(2, 2, dimx + 2, dimy + 2); // screen dimensions
 	while (1){
-		if (!main_menu(0)) { delete_menu(55, 95, 67, 120); delete_menu(47, 95, 67, 130); return; } // enter the menu } // enter the menu
+		if (!main_menu(0)) {  delete_menu(55, 95, 67, 120); delete_menu(47, 95, 67, 130); return; } // enter the menu } // enter the menu
 		tru = 1;
 		n_undo = n_redo = 0;
 		undo = (map*)calloc(1, sizeof(map));
@@ -158,7 +157,7 @@ void level_editor(){
 		yd = yu = 32;
 		xd = xu = 32;
 		what_to_print(yu, xu, yd, xd, element);
-		while (tru){
+		while (tru){	
 			switch (getch()){ // kretanje po mapi i cuvanje elementa na mapi// biranje elementa//menjanje dimenzija elementa
 			case KEY_UP:   if (lvl_can_move(yu, xu, yd, xd, 1))		move_up2x2(yu--, xu, yd--, xd);								break;
 			case KEY_DOWN: if (lvl_can_move(yu, xu, yd, xd, 2))		move_down2x2(yu++, xu, yd++, xd);							break;
