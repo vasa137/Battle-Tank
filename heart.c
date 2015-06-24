@@ -71,9 +71,9 @@ void execute_bots(){
 		if (i != 0){
 			pridx = 0; // vodi racuna da ne bi slao bilo koji pridx!
 			switch (lst->curr->tankAll.tank.diff){   // ovo treba da se poveze da se pusti bot Ne znam gde da stavim
-				case 0: easy_bot(); break;
-				case 1:case 2: medium_bot(); break;
-				//case 2: hard_bot();
+				case 1: easy_bot(); break;
+				case 2: medium_bot(); break;
+				case 3: hard_bot(); break;
 			}
 			if (lst->curr->tankAll.projectile[0].phase){ projectile(lst->curr->tankAll.tank.position.y,
 				lst->curr->tankAll.tank.position.x, lst->curr->tankAll.projectile[0].position.projectil_dir);
