@@ -428,7 +428,7 @@ void easy_bot()
 		lst->curr->tankAll.tank.start = vreme.millitm;
 
 	}
-	if (delay_s(140, lst->curr->tankAll.tank.mm, lst->curr->tankAll.tank.pp, lst->curr->tankAll.tank.phase))
+	if (delay_s(100, lst->curr->tankAll.tank.mm, lst->curr->tankAll.tank.pp, lst->curr->tankAll.tank.phase))
 	{
 	if (lst->curr->tankAll.tank.phase != 5)
 		action(lst->curr->tankAll.tank.position.barrel, &lst->curr->tankAll);
