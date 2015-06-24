@@ -2,7 +2,7 @@
 
 Lst *lst;
 
-char meni[][dimx] = { " New Game ", " Load Game ", " Settings ", " Map Editor ", " Play Custom map", " High Scores ", " Exit " };
+char meni[][dimx] = { " New Game ", " Settings ", " Map Editor ", " Play Custom map", " High Scores ", " Exit ", " -> EASY ", " -> MEDIUM ", " -> HARD " };
 
 char map_name[50] = "dobraje.map";
 
@@ -24,6 +24,8 @@ int right[] = { 6, 3, 0, 7, 4, 1, 8, 5, 2 };
 int bottom[] = { 8, 7, 6, 5, 4, 3, 2, 1, 0 };
 
 int HIGH_SCORE;  
+
+int BOT_DIF = 0, LVL;//
 
 int M, N;
 
