@@ -25,7 +25,7 @@ int bottom[] = { 8, 7, 6, 5, 4, 3, 2, 1, 0 };
 
 int HIGH_SCORE;  
 
-int BOT_DIF = 0, LVL;//
+int BOT_DIF = 0, LVL;
 
 int M, N;
 
