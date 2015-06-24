@@ -6,6 +6,7 @@
 #include <time.h>
 #include <sys/timeb.h>
 #include "level_order.h"
+#include <math.h>
 
 #ifndef TANK_H_INCLUDED
 #define TANK_H_INCLUDED
@@ -180,7 +181,7 @@ void fire_rate_assessment(int keyPressed);//
 void execute_our_tank();//
 void execute_bots();//
 void demo_mode();//
-void should_spawn_bot(clock_t *start_lvl_time, int *rez, int *br, int l, Levels *level[]);//
+void should_spawn_bot(clock_t *start_lvl_time, int *rez, int *br, int l);//
 
 int free_place(int place);
 
@@ -253,7 +254,7 @@ void move_bot(int *z, int *t, int *bot_barrel);
 void show_number(int y, int x, int numI[5][3], chtype C);
 void print_tank_status(int y, int x, TankDesign *tank_type, int *position);
 void delete_bots_left();
-void print_bots_left(int EMH, int LVL);
+void print_bots_left();
 void print_number(int y, int x, int number);
 void counter_spec(int y, int x);
 void print_high_score();
@@ -300,4 +301,12 @@ extern int *botsInLevel[];
 extern int Easy[];
 extern int Medium[];
 extern int Hard[];
+
+extern int BOT_DIF,LVL;
+void bot_settings();
+void inc_highScore(List *curr);
+void print_tank_status(int y, int x, TankDesign *tank_type, int *position, int A);
+void link_levels();
+void hard_bot();
+void move_bot_barrel();;
 #endif
