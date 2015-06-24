@@ -107,11 +107,6 @@ void move_bot()
 		lst->curr->tankAll.tank.position.barrel = 1;
 }
 
-#include "tank.h"
-#include<math.h>
-#include<time.h>
-
-
 void find_bullet()
 {
 	int i = 0;
@@ -293,7 +288,7 @@ void hard_bot()
 		move_bot_barrel();
 
 		lst->curr->tankAll.tank.mm = vreme.millitm;
-		if (delay_s(250, lst->curr->tankAll.tank.mm, lst->curr->tankAll.tank.pp, lst->curr->tankAll.tank.phase))
+		if (delay_s(100, lst->curr->tankAll.tank.mm, lst->curr->tankAll.tank.pp, lst->curr->tankAll.tank.phase))
 		{
 			action(lst->curr->tankAll.tank.position.barrel, &lst->curr->tankAll);
 			ftime(&vreme);
@@ -372,7 +367,7 @@ void medium_bot()
 		}
 
 		lst->curr->tankAll.tank.mm = vreme.millitm;
-		if (delay_s(250, lst->curr->tankAll.tank.mm, lst->curr->tankAll.tank.pp, lst->curr->tankAll.tank.phase))
+		if (delay_s(100, lst->curr->tankAll.tank.mm, lst->curr->tankAll.tank.pp, lst->curr->tankAll.tank.phase))
 			{
 				action(lst->curr->tankAll.tank.position.barrel, &lst->curr->tankAll);
 				ftime(&vreme);
@@ -433,7 +428,7 @@ void easy_bot()
 		lst->curr->tankAll.tank.start = vreme.millitm;
 
 	}
-	if (delay_s(250, lst->curr->tankAll.tank.mm, lst->curr->tankAll.tank.pp, lst->curr->tankAll.tank.phase))
+	if (delay_s(140, lst->curr->tankAll.tank.mm, lst->curr->tankAll.tank.pp, lst->curr->tankAll.tank.phase))
 	{
 	if (lst->curr->tankAll.tank.phase != 5)
 		action(lst->curr->tankAll.tank.position.barrel, &lst->curr->tankAll);
