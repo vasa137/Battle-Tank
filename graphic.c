@@ -468,9 +468,9 @@ void show_number(int y, int x, int numI[5][3], chtype C){
 void print_tank_status(int y, int x, TankDesign *tank_type, int *position, int A){
 
 	switch (A){
-	case 0: mvaddch(y + 2, x , 'E');
-	case 1: mvaddch(y + 2, x, 'M');
-	case 2: mvaddch(y + 2, x, 'H');
+	case 1: mvaddch(y + 3, x, 'E'); break;
+	case 2: mvaddch(y + 3, x, 'M'); break;
+	case 3: mvaddch(y + 3, x, 'H'); break;
 	}
 
 	attron(COLOR_PAIR(tank_type[position[0]].paint));
@@ -511,13 +511,12 @@ void delete_bots_left(){
 	if (M == -1) { M = 5; N--; }
 	y = yCord[N] - 1; x = xCord[M] - 1;
 	attron(COLOR_PAIR(1));
-	mvaddch(y-3,x+1,' ');
+	mvaddch(y + 4, x + 1, ' ');
 	for (i = y; i < y + 3; i++)
 		for (j = x; j < x + 3; j++)
 			mvaddch(i, j, ' ');
 	attroff(COLOR_PAIR(1));
 	refresh();
-
 	M--;
 }
 
@@ -537,11 +536,6 @@ void print_bots_left(){// BOT_DIF - easy(0), medium(1), hard(2) LVL - koji nivo
 		}
 	}
 	N = botsInLevel[BOT_DIF][LVL] / 6; M = botsInLevel[BOT_DIF][LVL] % 6 - 1;
-	for (i = botsInLevel[BOT_DIF][LVL]; i > 0; i--){
-		delete_bots_left();
-		Sleep(1000);
-	}
-
 }
 
 void print_number(int y, int x, int number){
