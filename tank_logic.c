@@ -83,10 +83,24 @@ void alloc_tank(int place,Levels tank_struct){ //place=0 za nas tenk
 	
 }
 
+void inc_highScore(List *curr){  // !
+	switch (curr->tankAll.tank.diff){
+	case 0: HIGH_SCORE += 100; break;
+	case 1: HIGH_SCORE += 200; break;
+	case 2: HIGH_SCORE += 300; break;
+	}
+	switch (curr->tankAll.tank.type){
+	case 0: break;
+	case 1: HIGH_SCORE += 75; break;
+	}
+}
+
 void free_tank(List *curr){
 	chtype possibility[6] = { ACS_BLOCK, ACS_PLUS, 187, 164, 162, ACS_DARROW };
 	int pos, j ,i;
 	List *temp = lst->first, *prev = NULL, *lstcurrcopy;
+	inc_highScore(curr); // !
+	delete_bots_left(); 
 	while (temp && temp != curr){
 		prev = temp;
 		temp = temp->next;
