@@ -4,9 +4,6 @@ void start_level(clock_t *start_lvl_time, int *l, int *br, unsigned long int *ra
 	char lvlprint[31];
 	char lvl_num[3];
 	Levels tank_struct;
-	Plst=(Poweruplst*) malloc (sizeof(Poweruplst));
-	Plst->first=Plst->last=NULL;
-	lst = (Lst*)malloc(sizeof(Lst));
 	*random_pup_gen=0;
 	* random_element_gen=0;
 	strcpy(lvlprint, "level");
@@ -33,7 +30,7 @@ void start_level(clock_t *start_lvl_time, int *l, int *br, unsigned long int *ra
 	tank_struct.smart=0;
 
 	print_border_side_menu(2, x1m, 25, x2m, 3); // bots left.
-	print_bots_left(EMH, LVL); // Ne radi. saljes tezinu izabranu u podesavanjima( Easy-0 medium-1 hard-2) LVL(koji je nivo).  NOVO!
+	print_bots_left(); // saljes tezinu izabranu u podesavanjima( Easy-0 medium-1 hard-2) LVL(koji je nivo).  NOVO!
 	print_border_side_menu(27, x1m + 20, 36, x2m, 4);// high score counter.
 	print_border_side_menu(58, x1m, 67, x2m, 4); // pw disclaimer.
 	print_menu_pups(61);
@@ -73,7 +70,11 @@ void execute_bots(){
 	for (i = 0, lst->curr = lst->first; i < lst->n; i++, lst->curr = lst->curr->next){
 		if (i != 0){
 			pridx = 0; // vodi racuna da ne bi slao bilo koji pridx!
-			medium_bot();
+			switch (lst->curr->tankAll.tank.diff){   // ovo treba da se poveze da se pusti bot Ne znam gde da stavim
+				case 0: easy_bot(); break;
+				case 1:case 2: medium_bot(); break;
+				//case 2: hard_bot();
+			}
 			if (lst->curr->tankAll.projectile[0].phase){ projectile(lst->curr->tankAll.tank.position.y,
 				lst->curr->tankAll.tank.position.x, lst->curr->tankAll.projectile[0].position.projectil_dir);
 			}
@@ -89,7 +90,6 @@ void execute_bots(){
 
 void demo_mode(){
 	Levels tank_struct;
-	lst = (Lst*)malloc(sizeof(Lst));
 	lst->first = NULL;
 	lst->curr = NULL;
 	lst->last = NULL;
@@ -102,10 +102,10 @@ void demo_mode(){
 	lst->curr = lst->first; // ovo mora posle alokacije
 }
 
-void should_spawn_bot(clock_t *start_lvl_time, int *rez, int *br, int l, Levels *level[]){
-	if (*br < lvl[l] && (((*rez = free_place(0)) && (((clock() - *start_lvl_time) * 1000 / CLOCKS_PER_SEC)>level[l][*br].time * 1000)) || (lst->n == 1))){
+void should_spawn_bot(clock_t *start_lvl_time, int *rez, int *br, int l){
+	if (*br < botsInLevel[BOT_DIF][LVL] && (((*rez = free_place(0)) && (((clock() - *start_lvl_time) * 1000 / CLOCKS_PER_SEC)>LEVEL[BOT_DIF][LVL][*br].time * 1000)) || (lst->n == 1))){
 		pridx = 0;
-		alloc_tank(*rez,level[l][*br]); (*br)++;
+		alloc_tank(*rez, LEVEL[BOT_DIF][LVL][*br]); (*br)++;
 	}
 }
 
