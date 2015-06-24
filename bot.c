@@ -1,7 +1,4 @@
 #include "tank.h"
-#include "tank.h"
-
-#include "tank.h"
 int array_bot_barrel[] = { 2, 4, 3, 4, 2, 3, 4 }, s = 0, x1;
 
 int hit_tank(int y, int x)
