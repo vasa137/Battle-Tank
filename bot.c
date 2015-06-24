@@ -107,6 +107,191 @@ void move_bot()
 		lst->curr->tankAll.tank.position.barrel = 1;
 }
 
+#include "tank.h"
+#include<math.h>
+#include<time.h>
+
+
+void find_bullet()
+{
+	int i = 0;
+	while ((matrix[lst->curr->tankAll.tank.position.y - y1b - 2 - i][lst->curr->tankAll.tank.position.x - x1b] == ' ') ||
+		(matrix[lst->curr->tankAll.tank.position.y - y1b - 2 - i][lst->curr->tankAll.tank.position.x - x1b] == 'g') ||
+		(matrix[lst->curr->tankAll.tank.position.y - y1b - 2 - i][lst->curr->tankAll.tank.position.x - x1b] == 'w'))
+		i++;
+
+	if (((matrix[lst->curr->tankAll.tank.position.y - y1b - 2 - i][lst->curr->tankAll.tank.position.x - x1b] == '*') &&
+		((lst->curr->tankAll.tank.position.y - y1b - 2 - i) == lst->first->tankAll.projectile[0].position.y) &&
+		((lst->curr->tankAll.tank.position.x - x1b) == lst->first->tankAll.projectile[0].position.x)) ||
+		(matrix[lst->curr->tankAll.tank.position.y - y1b - 2 - i][lst->curr->tankAll.tank.position.x - x1b] == 'h') ||
+		(hit_tank(lst->first->tankAll.tank.position.y, lst->first->tankAll.tank.position.x)))
+	{
+		lst->curr->tankAll.tank.position.barrel = 1;
+		lst->curr->tankAll.projectile[0].phase = 1;
+		return;
+	}
+	i = 0;
+	while ((matrix[lst->curr->tankAll.tank.position.y - y1b][lst->curr->tankAll.tank.position.x - x1b - 2 - i] == ' ') ||
+		(matrix[lst->curr->tankAll.tank.position.y - y1b][lst->curr->tankAll.tank.position.x - x1b - 2 - i] == 'g') ||
+		(matrix[lst->curr->tankAll.tank.position.y - y1b][lst->curr->tankAll.tank.position.x - x1b - 2 - i] == 'w'))
+		i++;
+
+	if (((matrix[lst->curr->tankAll.tank.position.y - y1b][lst->curr->tankAll.tank.position.x - x1b - 2 - i] == '*') &&
+		((lst->curr->tankAll.tank.position.y - y1b) == lst->first->tankAll.projectile[0].position.y) &&
+		((lst->curr->tankAll.tank.position.x - x1b - 2 - i) == lst->first->tankAll.projectile[0].position.x)) ||
+		(matrix[lst->curr->tankAll.tank.position.y - y1b][lst->curr->tankAll.tank.position.x - x1b - 2 - i] == 'h') ||
+		(hit_tank(lst->first->tankAll.tank.position.y, lst->first->tankAll.tank.position.x)))
+	{
+		lst->curr->tankAll.tank.position.barrel = 2;
+		lst->curr->tankAll.projectile[0].phase = 1;
+		return;
+	}
+	i = 0;
+	while ((matrix[lst->curr->tankAll.tank.position.y - y1b][lst->curr->tankAll.tank.position.x - x1b + 2 + i] == ' ') ||
+		(matrix[lst->curr->tankAll.tank.position.y - y1b][lst->curr->tankAll.tank.position.x - x1b + 2 + i] == 'g') ||
+		(matrix[lst->curr->tankAll.tank.position.y - y1b][lst->curr->tankAll.tank.position.x - x1b + 2 + i] == 'w'))
+		i++;
+	if (((matrix[lst->curr->tankAll.tank.position.y - y1b][lst->curr->tankAll.tank.position.x - x1b + 2 + i] == '*') &&
+		((lst->curr->tankAll.tank.position.y - y1b) == lst->first->tankAll.projectile[0].position.y) &&
+		((lst->curr->tankAll.tank.position.x - x1b + 2 + i) == lst->first->tankAll.projectile[0].position.x)) ||
+		(matrix[lst->curr->tankAll.tank.position.y - y1b][lst->curr->tankAll.tank.position.x - x1b + 2 + i] == 'h') ||
+		(hit_tank(lst->first->tankAll.tank.position.y, lst->first->tankAll.tank.position.x)))
+	{
+		lst->curr->tankAll.tank.position.barrel = 3;
+		lst->curr->tankAll.projectile[0].phase = 1;
+		return;
+	}
+	i = 0;
+	while ((matrix[lst->curr->tankAll.tank.position.y - y1b + 2 + i][lst->curr->tankAll.tank.position.x - x1b] == ' ') ||
+		(matrix[lst->curr->tankAll.tank.position.y - y1b + 2 + i][lst->curr->tankAll.tank.position.x - x1b] == 'g') ||
+		(matrix[lst->curr->tankAll.tank.position.y - y1b + 2 + i][lst->curr->tankAll.tank.position.x - x1b] == 'w'))
+		i++;
+
+	if (((matrix[lst->curr->tankAll.tank.position.y - y1b + 2 + i][lst->curr->tankAll.tank.position.x - x1b] == '*') &&
+		((lst->curr->tankAll.tank.position.y - y1b + 2 + i) == lst->first->tankAll.projectile[0].position.y) &&
+		((lst->curr->tankAll.tank.position.x - x1b) == lst->first->tankAll.projectile[0].position.x)) ||
+		(matrix[lst->curr->tankAll.tank.position.y - y1b + 2 + i][lst->curr->tankAll.tank.position.x - x1b] == 'h') ||
+		(hit_tank(lst->first->tankAll.tank.position.y, lst->first->tankAll.tank.position.x)))
+	{
+		lst->curr->tankAll.tank.position.barrel = 4;
+		lst->curr->tankAll.projectile[0].phase = 1;
+		return;
+	}
+}
+
+int distance(int x1, int y1, int x2, int y2, int x3, int y3)
+{
+	if ((pow(pow((double)x1 - x3, 2) + pow((double)y1 - y3, 2), 1. / 2)) - (pow((double)pow((double)x1 - x2, 2) + (double)pow((double)y1 - y2, 2), 1. / 2)) > 0)
+		return 1;
+	else
+		return 0;
+}
+
+//dimy = 40 - 50
+//dimx = 61 - 66
+
+void hard_bot()
+{
+	struct timeb vreme;
+	clock_t x;
+
+	int array_bot_barrel[] = { 2, 4, 3, 4, 2, 3, 4 }, s = 0, x1;
+
+	int array_of_choice1[] = { 4, 3 };
+	int array_of_choice2[] = { 4, 2 };
+	int array_of_choice3[] = { 1, 2 };
+	int array_of_choice4[] = { 1, 3 };
+	ftime(&vreme);
+	if ((lst->curr->tankAll.tank.position.y - y1b) < (dimy / 10))
+	{
+		medium_bot();
+	}
+	else
+	{
+		if (lst->curr->tankAll.tank.phase == 2)
+		{
+			lst->curr->tankAll.tank.counter1 = 0;
+			lst->curr->tankAll.tank.time = clock();
+		}
+
+		if (lst->curr->tankAll.tank.counter1++ == 0)
+		{
+			lst->curr->tankAll.tank.start = lst->curr->tankAll.tank.end = vreme.millitm;
+			lst->curr->tankAll.tank.counter = 1;
+			lst->curr->tankAll.tank.pp = lst->curr->tankAll.tank.mm = vreme.millitm;
+
+		}
+		lst->curr->tankAll.tank.end = vreme.millitm;
+		
+		if ((((x = clock()) - lst->curr->tankAll.tank.time) / CLOCKS_PER_SEC) > 3)
+		{
+			if (distance(lst->curr->tankAll.tank.position.x, lst->curr->tankAll.tank.position.y, lst->first->tankAll.tank.position.x,
+				lst->first->tankAll.tank.position.y, 65, 43))
+			{
+
+				if ((lst->curr->tankAll.tank.position.y - y1b) < (dimy / 2))
+				{
+					srand(time(NULL));
+					lst->curr->tankAll.tank.position.barrel = array_of_choice1[rand() % 2];
+				}
+				else
+				{
+					srand(time(NULL));
+					lst->curr->tankAll.tank.position.barrel = array_of_choice2[rand() % 2];
+				}
+			}
+			else
+			{
+				if ((lst->curr->tankAll.tank.position.x < lst->first->tankAll.tank.position.x) &&
+					(lst->curr->tankAll.tank.position.y < lst->first->tankAll.tank.position.y))
+				{
+					srand(time(NULL));
+					lst->curr->tankAll.tank.position.barrel = array_of_choice1[rand() % 2];
+				}
+				else if ((lst->curr->tankAll.tank.position.x < lst->first->tankAll.tank.position.x) &&
+					(lst->curr->tankAll.tank.position.y > lst->first->tankAll.tank.position.y))
+				{
+					srand(time(NULL));
+					lst->curr->tankAll.tank.position.barrel = array_of_choice2[rand() % 2];
+				}
+				else if ((lst->curr->tankAll.tank.position.x > lst->first->tankAll.tank.position.x) &&
+					(lst->curr->tankAll.tank.position.y > lst->first->tankAll.tank.position.y))
+				{
+					srand(time(NULL));
+					(lst->curr->tankAll.tank.position.barrel = array_of_choice3[rand() % 2]);
+
+				}
+				else if ((lst->curr->tankAll.tank.position.x > lst->first->tankAll.tank.position.x) &&
+					(lst->curr->tankAll.tank.position.y < lst->first->tankAll.tank.position.y))
+				{
+					srand(time(NULL));
+					lst->curr->tankAll.tank.position.barrel = array_of_choice4[rand() % 2];
+				}
+				else
+				{
+					find_bullet();
+				}
+			}
+			lst->curr->tankAll.tank.time = x;
+		}
+		//move_bot_barrel();
+
+		lst->curr->tankAll.tank.mm = vreme.millitm;
+		if (delay_s(250, lst->curr->tankAll.tank.mm, lst->curr->tankAll.tank.pp, lst->curr->tankAll.tank.phase))
+		{
+			action(lst->curr->tankAll.tank.position.barrel, &lst->curr->tankAll);
+			ftime(&vreme);
+			lst->curr->tankAll.tank.pp = vreme.millitm;
+			if (!lst->curr->tankAll.projectile[0].phase)
+			{
+				lst->curr->tankAll.projectile[0].counter++;
+				lst->curr->tankAll.projectile[0].counter %= 5;
+				lst->curr->tankAll.projectile[0].position.projectil_dir = lst->curr->tankAll.tank.position.last_move;
+			}
+		}
+	}
+}
+
 void medium_bot()
 {
 	struct timeb vreme;	
@@ -249,9 +434,4 @@ void easy_bot()
 		lst->curr->tankAll.projectile[0].position.projectil_dir = lst->curr->tankAll.tank.position.last_move;
 		}
 	}
-}
-
-void hard_bot()
-{
-	;
 }
