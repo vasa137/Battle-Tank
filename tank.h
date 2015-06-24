@@ -104,7 +104,7 @@ extern Lst *lst;
 
 typedef struct Powerup_List{
 	char type;
-	int position_y,position_x;
+	int position_y, position_x;
 	struct Powerup_List * next;
 } Powerup_list;
 
@@ -144,7 +144,7 @@ extern Levels Level1_e[];
 extern Levels Level2_e[];
 extern Levels Level3_e[];
 
-extern int HIGH_SCORE,M,N;
+extern int HIGH_SCORE, M, N;
 
 extern Powerups powerup;
 
@@ -176,7 +176,7 @@ extern TankDesign novi_tank_h[];
 void init_colors();
 void init_curses();
 
-void start_level(clock_t *start_lvl_time, int *l, int *br, unsigned long int *random_pup_gen,long int* random_element_gen);//
+void start_level(clock_t *start_lvl_time, int *l, int *br, unsigned long int *random_pup_gen, long int* random_element_gen);//
 void fire_rate_assessment(int keyPressed);//
 void execute_our_tank();//
 void execute_bots();//
@@ -193,7 +193,7 @@ void print_wall(int y, int x);
 void print_blanko(int y, int x);
 void print_tank(int y, int x, TankDesign *tank_type, int *position);
 
-void alloc_tank(int place,Levels tank_struct);
+void alloc_tank(int place, Levels tank_struct);
 void free_tank(List *curr);
 void create_tank(int barrel, TankAll current);
 void delete_tank(int y, int x);
@@ -240,7 +240,7 @@ void init_powerups();
 void update_powerups(char pw);
 int check_powerups(int y, int x, int a);
 void execute_powerups(clock_t *pw_shield_start, clock_t *pw_clock_start, clock_t *pw_shovel_start, unsigned long int* random_pup_gen);
-void alloc_powerup(chtype type,int y, int x); //
+void alloc_powerup(chtype type, int y, int x); //
 void free_powerup(Powerup_list* curr); //
 Powerup_list * which_powerup(int y, int x);
 void delete_powerup_list();
@@ -296,17 +296,18 @@ extern Levels *levelEasy[];
 extern Levels *levelMedium[];
 extern Levels *levelHard[];
 
-extern int *botsInLevel[]; 
+extern int *botsInLevel[];
 
 extern int Easy[];
 extern int Medium[];
 extern int Hard[];
 
-extern int BOT_DIF,LVL;
+extern int BOT_DIF, LVL;
 void bot_settings();
 void inc_highScore(List *curr);
 void print_tank_status(int y, int x, TankDesign *tank_type, int *position, int A);
 void link_levels();
 void hard_bot();
-void move_bot_barrel();;
+void move_bot_barrel();
+
 #endif
