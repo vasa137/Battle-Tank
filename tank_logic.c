@@ -44,7 +44,7 @@ void alloc_tank(int place,Levels tank_struct){ //place=0 za nas tenk
 	if (lst->first == NULL) lst->first = novi;
 	else lst->last->next = novi;
 
-	if (place == 0){
+	if (place == 0){ 
 		lst->first->tankAll.tank.position.y = 65;// Pocetne koordinate za nas tenk, zameniti sa konstantama.
 		lst->first->tankAll.tank.position.x = 38;
 		lst->first->tankAll.tank.position.last_move = 1;
@@ -85,9 +85,9 @@ void alloc_tank(int place,Levels tank_struct){ //place=0 za nas tenk
 
 void inc_highScore(List *curr){  // !
 	switch (curr->tankAll.tank.diff){
-	case 0: HIGH_SCORE += 100; break;
-	case 1: HIGH_SCORE += 200; break;
-	case 2: HIGH_SCORE += 300; break;
+	case 1: HIGH_SCORE += 100; break;
+	case 2: HIGH_SCORE += 200; break;
+	case 3: HIGH_SCORE += 300; break;
 	}
 	switch (curr->tankAll.tank.type){
 	case 0: break;
@@ -211,5 +211,4 @@ void delete_tank_list(){
 	}
 	lst->last=lst->curr=NULL;
 	lst->n=0;
-	free(lst);
 }
