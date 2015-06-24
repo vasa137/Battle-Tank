@@ -59,23 +59,25 @@ int check_powerups(int y, int x, int a){
 }
 
 void execute_powerups(clock_t *pw_shield_start, clock_t *pw_clock_start, clock_t *pw_shovel_start, unsigned long int*random_pup_gen){
-	int i, j, check ;
-	List *current,*temp;
+	int i, j, check, x, y;
+	List *current, *temp;
 	random_pup_gen++;
 	if (*random_pup_gen == 777000) *random_pup_gen = 0, rand_pup_gen();
 	if (powerup.bomb){
-		for (current = lst->first->next; current != NULL; ){
-			check=0;
+		for (current = lst->first->next; current != NULL;){
+			check = 0;
 			for (i = 0; i < 3; i++) // proverava da li je u travi.
 				for (j = 0; j < 3; j++)
-					if(current->tankAll.tank.visit_grass[i][j])
-					{ check = 1; break; }
+					if (current->tankAll.tank.visit_grass[i][j])
+					{
+						check = 1; break;
+					}
 			if (!check){
-				temp=current; 
-				current=current->next;
+				temp = current;
+				current = current->next;
 				free_tank(temp);
 			}// ako nije u travi brise ga.
-			else current=current->next;
+			else current = current->next;
 		}
 		powerup.bomb = 0;
 	}
@@ -85,33 +87,44 @@ void execute_powerups(clock_t *pw_shield_start, clock_t *pw_clock_start, clock_t
 			*pw_clock_start = clock();
 			powerup.clock = 2;
 			for (current = lst->first->next; current != NULL; current = current->next)
-			current->tankAll.tank.phase = 5;
+				current->tankAll.tank.phase = 5;
 		}
-		if (((clock()-*pw_clock_start)*1000/CLOCKS_PER_SEC) > 5000){
+		if (((clock() - *pw_clock_start) * 1000 / CLOCKS_PER_SEC) > PW_DURATION){ //  konstanta! PW_DURATION
 			for (current = lst->first->next; current != NULL; current = current->next)
 				current->tankAll.tank.phase = 2;
 			powerup.clock = 0;
-		}	
+		}
 	}
 
-	if (powerup.shovel){
+	if (powerup.shovel){ // ===========
 		if (powerup.shovel == 1){
 			*pw_clock_start = clock();
-			// stampaj beton oko baze.
+			x = 41;
+			for (y = 62; y < 67; y++) print_wall(y, x);
+			x = 49;
+			for (y = 62; y < 67; y++) print_wall(y, x);
+			y = 62;
+			for (x = 41; x < 50; x++) print_wall(y, x);
+
 			powerup.shovel = 2;
 		}
-		if (((clock()-*pw_shovel_start)*1000/CLOCKS_PER_SEC) > 5000){
-			// brisi beton oko baze.
+		if (((clock() - *pw_shovel_start) * 1000 / CLOCKS_PER_SEC) > PW_DURATION){ // konstanta! PW_DURATION
+			x = 41;
+			for (y = 62; y < 67; y++) print_head(y, x);
+			x = 49;
+			for (y = 62; y < 67; y++) print_head(y, x);
+			y = 62;
+			for (x = 41; x < 50; x++) print_head(y, x);
 			powerup.shovel = 0;
 		}
 	}
-	
+
 	if (powerup.shield){ // imam if u funkciji collision: if (!((temp == lst->first) && powerup.shield)) free_tank(temp);
 		if (powerup.shield == 1){
 			*pw_shield_start = clock();
 			powerup.shield = 2;
 		}
-		if (((clock()-*pw_shield_start)*1000/CLOCKS_PER_SEC) > 10000){
+		if (((clock() - *pw_shield_start) * 1000 / CLOCKS_PER_SEC) > PW_DURATION){//  konstanta! PW_DURATION
 			powerup.shield = 0;
 		}
 	}
@@ -119,7 +132,7 @@ void execute_powerups(clock_t *pw_shield_start, clock_t *pw_clock_start, clock_t
 
 int stars()
 {
-	switch(powerup.star){
+	switch (powerup.star){
 	case 0: return 1;
 	case 1: return 2;
 	case 2: case 3: return 4;
