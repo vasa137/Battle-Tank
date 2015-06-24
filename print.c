@@ -130,6 +130,13 @@ void what_to_print(int yu, int xu, int yd, int xd, chtype k)
 	}
 }
 
+void print_blocked_areas()
+{
+	what_to_print(bspawnY1, bspawnX2, bspawnY2, bspawnX1, '2');
+	what_to_print(spawn1Y1, spawn1X2, spawn1Y2, spawn1X1, '2');
+	what_to_print(spawn1Y1, spawn2X2, spawn1Y2, spawn2X1, '2');
+	what_to_print(spawn1Y1, spawn3X2, spawn1Y2, spawn3X1, '2');
+}
 
 void print_matrix(){
 	int i, j;
@@ -137,5 +144,6 @@ void print_matrix(){
 		for (j = 3; j < (dimy + 2); j++){
 		what_to_print(i, j, i, j, lvl_matrix[i-3][j-3]);
 		}
+	print_blocked_areas();
 	refresh();
 }
