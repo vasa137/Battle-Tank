@@ -176,7 +176,7 @@ void execute_powerups(clock_t *pw_shield_start, clock_t *pw_clock_start, clock_t
 	int i, j, check, x, y;
 	List *current,*temp;
 	(*random_pup_gen)++;
-	if (*random_pup_gen == 770000) *random_pup_gen = 0, rand_pup_gen();
+	if (*random_pup_gen == 377000) *random_pup_gen = 0, rand_pup_gen();
 	if (powerup.bomb){
 		for (current = lst->first->next; current != NULL; ){
 			check=0;
@@ -217,16 +217,18 @@ void execute_powerups(clock_t *pw_shield_start, clock_t *pw_clock_start, clock_t
 			for (y = 62; y < 67; y++) print_wall(y, x);
 			y = 62;
 			for (x = 41; x < 50; x++) print_wall(y, x);
+			refresh();
 
 			powerup.shovel = 2;
 		}
-		if (((clock() - *pw_shovel_start) * 1000 / CLOCKS_PER_SEC) > PW_DURATION){ // konstanta! PW_DURATION
+		if (((clock() - *pw_shovel_start) * 1000 / CLOCKS_PER_SEC) > PW_DURATION * 2){ // konstanta! PW_DURATION
 			x = 41;
 			for (y = 62; y < 67; y++) print_head(y, x);
 			x = 49;
 			for (y = 62; y < 67; y++) print_head(y, x);
 			y = 62;
 			for (x = 41; x < 50; x++) print_head(y, x);
+			refresh();
 			powerup.shovel = 0;
 		}
 	
@@ -237,7 +239,7 @@ void execute_powerups(clock_t *pw_shield_start, clock_t *pw_clock_start, clock_t
 			*pw_shield_start = clock();
 			powerup.shield = 2;
 		}
-		if (((clock()-*pw_shield_start)*1000/CLOCKS_PER_SEC) >  PW_DURATION){
+		if (((clock()-*pw_shield_start)*1000/CLOCKS_PER_SEC) >  PW_DURATION * 2){
 			powerup.shield = 0;
 		}
 	}
@@ -302,6 +304,4 @@ void delete_powerup_list()
 		Plst->first=Plst->first->next;
 		free(temp);
 	}
-	Plst->last=NULL;
-	free(Plst);
 }
