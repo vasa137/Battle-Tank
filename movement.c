@@ -131,10 +131,10 @@ void menu_up(int *mv, int limit, int *ind, int from, int mainm){
 	int i;
 	if (*mv == limit) return;
 	*mv = *mv - 2;
-	attron(COLOR_PAIR(8));
+	attron(COLOR_PAIR(8)| A_BOLD);
 	if(mainm) mvprintw(*mv, from, meni[--(*ind)]); //koji meni printa
 	else mvprintw(*mv, from, lvl_meni[--(*ind)]);
-	attroff(COLOR_PAIR(8));
+	attroff(COLOR_PAIR(8)| A_BOLD);
 	if(mainm) mvprintw(*mv + 2, from, meni[*ind + 1]);
 	else mvprintw(*mv + 2, from, lvl_meni[*ind + 1]);
 	refresh();
@@ -144,10 +144,10 @@ void menu_down(int *mv, int limit, int *ind, int from, int mainm){
 	int i;
 	if (*mv == limit) return;
 	*mv = *mv + 2;
-	attron(COLOR_PAIR(8));
+	attron(COLOR_PAIR(8)| A_BOLD);
 	if(mainm) mvprintw(*mv, from, meni[++(*ind)]);
 	else mvprintw(*mv, from, lvl_meni[++(*ind)]);
-	attroff(COLOR_PAIR(8));
+	attroff(COLOR_PAIR(8)| A_BOLD);
 	if(mainm) mvprintw(*mv - 2, from, meni[*ind - 1]);
 	else mvprintw(*mv - 2, from, lvl_meni[*ind - 1]);
 	refresh();
