@@ -36,15 +36,40 @@ void buttons(){
 int option_selected(int mv, int mainm){ // mainm ako smo u glavnom meniju
 	switch (mv){
 	case 7:      if (mainm) return 0;                                                else { init_matrix(); print_matrix(); buffer[0] = '\0'; element = 'b'; return 0; } break;
-	case 9:	 	 if (!mainm)														 return load_maps(1);                                              break;
-	case 11:     if (!mainm)														 return save_map();                                               break;
-	case 13:     if (mainm)	{ level_editor(); print_border_menu(y1c, x1c, y2c, x2c); print_commands(); create_map(map_name); return 1; }	 else return 0;   break;
-	case 15:																																		  break;
-	case 17:	 if (mainm) load_maps(0); break;																																  break;
-	case 19:     if (mainm) { system("cls"); exit(0); }																								  break;
+	case 9:	 	 if (mainm)	{bot_settings();delete_menu(y1m, x1m, y2m, x2m); return 1;}	           else   load_maps(1);  break;
+	case 11:	 if (mainm)	{ level_editor(); print_border_menu(y1c, x1c, y2c, x2c); print_commands(); create_map(map_name); return 1; }  else   return save_map(); 
+	case 13:     if (mainm)	{ delete_menu(y1c, x1c, y2c, x2c); return load_maps(0); }	else return 0; 						
+	case 15:	 if (mainm) read_high_scores(); break;														break;
+	case 17:	 if (mainm) { system("cls"); exit(0); }	                                                      break; 
 	}
 
 } //  koji blok je izabran
+
+
+
+void bot_settings(){
+	int limitup=11,limitdown=15,mv=11,i=6;
+	print_border_menu(y1m, x1m, y2m, x2m);
+	attron(COLOR_PAIR(10));
+		mvprintw(4, 111, " SET GAME DIFFICULTY : ");
+	attroff(COLOR_PAIR(10));
+	attron(COLOR_PAIR(8)|A_BOLD);
+	mvprintw(11, 117, " -> EASY ");
+	attroff(COLOR_PAIR(8)|A_BOLD);
+	mvprintw(13, 117, " -> MEDIUM");
+	mvprintw(15, 117, " -> HARD  ");
+	while(1){
+		switch(getch()){
+		    case KEY_UP : menu_up(&mv,limitup,&i,117,1); break;
+			case KEY_DOWN : menu_down(&mv,limitdown,&i,117,1); break;
+			case ENTER : if(mv==11) BOT_DIF=0;
+						 else if (mv==13) BOT_DIF=1;
+						 else if(mv==15) BOT_DIF=2; 
+			case ESC :   return;
+		}
+	}
+}
+
 
 void menu_content(int mainm){
 	int i, j;
@@ -60,7 +85,6 @@ void menu_content(int mainm){
 		mvprintw(13, 117, meni[3]);
 		mvprintw(15, 117, meni[4]);
 		mvprintw(17, 117, meni[5]);
-		mvprintw(19, 117, meni[6]);
 	}
 	else{
 		mvprintw(4, 117, " LEVEL EDITOR : ");
@@ -93,8 +117,8 @@ int main_menu(int mainm){
 		print_commands();
 	}
 	if (!mainm) limitdown = 13;
-	else limitdown = 19;
-	print_border_menu(y1m, x1m, y2m, x2m);
+	else limitdown = 17;
+	print_border_side_menu(y1m, x1m, y2m, x2m, 3);
 	menu_content(mainm);
 	while (tru){
 		if (_kbhit()){
@@ -102,10 +126,13 @@ int main_menu(int mainm){
 			case KEY_UP: menu_up(&mv, limitup, &ind, 117, mainm);		 break;
 			case KEY_DOWN: menu_down(&mv, limitdown, &ind, 117, mainm);  break;
 			case ENTER:
-				delete_menu(y1c-21,x1c,y2c-34,x2c); // vidi jos
-				delete_menu(y1m, x1m, y2m, x2m);  /*delete command menu*/
+				delete_menu(y1c - 11, x1c, y2c - 23, x2c); // vidi jos
+				delete_menu(y1m, x1m, y2m, x2m);  
 				if (tru = option_selected(mv, mainm)){
-					print_border_menu(y1m, x1m, y2m, x2m);
+					print_border_side_menu(y1m, x1m, y2m, x2m, 3);
+					print_border_side_menu(y1c - 11, x1c, y2c - 23, x2c, 3);
+					print_menu_pups(38); 
+					print_border_side_menu(y1c, x1c, y2c, x2c, 3);
 					menu_content(mainm);
 					mv = limitup;
 					ind = 0;
@@ -137,45 +164,49 @@ int main_menu(int mainm){
 }
 
 void level_editor(){
-	int yu = 32, xd = 32, yd = 32, xu = 32; // yu ~ y up ;  yd ~ y down; xu ~ x up; xd ~ x down     [yu]|    [xd]...[xu] |											//													[yd]|    [xd]...]xu] |
-	int i, j, tru = 1; // i,j pomocne promenljive;tru promenljiva koja prekida kretanje bloka po mapi; dify i difx vracaju visinu i sirinu bloka koji 
-	//treba da  se pojavi na mapi;
-	int n_undo, n_redo;
-	map *undo, *redo;
-	buffer[0] = '\0';
-	init_matrix();
-	clear();
-	element = 'b';
-	print_border_menu(2, 2, dimx + 2, dimy + 2); // screen dimensions
-	while (1){
-		if (!main_menu(0)) {  delete_menu(55, 95, 67, 120); delete_menu(47, 95, 67, 130); return; } // enter the menu } // enter the menu
-		tru = 1;
-		n_undo = n_redo = 0;
-		undo = (map*)calloc(1, sizeof(map));
-		redo = (map*)calloc(1, sizeof(map));
-		buttons();
-		yd = yu = 32;
-		xd = xu = 32;
-		what_to_print(yu, xu, yd, xd, element);
-		while (tru){	
-			switch (getch()){ // kretanje po mapi i cuvanje elementa na mapi// biranje elementa//menjanje dimenzija elementa
-			case KEY_UP:   if (lvl_can_move(yu, xu, yd, xd, 1))		move_up2x2(yu--, xu, yd--, xd);								break;
-			case KEY_DOWN: if (lvl_can_move(yu, xu, yd, xd, 2))		move_down2x2(yu++, xu, yd++, xd);							break;
-			case KEY_LEFT: if (lvl_can_move(yu, xu, yd, xd, 3))		move_left2x2(yu, xu--, yd, xd--);							break;
-			case KEY_RIGHT:if (lvl_can_move(yu, xu, yd, xd, 4))		move_right2x2(yu, xu++, yd, xd++);							break;
-			case ' ': PUSH_unredo(&undo, &n_undo);  save_in_matrix(yu, xu, yd, xd, element);									break;																	break;
-			case ESC: tru = 0;																									break;
-			case 'R': case 'r': size_resize(&yu, &xu, &yd, &xd);																break;
-			case 'B': case 'b': print_brick_lvl(yu, xu, yd, xd); element = 'b';													break;
-			case 'G': case 'g': print_grass_lvl(yu, xu, yd, xd); element = 'g';													break;
-			case 'W': case 'w': print_water_lvl(yu, xu, yd, xd); element = 'w';													break;
-			case 'C': case 'c': print_wall_lvl(yu, xu, yd, xd); element = 'c';													break;
-			case 'E': case'e':  element = 'e';		print_eraser(yu, xu, yd, xd);	 											break;
-			case 'S': case 's': if (buffer[0] != '\0') save_it(); else save_map();												break;
-			case 'z':case 'Z': _undo_redo(&undo, &redo, &n_undo, &n_redo);		what_to_print(yu, xu, yd, xd, element);			break;
-			case 'x': case 'X': _undo_redo(&redo, &undo, &n_redo, &n_undo);		what_to_print(yu, xu, yd, xd, element);			break;
+ int yu = 32, xd = 32, yd = 32, xu = 32; // yu  y up ;  yd  y down; xu  x up; xd  x down     [yu]|    [xd]...[xu] |           //             [yd]|    [xd]...]xu] |
+ int i, j, tru = 1; // i,j pomocne promenljive;tru promenljiva koja prekida kretanje bloka po mapi; dify i difx vracaju visinu i sirinu bloka koji 
+ //treba da  se pojavi na mapi;
+ int n_undo, n_redo;
+ map* undo, *redo;
+ buffer[0] = '\0';
+ init_matrix();
+ clear();
+ element = 'b';
+ print_border_menu(2, 2, dimx + 2, dimy + 2); // screen dimensions
+ while (1){
+  if (!main_menu(0)) { delete_menu(55, 95, 67, 120); delete_menu(47, 95, 67, 130); return; } // enter the menu
+  tru = 1;
+  n_undo = n_redo = 0;
+  undo = (map*)calloc(1, sizeof(map));
+  redo = (map*)calloc(1, sizeof(map));
+  buttons();
+  yd = yu = 32;
+  xd = xu = 32;
+  what_to_print(yu, xu, yd, xd, element);
+  while (tru){
+    
+   switch (getch()){ // kretanje po mapi i cuvanje elementa na mapi// biranje elementa//menjanje dimenzija elementa
+   case KEY_UP:   if (lvl_can_move(yu, xu, yd, xd, 1))  move_up2x2(yu--, xu, yd--, xd);        break;
+   case KEY_DOWN: if (lvl_can_move(yu, xu, yd, xd, 2))  move_down2x2(yu++, xu, yd++, xd);       break;
+   case KEY_LEFT: if (lvl_can_move(yu, xu, yd, xd, 3))  move_left2x2(yu, xu--, yd, xd--);       break;
+   case KEY_RIGHT:if (lvl_can_move(yu, xu, yd, xd, 4))  move_right2x2(yu, xu++, yd, xd++);       break;
+   case ' ': PUSH_unredo(&undo, &n_undo);  save_in_matrix(yu, xu, yd, xd, element);         break;                 break;
+   case ESC: tru = 0;                         break;
+   case 'R': case 'r': size_resize(&yu, &xu, &yd, &xd);                break;
+   case 'B': case 'b': print_brick_lvl(yu, xu, yd, xd); element = 'b';             break;
+   case 'G': case 'g': print_grass_lvl(yu, xu, yd, xd); element = 'g';             break;
+   case 'W': case 'w': print_water_lvl(yu, xu, yd, xd); element = 'w';             break;
+   case 'C': case 'c': print_wall_lvl(yu, xu, yd, xd); element = 'c';             break;
+   case 'E': case'e':  element = 'e';  print_eraser(yu, xu, yd, xd);             break;
+   case 'S': case 's': if (buffer[0] != '\0') save_it(); else  if(save_map()) tru = 0;         break;
+   case 'z':case 'Z': _undo_redo(&undo, &redo, &n_undo, &n_redo);  what_to_print(yu, xu, yd, xd, element);   break;
+   case 'x': case 'X': _undo_redo(&redo, &undo, &n_redo, &n_undo);  what_to_print(yu, xu, yd, xd, element);   break;
 
-			}
-		}
-	}
+   }
+   
+  }
+  destroy_undo_redo(&undo, &redo, n_redo, n_undo);
+  delete_menu(47, 95, 67, 130);
+ }
 }
