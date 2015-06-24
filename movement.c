@@ -1,11 +1,33 @@
 #include "tank.h"
 
+
+
+
+int blocked_areas(int yu, int xu, int yd, int xd)
+{
+	int i;
+	for (; yu <= yd; yu++)
+		for (i = xd; i <= xu; i++)
+		{
+		if ((yu >= baseY) && ((i >= baseX1) && (i <= baseX2))) return 1;
+		else
+			if (((yu >= spawn1Y1) && (yu <= spawn1Y2)) && ((i >= spawn1X1) && (i <= spawn1X2))) return 1;
+			else
+				if (((yu >= spawn1Y1) && (yu <= spawn1Y2)) && ((i >= spawn2X1) && (i <= spawn2X2))) return 1;
+				else
+					if (((yu >= spawn1Y1) && (yu <= spawn1Y2)) && ((i >= spawn3X1) && (i <= spawn3X2))) return 1;
+					else
+						if (((yu >= bspawnY1) && (yu <= bspawnY2)) && ((i >= bspawnX1) && (i <= bspawnX2))) return 1;
+
+		}
+	return 0;
+}
 int lvl_can_move(int yu, int xu, int yd, int xd, int num){
 	switch (num){
-	case 1: if ((yu - 1) == 2) return 0; else return 1; break;
-	case 2: if ((yd + 1) == (dimx + 2)) return 0; else return 1; break;
-	case 3: if ((xd - 1) == 2) return 0; else return 1; break;
-	case 4: if ((xu + 1) == (dimy + 2)) return 0; else return 1; break;
+	case 1: if (((yu - 1) == 2)||(blocked_areas(yu-1,xu,yd-1,xd))) return 0; else return 1; break; // up
+	case 2: if (((yd + 1) == (dimx + 2)) || blocked_areas(yu+1,xu,yd+1,xd)) return 0; else return 1; break; // down
+	case 3: if (((xd - 1) == 2)|| (blocked_areas(yu,xu-1,yd,xd-1))) return 0; else return 1; break; //left
+	case 4: if (((xu + 1) == (dimy + 2))||(blocked_areas(yu,xu+1,yd,xd+1))) return 0; else return 1; break; // right
 	}
 }  // ispituje mogucnost kretanje u zadatom smeru(zidovi mape ogranicavaju kretanje)
 
@@ -109,10 +131,10 @@ void menu_up(int *mv, int limit, int *ind, int from, int mainm){
 	int i;
 	if (*mv == limit) return;
 	*mv = *mv - 2;
-	attron(COLOR_PAIR(8)| A_BOLD);
+	attron(COLOR_PAIR(8));
 	if(mainm) mvprintw(*mv, from, meni[--(*ind)]); //koji meni printa
 	else mvprintw(*mv, from, lvl_meni[--(*ind)]);
-	attroff(COLOR_PAIR(8)| A_BOLD);
+	attroff(COLOR_PAIR(8));
 	if(mainm) mvprintw(*mv + 2, from, meni[*ind + 1]);
 	else mvprintw(*mv + 2, from, lvl_meni[*ind + 1]);
 	refresh();
@@ -122,10 +144,10 @@ void menu_down(int *mv, int limit, int *ind, int from, int mainm){
 	int i;
 	if (*mv == limit) return;
 	*mv = *mv + 2;
-	attron(COLOR_PAIR(8)| A_BOLD);
+	attron(COLOR_PAIR(8));
 	if(mainm) mvprintw(*mv, from, meni[++(*ind)]);
 	else mvprintw(*mv, from, lvl_meni[++(*ind)]);
-	attroff(COLOR_PAIR(8)| A_BOLD);
+	attroff(COLOR_PAIR(8));
 	if(mainm) mvprintw(*mv - 2, from, meni[*ind - 1]);
 	else mvprintw(*mv - 2, from, lvl_meni[*ind - 1]);
 	refresh();
@@ -190,5 +212,3 @@ void _undo_redo(map** pop, map** push, int* n_pop, int* n_push){
 	print_matrix();
 
 }
-
- 
