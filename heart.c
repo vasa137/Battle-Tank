@@ -1,10 +1,14 @@
 #include "tank.h"
 
-void start_level(clock_t *start_lvl_time, int *l, int *br, unsigned long int *random_pup_gen, long int* random_element_gen){
+void start_level(clock_t *start_lvl_time, int *l, int *br, unsigned long int *random_pup_gen,long int* random_element_gen){
 	char lvlprint[31];
 	char lvl_num[3];
-	*random_pup_gen = 0;
-	*random_element_gen = 0;
+	Levels tank_struct;
+	Plst=(Poweruplst*) malloc (sizeof(Poweruplst));
+	Plst->first=Plst->last=NULL;
+	lst = (Lst*)malloc(sizeof(Lst));
+	*random_pup_gen=0;
+	* random_element_gen=0;
 	strcpy(lvlprint, "level");
 	sprintf(lvl_num, "%d", *l + 1);
 	strcat(lvlprint, lvl_num);
@@ -18,15 +22,22 @@ void start_level(clock_t *start_lvl_time, int *l, int *br, unsigned long int *ra
 	lst->first = NULL;
 	lst->curr = NULL;
 	lst->last = NULL;
-	strcpy(map_name, "putIN.dat");
+	lst->n=0;
+	Plst->first= NULL;
+	Plst->last= NULL;
+	strcpy(map_name, "level");
+	strcat(map_name,lvl_num);
+	strcat(map_name,".map");
 	create_map(map_name);
+	tank_struct.kind=-1;
+	tank_struct.smart=0;
+
 	print_border_side_menu(2, x1m, 25, x2m, 3); // bots left.
 	print_bots_left(EMH, LVL); // Ne radi. saljes tezinu izabranu u podesavanjima( Easy-0 medium-1 hard-2) LVL(koji je nivo).  NOVO!
 	print_border_side_menu(27, x1m + 20, 36, x2m, 4);// high score counter.
 	print_border_side_menu(58, x1m, 67, x2m, 4); // pw disclaimer.
 	print_menu_pups(61);
-
-	alloc_tank(0);
+	alloc_tank(0,tank_struct);
 }
 
 void fire_rate_assessment(int keyPressed){
@@ -63,8 +74,10 @@ void execute_bots(){
 		if (i != 0){
 			pridx = 0; // vodi racuna da ne bi slao bilo koji pridx!
 			medium_bot();
-			if (lst->curr->tankAll.projectile[0].phase) projectile(lst->curr->tankAll.tank.position.y,
+			if (lst->curr->tankAll.projectile[0].phase){ projectile(lst->curr->tankAll.tank.position.y,
 				lst->curr->tankAll.tank.position.x, lst->curr->tankAll.projectile[0].position.projectil_dir);
+			}
+			if(!strcmp(map_name,"gameover.map")) return;
 		}
 		else{
 			for (pridx = 0; pridx < 4; pridx++)
@@ -75,23 +88,26 @@ void execute_bots(){
 }
 
 void demo_mode(){
+	Levels tank_struct;
 	lst = (Lst*)malloc(sizeof(Lst));
 	lst->first = NULL;
 	lst->curr = NULL;
 	lst->last = NULL;
 	lst->n = 0;
-	alloc_tank(0);
+	strcpy(map_name,"dobraje.map");
+	create_map(map_name);
+	tank_struct.kind=0;
+	tank_struct.smart=1;
+	alloc_tank(0,tank_struct);
 	lst->curr = lst->first; // ovo mora posle alokacije
 }
 
-/*void should_spawn_bot(clock_t *start_lvl_time, int *rez, int *br, int l, Levels *level[]){
+void should_spawn_bot(clock_t *start_lvl_time, int *rez, int *br, int l, Levels *level[]){
 	if (*br < lvl[l] && (((*rez = free_place(0)) && (((clock() - *start_lvl_time) * 1000 / CLOCKS_PER_SEC)>level[l][*br].time * 1000)) || (lst->n == 1))){
-
 		pridx = 0;
-		alloc_tank(*rez); (*br)++;
+		alloc_tank(*rez,level[l][*br]); (*br)++;
 	}
 }
-*/
 
 void link_levels(){
 	LEVEL[0] = levelEasy;
