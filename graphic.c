@@ -465,7 +465,14 @@ void show_number(int y, int x, int numI[5][3], chtype C){
 	}
 }
 
-void print_tank_status(int y, int x, TankDesign *tank_type, int *position){
+void print_tank_status(int y, int x, TankDesign *tank_type, int *position, int A){
+
+	switch (A){
+	case 0: mvaddch(y + 2, x , 'E');
+	case 1: mvaddch(y + 2, x, 'M');
+	case 2: mvaddch(y + 2, x, 'H');
+	}
+
 	attron(COLOR_PAIR(tank_type[position[0]].paint));
 	mvaddch(y - 1, x - 1, tank_type[position[0]].ch);
 
@@ -504,6 +511,7 @@ void delete_bots_left(){
 	if (M == -1) { M = 5; N--; }
 	y = yCord[N] - 1; x = xCord[M] - 1;
 	attron(COLOR_PAIR(1));
+	mvaddch(y-3,x+1,' ');
 	for (i = y; i < y + 3; i++)
 		for (j = x; j < x + 3; j++)
 			mvaddch(i, j, ' ');
@@ -513,28 +521,23 @@ void delete_bots_left(){
 	M--;
 }
 
-void print_bots_left(int EMH, int LVL){// EMH - easy(0), medium(1), hard(2) LVL - koji nivo
+void print_bots_left(){// BOT_DIF - easy(0), medium(1), hard(2) LVL - koji nivo
 	int i, j, bot = -1, n, m;
 	TankDesign *style;
 	int xCord[] = { 105, 112, 119, 126, 133, 140 };
 	int yCord[] = { 5, 12, 19 };
-
-	if (LEVEL[EMH][LVL][bot].kind) style = special_tank_v;
-	else style = normal_tank_v;
-
-
 	for (i = 0; i < 3; i++){
 		for (j = 0; j < 6; j++){
 			bot++;
-			if (LEVEL[EMH][LVL][bot].kind) style = special_tank_v;
+			if (LEVEL[BOT_DIF][LVL][bot].kind) style = special_tank_v;
 			else style = normal_tank_v;
 
-			if (bot < botsInLevel[EMH][LVL])
-				print_tank_status(yCord[i], xCord[j], style, top);
+			if (bot < botsInLevel[BOT_DIF][LVL])
+				print_tank_status(yCord[i], xCord[j], style, top, LEVEL[BOT_DIF][LVL][bot].smart);
 		}
 	}
-	N = botsInLevel[EMH][LVL] / 6; M = botsInLevel[EMH][LVL] % 6 - 1;
-	for (i = botsInLevel[EMH][LVL]; i > 0; i--){
+	N = botsInLevel[BOT_DIF][LVL] / 6; M = botsInLevel[BOT_DIF][LVL] % 6 - 1;
+	for (i = botsInLevel[BOT_DIF][LVL]; i > 0; i--){
 		delete_bots_left();
 		Sleep(1000);
 	}
@@ -582,7 +585,7 @@ void counter_spec(int y, int x){
 
 void print_high_score(){
 	int I, II, III, IV;
-	HIGH_SCORE = 2344;
+
 	if (HIGH_SCORE < 10){
 		I = HIGH_SCORE;
 		print_number(29, 138, I);
