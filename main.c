@@ -30,7 +30,7 @@ void main(){ // Da sredimo main kasnije.
 					execute_our_tank(&mm, &pp, &phase, &lastKey);
 				execute_bots();
 				if ((!powerup.life) || (!strcmp(map_name, "gameover.map"))) break;
-				if (lst->n == 1 && br >= botsInLevel[BOT_DIF][LVL]) { Sleep(2000); free_tank(lst->first); break; }
+				if (lst->n == 1 && br >= botsInLevel[BOT_DIF][LVL]) { print_high_score(); Sleep(2000); free_tank(lst->first); break; }
 			}
 			delete_tank_list();
 			delete_powerup_list();
