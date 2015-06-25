@@ -36,10 +36,10 @@ void buttons(){
 int option_selected(int mv, int mainm){ // mainm ako smo u glavnom meniju
 	switch (mv){
 	case 7:      if (mainm) return 0;                                                else { init_matrix(); print_matrix(); buffer[0] = '\0'; element = 'b'; return 0; } break;
-	case 9:	 	 if (mainm)	{bot_settings();delete_menu(y1m, x1m, y2m, x2m); return 1;}	           else   load_maps(1);  break;
+	case 9:	 	 if (mainm)	{ bot_settings();delete_menu(y1m, x1m, y2m, x2m); return 1;}	           else   load_maps(1);  break;
 	case 11:	 if (mainm)	{ level_editor(); print_border_menu(y1c, x1c, y2c, x2c); print_commands(); create_map(map_name); return 1; }  else   return save_map(); 
-	case 13:     if (mainm)	{ delete_menu(y1c, x1c, y2c, x2c); return load_maps(0); }	else return 0; 						
-	case 15:	 if (mainm) read_high_scores(); break;														break;
+	case 13:     if (mainm) { delete_menu(y1c, x1c, y2c, x2c); return load_maps(0); } else return 0;						
+	case 15:	 if (mainm) { read_high_scores(); return 1; }                                                         break;													
 	case 17:	 if (mainm) { system("cls"); exit(0); }	                                                      break; 
 	}
 
@@ -133,6 +133,7 @@ int main_menu(int mainm){
 					print_border_side_menu(y1c - 11, x1c, y2c - 23, x2c, 3);
 					print_menu_pups(38); 
 					print_border_side_menu(y1c, x1c, y2c, x2c, 3);
+					print_commands();
 					menu_content(mainm);
 					mv = limitup;
 					ind = 0;
@@ -173,7 +174,7 @@ void level_editor(){
  init_matrix();
  clear();
  element = 'b';
- print_border_menu(2, 2, dimx + 2, dimy + 2); // screen dimensions
+	print_border_menu(2, 2, dimx+2, dimy+2); // IZMENA // screen dimensions
  while (1){
   if (!main_menu(0)) { delete_menu(55, 95, 67, 120); delete_menu(47, 95, 67, 130); return; } // enter the menu
   tru = 1;
@@ -202,9 +203,7 @@ void level_editor(){
    case 'S': case 's': if (buffer[0] != '\0') save_it(); else  if(save_map()) tru = 0;         break;
    case 'z':case 'Z': _undo_redo(&undo, &redo, &n_undo, &n_redo);  what_to_print(yu, xu, yd, xd, element);   break;
    case 'x': case 'X': _undo_redo(&redo, &undo, &n_redo, &n_undo);  what_to_print(yu, xu, yd, xd, element);   break;
-
    }
-   
   }
   destroy_undo_redo(&undo, &redo, n_redo, n_undo);
   delete_menu(47, 95, 67, 130);
