@@ -120,18 +120,12 @@ int load_maps(int decide){
 				delete_menu(5, 101, 38, 144);  j = print_a_page(book, ++c_page, limitdown, limitup, per_page) - 2; mv = 8; i = (c_page - 1)*per_page;
 			} break;
 			case ENTER: if (decide) { strcpy(buffer, book[i]); load_matrix(book[i]); print_matrix(); free_book(book);  delete_menu(y1, x1, y2, x2); return 0; }
-						else { create_map(book[i]); free_book(book); delete_menu(y1, x1, y2, x2); return 0; }
+						else { clear(); custom_map(book[i]); free_book(book); delete_menu(y1, x1, y2, x2); return 1; }
 
 
 				break;
 			case ESC: delete_menu(y1, x1, y2, x2); return 1; break;
 			}
-
 		}
-
-
-
 	}
-
-
 }
