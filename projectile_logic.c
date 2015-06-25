@@ -172,9 +172,14 @@ void collision(int y, int x, int projectil_dir, char object){ // saljes mi koord
 			else{
 				delete_tank(lst->first->tankAll.tank.position.y, lst->first->tankAll.tank.position.x);
 				strcpy(map_name, "gameover.map");
-				new_high_score(HIGH_SCORE);
 				create_map(map_name);
 				Sleep(2300);
+				delete_menu(2, 100, 45, 130);
+				delete_menu(y1c, x1c, y2c, x2c);
+				delete_menu(y1c - 11, x1c, y2c - 23, x2c);
+				delete_menu(27, x1m + 20, 36, x2m);
+				new_high_score(HIGH_SCORE);
+				HIGH_SCORE = 0;
 				powerup.life--;
 				break;
 			}
@@ -225,6 +230,12 @@ void collision(int y, int x, int projectil_dir, char object){ // saljes mi koord
 		strcpy(map_name, "gameover.map");
 		create_map(map_name);
 		Sleep(2300);
+		delete_menu(2, 100, 45, 130);
+		delete_menu(y1c, x1c, y2c, x2c);
+		delete_menu(y1c - 11, x1c, y2c - 23, x2c);
+		delete_menu(27, x1m + 20, 36, x2m);
+		new_high_score(HIGH_SCORE);  // 228
+		HIGH_SCORE = 0;
 		break;
 	}
 
