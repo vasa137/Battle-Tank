@@ -73,15 +73,13 @@ void execute_our_tank(unsigned short *mm, unsigned short *pp, int *phase, int *l
 		else{
 			ftime(&vreme);
 			*mm = vreme.millitm;
-			if (delay_s(100, *mm, *pp, *phase)){
+			if (delay_s(67, *mm, *pp, *phase)){
 				action(keyPressed, &lst->first->tankAll);
 				*mm = *pp = vreme.millitm;
 			}
 		}
 	}
 }
-
-
 
 void execute_bots(){
 	int i;
