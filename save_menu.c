@@ -52,7 +52,7 @@ int save_map(){
 	FILE  *saved_maps;
 	buffer[0] = '\0';
 
-	print_border(y1, x1, y2, x2);
+	print_border_side_menu(y1, x1, y2, x2, 3);// IZMENA
 	mvprintw(y1 + 1, x1 + 15, " S A V E  M A P  A S");
 	mvprintw(y1 + 6, x1 + 2, " Map Name :  _______________");
 	mvprintw(y1 + 13, x1 + 2, "ESC : Return to main menu ");
