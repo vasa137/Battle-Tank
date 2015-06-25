@@ -6,7 +6,7 @@ unsigned long long int RSA_D(long long int checksum)
 	unsigned long long int d = 17; // p = 49; q = 43 11 13
 	unsigned long long int n = 3 * 11;
 	unsigned long long int rez;
-	rez = ((unsigned long long int)pow(checksum, d) % n);
+	rez = ((unsigned long long int)pow((double)checksum, (double)d) % n);
 	return rez;
 }
 
@@ -16,7 +16,7 @@ unsigned long long int RSA_E(long long int sum)
 	unsigned long long int e = 7;
 	unsigned long long int n = 3 * 11;
 	unsigned long long int rez;
-	rez = (unsigned long long int)pow(sum, e) % n;
+	rez =( (unsigned long long int)pow((double)sum,(double) e) )% n;
 	return rez;
 }
 
@@ -34,7 +34,7 @@ FILE* create_scoreboard_n_check(FILE* hs, score** best)
 	while (!feof(hs)) // until it hits eof of binary file
 	{
 		//fread(zurzeit, sizeof(score*), 1, hs);
-		fread(zurzeit->name, sizeof(chtype), 10, hs);
+		fread(zurzeit->name, sizeof(char), 10, hs);
 		fread(&zurzeit->score, sizeof(long long int), 1, hs);
 		zurzeit->name[9] = '\0';
 		sum += zurzeit->score;
@@ -59,9 +59,11 @@ FILE* create_scoreboard_n_check(FILE* hs, score** best)
 	return hs;
 	}
 
-int show_scores(score* zurzeit, int j, score* cmp)
+int show_scores(score* best, int j, score* cmp)
 {
-	int i = 1, rvl = 0;
+	int i = 1, rvl = 0; 
+	score* zurzeit;
+	zurzeit = best;
 	//======prints scores on screen========
 	while ((zurzeit) && (i <11))
 	{
@@ -70,7 +72,7 @@ int show_scores(score* zurzeit, int j, score* cmp)
 			zurzeit = zurzeit->next;
 			continue;
 		}
-		mvprintw(j, 110, "%d. %-4s    %4d", i++, zurzeit->name, zurzeit->score);
+		mvprintw(j, 110, "%d. %-5s    %4d", i++, zurzeit->name, zurzeit->score);
 		zurzeit = zurzeit->next;
 		j += 2;
 	}
@@ -79,6 +81,7 @@ int show_scores(score* zurzeit, int j, score* cmp)
 	//=====================================
 
 }
+
 void destroy_scoreboard(score* best)
 {
 	score* zurzeit;
@@ -89,8 +92,6 @@ void destroy_scoreboard(score* best)
 		free(zurzeit);
 	}
 }
-
-
 
 score* insert_n_h(score** best, long long int s) // new high score is added to the list of top scores
 {
@@ -109,15 +110,10 @@ score* insert_n_h(score** best, long long int s) // new high score is added to t
 			}
 			zurzeit = zurzeit->next;
 		}
+	free(rvl);
 	return NULL;
 
 }
-
-
-
-
-
-
 
 void new_high_score(long long int s)
 {
@@ -126,25 +122,31 @@ void new_high_score(long long int s)
 	chtype Key;
 	char name[10];
 	long long int sum = 0, checksum = 0;
-	int i = 0, tru, j = 114, row;
-	int min = 114, max = 123;
+	int i = 0, tru, j = 113, row;
+	int min = 113, max = 122;
 	int x1 = 100, y1 = 2, x2 = 145, y2 = 45;
+	delete_menu(y1, x2, y2+20, x2+10);
+	delete_menu(y1c, x1c, y2c, x2c);
+	delete_menu(y1c - 11, x1c, y2c - 23, x2c);
+	clear();
+	if (!s) return;
 	if (!(hs = fopen("high_scores.dat", "rb"))) hs = fopen("high_scores.dat", "wb"); // if it doesnt exist;
 	else{
-		if (!(hs = create_scoreboard_n_check(hs, &best))) return 1;
+		if (!(hs = create_scoreboard_n_check(hs, &best))) return ;
 	}
 
 	fclose(hs);
 	
 	tru = 1;
 
-	delete_menu(y1c, x1c, y2c, x2c);
-	print_border_menu(y1, x1, y2, x2);
+	
+	//print_border_menu(y1, x1, y2, x2);
+	print_border_side_menu(y1, x1, y2, x2, 3);
 
 	name[0] = '\0';
 
 	attron(COLOR_PAIR(10));
-	mvaddstr(y1 + 3, x1 + 12, "H I G H  S C O R E S :");
+	mvaddstr(y1 + 3, x1 + 12, "NEW HIGH SCORE:");
 	attroff(COLOR_PAIR(10));
 
 	neu = insert_n_h(&best, s);
@@ -216,8 +218,11 @@ int read_high_scores()
 	mvaddstr(y1 + 3, x1 + 12, "H I G H  S C O R E S :");
 	attroff(COLOR_PAIR(10));
 
-	print_border_menu(y1, x1, y2, x2);
+	//print_border_menu(y1, x1, y2, x2);
+	
 	delete_menu(y1c, x1c, y2c, x2c);
+	delete_menu(y1c - 11, x1c, y2c - 23, x2c);
+	print_border_side_menu(y1, x1, y2, x2, 3);
 
 	if (!(hs = fopen("high_scores.dat", "rb")))	{
 		delete_menu(y1, x1, y2, x2);	  return 1;
