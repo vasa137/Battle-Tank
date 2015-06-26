@@ -47,7 +47,7 @@ void save_it(){
 
 int save_map(){
 	int i = 0, j = 115, tru = 1;
-	char Key;
+	chtype Key;
 	int x1 = 100, y1 = 2, x2 = 145, y2 = 17, min = 115, max = 130, mv = 8, ind1 = 4;
 	FILE  *saved_maps;
 	buffer[0] = '\0';
