@@ -1,7 +1,7 @@
 #include "tank.h"
 
 void init_powerups(){
-	powerup.life = 1;
+	powerup.life = 2;
 	powerup.bomb = 0;
 	powerup.star = 0;
 	powerup.clock = 0;
@@ -11,12 +11,12 @@ void init_powerups(){
 
 void update_powerups(char pw){
 	switch (pw){
-	case 'l': powerup.life++;		break;
-	case 'q': powerup.bomb = 1;		break;
-	case 's': powerup.star++;		break;
-	case 'a': powerup.clock = 1;	break;
-	case 'y': powerup.shovel = 1;	break;
-	case 'x': powerup.shield = 1;	break;
+	case 'l': powerup.life++;							break;
+	case 'q': powerup.bomb = 1;							break;
+	case 's': if(powerup.star<3) powerup.star++;		break;
+	case 'a': powerup.clock = 1;						break;
+	case 'y': powerup.shovel = 1;						break;
+	case 'x': powerup.shield = 1;						break;
 	}
 }
 
@@ -93,7 +93,6 @@ int check_powerups(int y, int x, int a){
 				temp=which_powerup(y,x-2);
 				free_powerup(temp);
 			}
-			else if ((matrix[y - y1b][x - x1b - 2] == ' ') || (matrix[y - y1b][x - x1b - 2] == 'g')) flag[1]=1;
 			if	(matrix[y - y1b + 1][x - x1b - 2] == pUps[i]){
 				if(lst->curr==lst->first) update_powerups(pUps[i]);
 				temp=which_powerup(y+1,x-2);
@@ -103,14 +102,17 @@ int check_powerups(int y, int x, int a){
 	return 1;
 	case 3:
 		for (i = 0; i < 6; i++){
-		if (matrix[y - y1b - 1][x - x1b + 2] == pUps[i]) {
+		
+			if (matrix[y - y1b - 1][x - x1b + 2] == pUps[i]) {
 				flag[0]=1; // negde da ubacimo brisanje powerupa.
 			}
 		else if ((matrix[y - y1b - 1][x - x1b + 2] == ' ') || (matrix[y - y1b - 1][x - x1b + 2] == 'g')) flag[0]=1;
-			if	(matrix[y - y1b][x - x1b + 2] == pUps[i]){
+			
+		if	(matrix[y - y1b][x - x1b + 2] == pUps[i]){
 				flag[1]=1;// negde da ubacimo brisanje powerupa.
 			}
 			else if ((matrix[y - y1b][x - x1b + 2] == ' ') || (matrix[y - y1b][x - x1b + 2] == 'g')) flag[1]=1;
+			
 			if	(matrix[y - y1b + 1][x - x1b + 2] == pUps[i]){
 				flag[2]=1; // negde da ubacimo brisanje powerupa.
 			}
@@ -118,7 +120,8 @@ int check_powerups(int y, int x, int a){
 	} 
 		for(i=0;i<=2; i++) if(flag[i]==0) return 0;
 			for (i = 0; i < 6; i++){
-		if (matrix[y - y1b - 1][x - x1b + 2] == pUps[i]) {
+		
+			if (matrix[y - y1b - 1][x - x1b + 2] == pUps[i]) {
 				if(lst->curr==lst->first) update_powerups(pUps[i]);
 				temp=which_powerup(y-1,x+2);
 				free_powerup(temp); // negde da ubacimo brisanje powerupa.
@@ -176,7 +179,7 @@ void execute_powerups(clock_t *pw_shield_start, clock_t *pw_clock_start, clock_t
 	int i, j, check, x, y;
 	List *current,*temp;
 	(*random_pup_gen)++;
-	if (*random_pup_gen == 377000) *random_pup_gen = 0, rand_pup_gen();
+	if (*random_pup_gen == 700000) *random_pup_gen = 0, rand_pup_gen();
 	if (powerup.bomb){
 		for (current = lst->first->next; current != NULL; ){
 			check=0;
@@ -210,7 +213,7 @@ void execute_powerups(clock_t *pw_shield_start, clock_t *pw_clock_start, clock_t
 
 	if (powerup.shovel){
 		if (powerup.shovel == 1){
-			*pw_clock_start = clock();
+			*pw_shovel_start = clock();
 			x = 41;
 			for (y = 62; y < 67; y++) print_wall(y, x);
 			x = 49;
@@ -262,9 +265,9 @@ void alloc_powerup(chtype type, int y, int x)
 	if(Plst->first==NULL) Plst->first=novi;
 	else Plst->last->next=novi;
 	Plst->last=novi;
-	novi->type=type;
-	novi->position_y=y;
-	novi->position_x=x;
+	novi->info.type=type;
+	novi->info.position_y=y;
+	novi->info.position_x=x;
 }
 
 void free_powerup(Powerup_list* curr)
@@ -278,8 +281,8 @@ void free_powerup(Powerup_list* curr)
 	if (!prev) Plst->first = curr->next;
 	else prev->next = curr->next;
 	if (curr == Plst->last) Plst->last = prev;
-	for (j = (curr->position_y - 1); j < (curr->position_y + 2); j++){
-		for (i = (curr->position_x - 1); i < (curr->position_x + 2); i++){
+	for (j = (curr->info.position_y - 1); j < (curr->info.position_y + 2); j++){
+		for (i = (curr->info.position_x - 1); i < (curr->info.position_x + 2); i++){
 			matrix[j - 2][i - 2] = ' ';
 			print_blanko(j,i);
 		}
@@ -290,7 +293,7 @@ void free_powerup(Powerup_list* curr)
 Powerup_list * which_powerup(int y, int x){
 	Powerup_list * temp=Plst->first;
 	while(temp!=NULL){
-		if ((y == temp->position_y || y == temp->position_y + 1 || y == temp->position_y - 1) && (x == temp->position_x|| x == temp->position_x + 1 || x == temp->position_x - 1)) return temp;
+		if ((y == temp->info.position_y || y == temp->info.position_y + 1 || y == temp->info.position_y - 1) && (x == temp->info.position_x|| x == temp->info.position_x + 1 || x == temp->info.position_x - 1)) return temp;
 		temp=temp->next;
 	}
 }
