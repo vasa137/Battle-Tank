@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #include <stdio.h>
 #include <stdlib.h>
 #include <windows.h>
@@ -444,17 +445,85 @@ void main(){
 	char last_object=' ';
 	int y = 4, x = 4, check = 0, keyPressed, last_move, projectil_dir, px, py; // f- da li postoji projektil
 	char map_name[50] = "vasa.txt";
+=======
+#include "tank.h"
+
+void main(){ // Da sredimo main kasnije.
+	int i, rez;
+	int br, phase = 1, lastKey = 5;
+	long int random_element_gen;
+	unsigned long int random_pup_gen;
+	unsigned short mm = 0, pp = 0;
+	char lvlprint[31];
+	char lvl_num[3];
+	clock_t start_lvl_time, pw_shield_start, pw_clock_start, pw_shovel_start;
+	Plst = (Poweruplst*)malloc(sizeof(Poweruplst));
+	Plst->first = Plst->last = NULL;
+	lst = (Lst*)malloc(sizeof(Lst));
+>>>>>>> origin/master
 	init_curses();
-	create_map(map_name);
-	create_tank(y, x, 1, special_tank_v);
-	last_move = 1; //zato sto tenk stvaramo uspravno
+	link_levels();
 	while (1){
-		time_now();
-		if (_kbhit())
-		{
-			keyPressed = getch();
-			action(&y, &x, special_tank_v, special_tank_h, keyPressed, &check, &last_move, &projectil_dir);
+		demo_mode();
+		refresh();
+		main_menu(1);
+		for (LVL = 0; LVL<10; LVL++){ // Begin.
+			if(!GAME_LOADED)  start_level(&start_lvl_time, &LVL, &br, &random_pup_gen, &random_element_gen);
+			else{
+				start_lvl_time=clock()-level_info.time;
+				LVL=level_info.Lvl;
+				br=level_info.Br;
+				HIGH_SCORE=level_info.high_score;
+				random_pup_gen = 0;
+				random_element_gen = 0;
+				sprintf(lvl_num, "%d", LVL + 1);
+				strcpy(map_name, "level");
+				strcat(map_name, lvl_num);
+				strcat(map_name, ".map");
+				create_map(map_name);
+			}
+			while (1){
+				time_now();
+				print_high_score();
+				random_element_gen++;
+				if (random_element_gen == 100000) random_element_gen = 0, rand_gen();
+				execute_powerups(&pw_shield_start, &pw_clock_start, &pw_shovel_start, &random_pup_gen);
+				should_spawn_bot(&start_lvl_time, &rez, &br, LVL);
+				if (_kbhit())
+					execute_our_tank(&mm, &pp, &phase, &lastKey, start_lvl_time, br, 1);
+				execute_bots(1);
+				if (!strcmp(map_name,"gohardorgohome.map")) break;
+				if ((!powerup.life) || (!strcmp(map_name, "gameover.map"))){
+					create_map(map_name);
+					Sleep(2000);
+					break;
+				}
+				if (lst->n == 1 && br >= botsInLevel[BOT_DIF][LVL]) { print_high_score(); Sleep(2000); free_tank(lst->first); break; }
+			}
+			delete_tank_list();
+			delete_powerup_list();
+			if(GAME_LOADED) GAME_LOADED=0;
+			if (!strcmp(map_name, "gameover.map") ||  (!strcmp(map_name, "gohardorgohome.map")) ) break;
 		}
+<<<<<<< HEAD
 		if (check) projectile(&py, &px, y, x, projectil_dir, &mm, &pp, &check, &last_object);
 	}
 }
+=======
+		if(LVL==10){
+			strcpy(map_name,"win.map");
+			create_map(map_name);
+			Sleep(2500);
+			break;
+		}
+		if(! (!strcmp(map_name, "gohardorgohome.map"))) new_high_score(HIGH_SCORE);
+		HIGH_SCORE=0;
+		clear();
+		//delete_menu(2, x1m, 25, x2m);
+		//delete_menu(27, x1m + 20, 36, x2m);
+		//delete_menu(58, x1m, 67, x2m);
+	}
+	free(lst);
+	free(Plst);
+}
+>>>>>>> origin/master
