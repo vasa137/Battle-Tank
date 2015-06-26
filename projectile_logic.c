@@ -17,7 +17,9 @@ void projectile(int y, int x, int projectil_dir){
 	else lst->curr->tankAll.projectile[pridx].mm = vreme.millitm;
 	if (delay_s(40, lst->curr->tankAll.projectile[pridx].mm, lst->curr->tankAll.projectile[pridx].pp, lst->curr->tankAll.projectile[pridx].phase)) { //u prvoj inicijalizaciji last object saljemo bez inicijalizacije jer ga ne koristimo
 		lst->curr->tankAll.projectile[pridx].last_object = move_projectile(projectil_dir);
-		if (lst->curr->tankAll.projectile[pridx].phase == 1) if (lst->curr->tankAll.projectile[pridx].last_object != 't') lst->curr->tankAll.projectile[pridx].phase = 2;// u prvom pozivu check ce preci u 2->stanje leta
+		if (lst->curr->tankAll.projectile[pridx].phase == 1) if (lst->curr->tankAll.projectile[pridx].last_object != 't') {
+			lst->curr->tankAll.projectile[pridx].phase = 2;// u prvom pozivu check ce preci u 2->stanje leta
+		}
 		ftime(&vreme);
 		lst->curr->tankAll.projectile[pridx].pp = lst->curr->tankAll.projectile[pridx].mm = vreme.millitm;
 	}
@@ -48,6 +50,7 @@ phase of projectile*/
 			lst->curr->tankAll.projectile[pridx].phase = 0; break;
 		case 2: --lst->curr->tankAll.projectile[pridx].position.y; break; //ako naidje na travu samo pomeri metak ali ga ne ispisuj!
 		}
+		return object.obs;
 		break;
 
 	case 2:
@@ -59,6 +62,7 @@ phase of projectile*/
 			lst->curr->tankAll.projectile[pridx].phase = 0; break;
 		case 2: --lst->curr->tankAll.projectile[pridx].position.x; break;
 		}
+		return object.obs;
 		break;
 	case 3:
 		object = can_fly(lst->curr->tankAll.projectile[pridx].position.y, lst->curr->tankAll.projectile[pridx].position.x + 1);
@@ -69,6 +73,7 @@ phase of projectile*/
 			lst->curr->tankAll.projectile[pridx].phase = 0; break;
 		case 2: ++lst->curr->tankAll.projectile[pridx].position.x;  break;
 		}
+		return object.obs;
 		break;
 
 	case 4:
@@ -80,9 +85,11 @@ phase of projectile*/
 			lst->curr->tankAll.projectile[pridx].phase = 0; break;
 		case 2: ++lst->curr->tankAll.projectile[pridx].position.y; break;
 		}
+		return object.obs;
 		break;
 	}
 	refresh();
+	object.obs=' ';
 	return object.obs;
 }
 
@@ -146,7 +153,8 @@ void collision(int y, int x, int projectil_dir, char object){ // saljes mi koord
 			if (matrix[y - y1b][x - x1b + 1] == 'b' && (matrix[y - y1b - 1][x - x1b + 1] != 'b')) print_blanko(y, x + 1);
 			break;
 		}
-
+		
+	
 		break;
 	case 't':
 		temp = which_tank(y, x);
@@ -154,6 +162,7 @@ void collision(int y, int x, int projectil_dir, char object){ // saljes mi koord
 		if (temp == lst->first){
 			if (powerup.shield) break;
 			if (powerup.life>1){
+
 				delete_tank(lst->first->tankAll.tank.position.y, lst->first->tankAll.tank.position.x);
 				lst->first->tankAll.tank.position.y = 65;// Pocetne koordinate za nas tenk, zameniti sa konstantama.
 				lst->first->tankAll.tank.position.x = 24;
@@ -172,26 +181,19 @@ void collision(int y, int x, int projectil_dir, char object){ // saljes mi koord
 			else{
 				delete_tank(lst->first->tankAll.tank.position.y, lst->first->tankAll.tank.position.x);
 				strcpy(map_name, "gameover.map");
-				create_map(map_name);
-				Sleep(2300);
-				delete_menu(2, 100, 45, 130);
-				delete_menu(y1c, x1c, y2c, x2c);
-				delete_menu(y1c - 11, x1c, y2c - 23, x2c);
-				delete_menu(27, x1m + 20, 36, x2m);
-				new_high_score(HIGH_SCORE);
-				HIGH_SCORE = 0;
 				powerup.life--;
 				break;
 			}
 		}
 		else free_tank(temp);
+		PlaySound(TEXT("Unistenje_tenka.wav"), NULL, SND_ASYNC);
 		break;
 	case 'x': case 'l': case 's': case 'q': case 'a': case 'y':
 		pom = which_powerup(y, x);
 		free_powerup(pom);
 		break;
 	case 'c':
-		if (lst->curr->tankAll.tank.type == 1){
+		if (lst->curr->tankAll.tank.type == 1 || (lst->curr==lst->first && powerup.star==3)){
 			switch (projectil_dir){
 			case 1://up 
 				if (matrix[y - y1b][x - x1b - 1] == 'c' && (matrix[y - y1b + 1][x - x1b - 1] != 'c')) print_blanko(y, x - 1);
@@ -227,15 +229,10 @@ void collision(int y, int x, int projectil_dir, char object){ // saljes mi koord
 		break;
 
 	case 'h':
+		PlaySound(TEXT("Unistenje_tenka.wav"), NULL, SND_ASYNC);
 		strcpy(map_name, "gameover.map");
 		create_map(map_name);
 		Sleep(2300);
-		delete_menu(2, 100, 45, 130);
-		delete_menu(y1c, x1c, y2c, x2c);
-		delete_menu(y1c - 11, x1c, y2c - 23, x2c);
-		delete_menu(27, x1m + 20, 36, x2m);
-		new_high_score(HIGH_SCORE);  // 228
-		HIGH_SCORE = 0;
 		break;
 	}
 
