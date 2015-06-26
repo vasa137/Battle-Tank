@@ -61,12 +61,15 @@ void alloc_tank(int place, Levels tank_struct){ //place=0 za nas tenk
 		}
 		else { novi->tankAll.tank.position.y = splace[rez - 1].y; novi->tankAll.tank.position.x = splace[rez - 1].x; }
 		novi->tankAll.projectile = (Projectile *)malloc(sizeof(Projectile));
-		switch (tank_struct.kind){
-		case 0:  novi->tankAll.tank.tankDesign_v = normal_tank_v; novi->tankAll.tank.tankDesign_h = normal_tank_h; break;
-		case 1:  novi->tankAll.tank.tankDesign_v = special_tank_v; novi->tankAll.tank.tankDesign_h = special_tank_h; break;
+		switch (tank_struct.smart){
+		case 1:  novi->tankAll.tank.tankDesign_v = normal_tank_v; novi->tankAll.tank.tankDesign_h = normal_tank_h; break;
+		case 2:  novi->tankAll.tank.tankDesign_v = brat_tank_v; novi->tankAll.tank.tankDesign_h = brat_tank_h; break;
+		case 3:  novi->tankAll.tank.tankDesign_v = special_tank_v; novi->tankAll.tank.tankDesign_h = special_tank_h; break;
 		}
 		novi->tankAll.tank.position.last_move = 4;
 		novi->tankAll.tank.position.barrel = 4;
+
+		delete_bots_left();
 	}
 	novi->tankAll.tank.type = tank_struct.kind;
 	novi->tankAll.tank.diff = tank_struct.smart;
@@ -113,6 +116,7 @@ void free_tank(List *curr){
 	if (lst->curr->tankAll.projectile[pridx].phase == 2){
 		delete_projectile(lst->curr->tankAll.projectile[pridx].position.y, lst->curr->tankAll.projectile[pridx].position.x, lst->curr->tankAll.projectile[pridx].last_object);
 		lst->curr->tankAll.projectile[pridx].phase = 0;
+		free(lst->curr->tankAll.projectile);
 	}
 	delete_tank(curr->tankAll.tank.position.y, curr->tankAll.tank.position.x);
 	lst->curr = lstcurrcopy;
@@ -153,6 +157,7 @@ void action(int keyPressed, TankAll *current){
 		else { delete_tank(current->tank.position.y, current->tank.position.x);  create_tank(4, *current); } refresh(); break;
 
 	case ' ':
+		PlaySound(TEXT("Pucanje.wav"),NULL, SND_ASYNC);
 		current->projectile[pridx].last_object = 't ';
 		current->projectile[pridx].position.projectil_dir = current->tank.position.last_move;
 		current->projectile[pridx].phase = 1;
@@ -207,6 +212,7 @@ void delete_tank_list(){
 	{
 		temp = lst->first;
 		lst->first = lst->first->next;
+		free(temp->tankAll.projectile);
 		free(temp);
 	}
 	lst->last = lst->curr = NULL;
