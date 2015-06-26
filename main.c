@@ -6,6 +6,62 @@
 #include <time.h>
 #include <sys/timeb.h>
 
+#define dimx 65
+#define dimy 90
+#define x1 2
+#define y1 2
+#define x2 92
+#define y2 67
+
+
+typedef struct Tank{
+	chtype ch;
+	int paint;
+} tank;
+
+typedef struct Barrier{
+	int flag;
+	char obs;
+}barrier;
+
+chtype matrix[dimx + 1][dimy + 1];                         // velicina mape
+
+int top[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8 };
+int left[] = { 2, 5, 8, 1, 4, 7, 0, 3, 6 };
+int right[] = { 6, 3, 0, 7, 4, 1, 8, 5, 2 };
+int bottom[] = { 8, 7, 6, 5, 4, 3, 2, 1, 0 };
+
+tank special_tank_v[] = { { ACS_VLINE, 1 }, { ACS_VLINE, 1 }, { ACS_VLINE, 1 }, { ACS_VLINE, 1 }, { ACS_BULLET, 5 }, { ACS_VLINE, 1 }, { ACS_DIAMOND, 4 }, { ACS_HLINE, 4 }, { ACS_DIAMOND, 4 } };
+tank special_tank_h[] = { { ACS_HLINE, 1 }, { ACS_HLINE, 1 }, { ACS_HLINE, 1 }, { ACS_HLINE, 1 }, { ACS_BULLET, 5 }, { ACS_HLINE, 1 }, { ACS_DIAMOND, 4 }, { ACS_VLINE, 4 }, { ACS_DIAMOND, 4 } };
+
+tank normal_tank_v[] = { { 126, 6 }, { ACS_VLINE, 1 }, { 126, 6 }, { ACS_DIAMOND, 2 }, { 79, 7 }, { ACS_DIAMOND, 2 }, { ACS_DIAMOND, 2 }, { ACS_CKBOARD, 8 }, { ACS_DIAMOND, 2 } };
+tank normal_tank_h[] = { { 126, 6 }, { ACS_HLINE, 1 }, { 126, 6 }, { ACS_DIAMOND, 2 }, { 79, 7 }, { ACS_DIAMOND, 2 }, { ACS_DIAMOND, 2 }, { ACS_CKBOARD, 8 }, { ACS_DIAMOND, 2 } };
+
+void init_colors(){
+	start_color();
+	init_pair(1, COLOR_WHITE, COLOR_BLACK);
+	init_pair(2, COLOR_GREEN, COLOR_BLACK);
+	init_pair(3, COLOR_WHITE, COLOR_RED);
+	init_pair(4, COLOR_WHITE, COLOR_YELLOW);
+	init_pair(5, COLOR_BLACK, COLOR_YELLOW);
+	init_pair(6, COLOR_BLACK, COLOR_BLACK);
+	init_pair(7, COLOR_RED, COLOR_GREEN);
+	init_pair(8, COLOR_YELLOW, COLOR_BLACK);
+	init_pair(9, COLOR_RED, COLOR_YELLOW);
+	init_pair(10, COLOR_WHITE, COLOR_BLUE);
+	init_pair(11, COLOR_YELLOW, COLOR_BLUE);
+}
+
+void init_curses(){
+	initscr();
+	init_colors();
+	cbreak();
+	noecho();
+	keypad(stdscr, TRUE);
+	curs_set(0);
+	resize_term(70, 150);
+}
+
 void print_tank(int y, int x, tank *tank_type, int *position)
 {
 	attron(COLOR_PAIR(tank_type[position[0]].paint));
@@ -43,112 +99,6 @@ void print_tank(int y, int x, tank *tank_type, int *position)
 	attron(COLOR_PAIR(tank_type[position[8]].paint));
 	mvaddch(y + 1, x + 1, tank_type[position[8]].ch);
 	matrix[y + 1 - 2][x + 1 - 2] = 't';
-	refresh();
-}
-
-
-void colision(int y, int x, int barrel, barrier bar ){ // saljes mi koordinate udara.
-	switch (bar.obs){
-	case 'b':
-		switch (barrel){
-		case 1://up 
-			if ((matrix[y - 2][x - 2 - 1] == 'b') && (matrix[y - 2 + 1][x - 2 - 1] != 'b')) print_blanko(y, x - 1);
-			if (matrix[y - 2][x - 2] == 'b') print_blanko(y, x);
-			if (matrix[y - 2][x - 2 + 1] == 'b' && (matrix[y - 2 + 1][x - 2 - 1] != 'b')) print_blanko(y, x + 1);
-			break;
-		case 2: // left.
-			if ((matrix[y - 2 - 1][x - 2] == 'b') && (matrix[y - 2 - 1][x - 2 + 1] != 'b')) print_blanko(y - 1, x);
-			if (matrix[y - 2][x - 2] == 'b') print_blanko(y, x);
-			if ((matrix[y - 2 + 1][x - 2] == 'b') && (matrix[y - 2 + 1][x - 2 + 1] != 'b'))print_blanko(y + 1, x);
-			break;
-		case 3: //right.
-			if ((matrix[y - 2 - 1][x - 2] == 'b') && (matrix[y - 2 - 1][x - 2 - 1] != 'b')) print_blanko(y - 1, x);
-			if (matrix[y - 2][x - 2] == 'b') print_blanko(y, x);
-			if ((matrix[y - 2 + 1][x - 2] == 'b') && (matrix[y - 2 + 1][x - 2 - 1] != 'b')) print_blanko(y + 1, x);
-			break;
-		case 4:
-			if ((matrix[y - 2][x - 2 - 1] == 'b') && (matrix[y - 2 - 1][x - 2 - 1] != 'b')) print_blanko(y, x - 1);
-			if (matrix[y - 2][x - 2] == 'b') print_blanko(y, x);
-			if (matrix[y - 2][x - 2 + 1] == 'b' && (matrix[y - 2 - 1][x - 2 - 1] != 'b')) print_blanko(y, x + 1);
-			break;
-		}
-	case 'o':; // za botove.
-	case 'c':; // za beton, kada budemo imali strukturu.
-	case '*':; // za metak o metak, gledamo razlicite strane i gledamo da li se sudaraju, pazimo na mimoilazenje.
-	}
-
-}
-
-#define dimx 65
-#define dimy 90
-
-typedef struct Tank{ chtype ch; int paint; } tank;
-
-chtype matrix[dimx + 1][dimy + 1];                         // velicina mape
-
-int top[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8 };
-int left[] = { 2, 5, 8, 1, 4, 7, 0, 3, 6 };
-int right[] = { 6, 3, 0, 7, 4, 1, 8, 5, 2 };
-int bottom[] = { 8, 7, 6, 5, 4, 3, 2, 1, 0 };
-
-tank special_tank_v[] = { { ACS_VLINE, 1 }, { ACS_VLINE, 1 }, { ACS_VLINE, 1 }, { ACS_VLINE, 1 }, { ACS_BULLET, 5 }, { ACS_VLINE, 1 }, { ACS_DIAMOND, 4 }, { ACS_HLINE, 4 }, { ACS_DIAMOND, 4 } };
-tank special_tank_h[] = { { ACS_HLINE, 1 }, { ACS_HLINE, 1 }, { ACS_HLINE, 1 }, { ACS_HLINE, 1 }, { ACS_BULLET, 5 }, { ACS_HLINE, 1 }, { ACS_DIAMOND, 4 }, { ACS_VLINE, 4 }, { ACS_DIAMOND, 4 } };
-
-tank normal_tank_v[] = { { 126, 6 }, { ACS_VLINE, 1 }, { 126, 6 }, { ACS_DIAMOND, 2 }, { 79, 7 }, { ACS_DIAMOND, 2 }, { ACS_DIAMOND, 2 }, { ACS_CKBOARD, 8 }, { ACS_DIAMOND, 2 } };
-tank normal_tank_h[] = { { 126, 6 }, { ACS_HLINE, 1 }, { 126, 6 }, { ACS_DIAMOND, 2 }, { 79, 7 }, { ACS_DIAMOND, 2 }, { ACS_DIAMOND, 2 }, { ACS_CKBOARD, 8 }, { ACS_DIAMOND, 2 } };
-
-void init_colors(){
-	start_color();
-	init_pair(1, COLOR_WHITE, COLOR_BLACK);
-	init_pair(2, COLOR_GREEN, COLOR_BLACK);
-	init_pair(3, COLOR_WHITE, COLOR_RED);
-	init_pair(4, COLOR_WHITE, COLOR_YELLOW);
-	init_pair(5, COLOR_BLACK, COLOR_YELLOW);
-	init_pair(6, COLOR_BLACK, COLOR_BLACK);
-	init_pair(7, COLOR_RED, COLOR_GREEN);
-	init_pair(8, COLOR_YELLOW, COLOR_BLACK);
-	init_pair(9, COLOR_RED, COLOR_YELLOW);
-	init_pair(10, COLOR_WHITE, COLOR_BLUE);
-}
-
-void init_curses(){
-	initscr();
-	init_colors();
-	cbreak();
-	noecho();
-	keypad(stdscr, TRUE);
-	curs_set(0);
-	resize_term(70, 150);
-}
-
-void print_tank(int y, int x, tank *tank_type, int *position)
-{
-	attron(COLOR_PAIR(tank_type[position[0]].paint));
-	mvaddch(y - 1, x - 1, tank_type[position[0]].ch);
-	refresh();
-	attron(COLOR_PAIR(tank_type[position[1]].paint));
-	mvaddch(y - 1, x, tank_type[position[1]].ch);
-	refresh();
-	attron(COLOR_PAIR(tank_type[position[2]].paint));
-	mvaddch(y - 1, x + 1, tank_type[position[2]].ch);
-	refresh();
-	attron(COLOR_PAIR(tank_type[position[3]].paint));
-	mvaddch(y, x - 1, tank_type[position[3]].ch);
-	refresh();
-	attron(COLOR_PAIR(tank_type[position[4]].paint));
-	mvaddch(y, x, tank_type[position[4]].ch);
-	refresh();
-	attron(COLOR_PAIR(tank_type[position[5]].paint));
-	mvaddch(y, x + 1, tank_type[position[5]].ch);
-	refresh();
-	attron(COLOR_PAIR(tank_type[position[6]].paint));
-	mvaddch(y + 1, x - 1, tank_type[position[6]].ch);
-	refresh();
-	attron(COLOR_PAIR(tank_type[position[7]].paint));
-	mvaddch(y + 1, x, tank_type[position[7]].ch);
-	refresh();
-	attron(COLOR_PAIR(tank_type[position[8]].paint));
-	mvaddch(y + 1, x + 1, tank_type[position[8]].ch);
 	refresh();
 }
 
@@ -234,64 +184,160 @@ int delay_s(int timeToDelay, unsigned short* mm, unsigned short* pp, int *check)
 	return 0;
 }
 
-int can_fly(int y, int x)
-{
-	if ((matrix[y - 2][x - 2]) == ' ') return 1;
-	else return 0;
+void print_brick(int y,int x){
+	attron(COLOR_PAIR(9) | A_BOLD);
+	mvaddch(y,x, ACS_CKBOARD);
+	attroff(A_BOLD);
+	matrix[y-y1][x-x1] = 'b';
 }
 
-void delete_projectile(int y, int x)
-{
+void print_grass(int y, int x){
+	attron(COLOR_PAIR(2));
+	mvaddch(y,x,'#');
+	matrix[y-y1][x-x1] = 'g';
+}
+
+void print_water(int y,int x){
+	attron(COLOR_PAIR(10));
+	mvaddch(y,x,'~');
+	matrix[y-y1][x-x1] = 'w';
+}
+
+void print_blanko(int y,int x){
 	attron(COLOR_PAIR(6));
-	mvaddch(y, x, ' ');
-	matrix[y - 2][x - 2] = ' ';
+	mvaddch(y,x,' ');
+	matrix[y-y1][x-x1] = ' ';
 }
 
-void print_projectile(int y, int x)
+barrier can_fly(int y, int x)
 {
-	attron(COLOR_PAIR(8));
+	barrier ret; //return
+	ret.obs = matrix[y - 2][x - 2];
+	switch (ret.obs){
+	case ' ': case 'w':
+		ret.flag = 1;
+		break;
+	case 'g':
+		ret.flag = 2;
+		break;
+	case 'b': case 'e':
+		ret.flag = 0;
+		break;
+	}
+	return ret;
+	// I jos za tenkove, projektile i ostale stvari.
+}
+
+void delete_projectile(int y, int x, char *last_object)
+{
+	if( *last_object=='w') print_water(y,x); // umesto if-a moze print object da se pozove on je sam po sebi case
+	else if ( *last_object==' ') print_blanko(y,x);
+}
+
+void print_projectile(int y, int x, char object)
+{
+	if( object == 'w')  attron(COLOR_PAIR(11)); // ako naidje na vodu
+	else if(object == ' ')  attron(COLOR_PAIR(8));
 	mvaddch(y, x, ACS_BULLET | A_BOLD);
 	matrix[y - 2][x - 2] = '*';
 }
 
-/*void check_projectile(int y,int x)
-{
+void collision(int y, int x, int projectil_dir, char object ){ // saljes mi koordinate udara.
+	switch (object){
+	case 'b':
+		switch (projectil_dir){
+		case 1: //up 
+			if ((matrix[y - 2][x - 2 - 1] == 'b') && (matrix[y - 2 + 1][x - 2 - 1] != 'b')) print_blanko(y, x - 1);
+			if (matrix[y - 2][x - 2] == 'b') print_blanko(y, x);
+			if (matrix[y - 2][x - 2 + 1] == 'b' && (matrix[y - 2 + 1][x - 2 + 1] != 'b')) print_blanko(y, x + 1);
+			break;
+		case 2: // left.
+			if ((matrix[y - 2 - 1][x - 2] == 'b') && (matrix[y - 2 - 1][x - 2 + 1] != 'b')) print_blanko(y - 1, x);
+			if (matrix[y - 2][x - 2] == 'b') print_blanko(y, x);
+			if ((matrix[y - 2 + 1][x - 2] == 'b') && (matrix[y - 2 + 1][x - 2 + 1] != 'b'))print_blanko(y + 1, x);
+			break;
+		case 3: //right.
+			if ((matrix[y - 2 - 1][x - 2] == 'b') && (matrix[y - 2 - 1][x - 2 - 1] != 'b')) print_blanko(y - 1, x);
+			if (matrix[y - 2][x - 2] == 'b') print_blanko(y, x);
+			if ((matrix[y - 2 + 1][x - 2] == 'b') && (matrix[y - 2 + 1][x - 2 - 1] != 'b')) print_blanko(y + 1, x);
+			break;
+		case 4:
+			if ((matrix[y - 2][x - 2 - 1] == 'b') && (matrix[y - 2 - 1][x - 2 - 1] != 'b')) print_blanko(y, x - 1);
+			if (matrix[y - 2][x - 2] == 'b') print_blanko(y, x);
+			if (matrix[y - 2][x - 2 + 1] == 'b' && (matrix[y - 2 - 1][x - 2 + 1] != 'b')) print_blanko(y, x + 1);
+			break;
+		}
+	case 'o':; // za botove.
+	case 'c':; // za beton, kada budemo imali strukturu.
+	case '*':; // za metak o metak, gledamo razlicite strane i gledamo da li se sudaraju, pazimo na mimoilazenje.
+	}
 
 }
-*/
 
-void move_projectile(int *y, int *x, int barrel, int *check)
+char move_projectile(int *y, int *x, int projectil_dir, int *check, char *last_object) //vraca nam poslednji objekat na putu u slucaju da treba da ga vratimo posle prolaska metka
 {
-	if (*check == 2) delete_projectile(*y, *x);
+	barrier object;
+	if (*check == 2) delete_projectile(*y, *x, last_object);
 	else if (*check == 1) *check = 2; //ako je metak bio u letu brisi ga
-	switch (barrel){
-	case 1:   if (can_fly(*y - 1, *x)) print_projectile(--*y, *x); else *check = 0; /*check_projectile(y-1,x)*/ break;
-	case 2:	  if (can_fly(*y, *x - 1)) print_projectile(*y, --*x); else *check = 0; /*check_projectile(y,x-1)*/ break;
-	case 3:	  if (can_fly(*y, *x + 1)) print_projectile(*y, ++*x); else *check = 0; /*check_projectile(y,x+1)*/ break;
-	case 4:   if (can_fly(*y + 1, *x)) print_projectile(++*y, *x); else *check = 0; /*check_projectile(y+1,x)*/ break;
+	switch (projectil_dir){ //switch za stranu u koju metak treba da leti
+	
+	case 1: 
+		object=can_fly(*y - 1, *x);
+		switch (object.flag)  // switch za povratnu vrednost can_fly, 1 naisao na prazno polje, 0 nestaje metak ostale vrednosti metak leti ali se ne printa(trava)
+		{
+			case 1: print_projectile(--*y, *x, object.obs); break;
+			case 0: collision(*y-1,*x,projectil_dir,object.obs); *check = 0; break;
+		}
+		break;
+	
+	case 2:	 
+		object=can_fly(*y, *x - 1);
+		switch (object.flag)
+		{
+			case 1: print_projectile(*y, --*x, object.obs); break;
+			case 0: collision(*y,*x-1,projectil_dir,object.obs); *check = 0; break;
+		}
+		break;
+	case 3:	
+		object=can_fly(*y, *x + 1);
+		switch (object.flag)
+		{
+			case 1: print_projectile(*y, ++*x, object.obs); break;
+			case 0: collision(*y,*x+1,projectil_dir,object.obs); *check = 0; break;
+		}
+		break;
+
+	case 4: 
+		object=can_fly(*y + 1, *x);
+		switch (object.flag)
+		{
+			case 1: print_projectile(++*y, *x, object.obs); break;
+			case 0: collision(*y+1,*x,projectil_dir,object.obs); *check = 0; break;
+		}
+		break;
+
 	}
 	refresh();
+	return object.obs;
 }
 
-
-
-void projectile(int *py, int*px, int y, int x, int projectil_dir, unsigned short* mm, unsigned short* pp, int *check)
+void projectile(int *py, int*px, int y, int x, int projectil_dir, unsigned short* mm, unsigned short* pp, int *check,char *last_object)
 {
 	struct timeb vreme;
 	ftime(&vreme);
 	if (*check == 1) // prvo postavljanje checka na 1, samo taj put ulazi u petlju
 	{
 		switch (projectil_dir){       //definisanje pocetnog mesta na kome je cevka
-		case 1:  *py = y - 1; *px = x;  break;
-		case 2:	 *py = y; *px = x - 1;  break;
-		case 3:	 *py = y; *px = x + 1;  break;
-		case 4:  *py = y + 1; *px = x;  break;
+		case 1:  *py = y - 1;   *px = x;      break;
+		case 2:	 *py = y;       *px = x - 1;  break;
+		case 3:	 *py = y;       *px = x + 1;  break;
+		case 4:  *py = y + 1;   *px = x;      break;
 		} 
 		*pp = *mm = vreme.millitm;
 	}
 	*mm = vreme.millitm;
-	if (delay_s(40, mm, pp, check)) {
-		move_projectile(py, px, projectil_dir, check); // u prvom pozivu check ce preci u 2->stanje leta
+	if (delay_s(40, mm, pp, check)) { //u prvoj inicijalizaciji last object saljemo bez inicijalizacije jer ga ne koristimo
+		*last_object=move_projectile(py, px, projectil_dir, check, last_object); // u prvom pozivu check ce preci u 2->stanje leta
 		ftime(&vreme);
 		*pp = *mm = vreme.millitm;
 	}
@@ -308,38 +354,17 @@ void action(int *y, int *x, tank* ver, tank* hor, int keyPressed, int *check, in
 	}
 }
 
-void print_brick(){
-	attron(COLOR_PAIR(9) | A_BOLD);
-	addch(ACS_CKBOARD);
-	attroff(A_BOLD);
-}
-
-void print_grass(){
-	attron(COLOR_PAIR(2));
-	addch('#');
-}
-
-void print_water(){
-	attron(COLOR_PAIR(10));
-	addch('~');
-}
-
-void print_blanko(){
-	attron(COLOR_PAIR(6));
-	addch(' ');
-}
-
-void print_object(int c){
+void print_object(int y,int x,int c){
 	switch (c)
 	{
-	case 'b': print_brick(); break;
-	case 'v': print_water(); break;
-	case 'g': print_grass(); break;
-	default:  print_blanko(); break;
+	case 'b': print_brick(y,x); break;
+	case 'v': print_water(y,x); break;
+	case 'g': print_grass(y,x); break;
+	default:  print_blanko(y,x); break;
 	}
 }
 
-void print_border(int y1, int x1, int y2, int x2)
+void print_border()
 {
 	int i;
 	attron(COLOR_PAIR(10)); // dodaj atribut za boju
@@ -376,29 +401,25 @@ void create_map(char map_name[])
 {
 	FILE *map;
 	int c;
-	int xM, yM;
-	int x1 = 2, y1 = 2, x2 = 67, y2 = 92, pom;
-	pom = y1;                            //da ne izgubimo parametar za okvir kopiramo ga u pom
-	yM = 1;
-	xM = 1;
+	int y=y1+1, x=x1+1; 
+
 	map = fopen(map_name, "r");
 
-	print_border(x1, y1, x2, y2); //okvir
+	print_border();  //okvir
 
-	move(++pom, x1 + 1);
 	while ((c = fgetc(map)) != EOF)
 	{
 		if (c == '\n') continue;
 		if (c != '/')
 		{
 			if (c == '.') c = ' ';
-			matrix[xM][yM++] = c;
-			print_object(c);
+			print_object(y,x,c);
+			x++;
 			refresh();
 		}
 		else {
-			move(++pom, x1 + 1);
-			xM++; yM = 1;
+			y++;
+			x = x1 + 1;
 		}
 	}
 }
@@ -409,6 +430,7 @@ void time_now(){
 	char* dateTimeString = (char*)calloc(100 + 1, sizeof(char));
 	pIntTime = time(NULL);
 	currentLocalTime = localtime(&pIntTime);
+	attron(COLOR_PAIR(1));
 	if (currentLocalTime && dateTimeString)
 		strftime(dateTimeString, 100, "%H:%M:%S", currentLocalTime);
 	mvaddstr(1, 42, dateTimeString);
@@ -419,6 +441,7 @@ void time_now(){
 void main(){
 	unsigned short mm, pp;
 	struct timeb vreme;
+	char last_object=' ';
 	int y = 4, x = 4, check = 0, keyPressed, last_move, projectil_dir, px, py; // f- da li postoji projektil
 	char map_name[50] = "vasa.txt";
 	init_curses();
@@ -432,8 +455,6 @@ void main(){
 			keyPressed = getch();
 			action(&y, &x, special_tank_v, special_tank_h, keyPressed, &check, &last_move, &projectil_dir);
 		}
-		if (check) projectile(&py, &px, y, x, projectil_dir, &mm, &pp, &check);
+		if (check) projectile(&py, &px, y, x, projectil_dir, &mm, &pp, &check, &last_object);
 	}
 }
-
-
