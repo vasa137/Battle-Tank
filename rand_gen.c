@@ -57,8 +57,7 @@ void rand_pup_gen()
 	{
 		h = (rand() % ((dimx + 1) - 4 + 1)) + 4;
 		w = (rand() % ((dimy + 1) - 2 + 1)) + 2;
-		pos = (rand() % ((5 + 1)));
-		
+		pos = (rand() % ((5 + 1)));	
 		if (check_if_free(h, w))
 		{
 			alloc_powerup(pUps[pos], h, w);
@@ -69,5 +68,4 @@ void rand_pup_gen()
 			return;
 		}
 	}
-
 }
