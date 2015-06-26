@@ -420,8 +420,10 @@ void print_border_menu(int y1, int x1, int y2, int x2)
 	}
 	refresh();
 	attroff(COLOR_PAIR(10));
-}  // granice/okvir mape/menija
+}  
+// granice/okvir mape/menija
 //======================================================================= odavde pa do dole.
+
 void print_border_side_menu(int y1, int x1, int y2, int x2, int C)
 {
 	int i;
@@ -468,9 +470,8 @@ void show_number(int y, int x, int numI[5][3], chtype C){
 void print_tank_status(int y, int x, TankDesign *tank_type, int *position, int A){
 
 	switch (A){
-	case 1: mvaddch(y + 3, x, 'E'); break;
-	case 2: mvaddch(y + 3, x, 'M'); break;
-	case 3: mvaddch(y + 3, x, 'H'); break;
+	case 0: attron(COLOR_PAIR(1) | A_BOLD); mvaddch(y + 3, x, 'N'); attroff(COLOR_PAIR(1) | A_BOLD); break;
+	case 1: attron(COLOR_PAIR(1) | A_BOLD); mvaddch(y + 3, x, 'S'); attroff(COLOR_PAIR(1) | A_BOLD); break;
 	}
 
 	attron(COLOR_PAIR(tank_type[position[0]].paint));
@@ -520,19 +521,25 @@ void delete_bots_left(){
 	M--;
 }
 
-void print_bots_left(){// BOT_DIF - easy(0), medium(1), hard(2) LVL - koji nivo
-	int i, j, bot = -1, n, m;
+void print_bots_left(){// BOT_DIF - easy(0), medium(1), hard(2) LVL - koji nivo.
+	int i, j, bot, n, m;
 	TankDesign *style;
 	int xCord[] = { 105, 112, 119, 126, 133, 140 };
 	int yCord[] = { 5, 12, 19 };
+
+	bot = botsInLevel[BOT_DIF][LVL];
 	for (i = 0; i < 3; i++){
 		for (j = 0; j < 6; j++){
-			bot++;
-			if (LEVEL[BOT_DIF][LVL][bot].kind) style = special_tank_v;
-			else style = normal_tank_v;
+			bot--;
+			switch (LEVEL[BOT_DIF][LVL][bot].smart) {
+			case 1:	style = normal_tank_v; break;
+			case 2: style = special_tank_v; break;
+			case 3: style = brat_tank_v; break;
+			default: style = normal_tank_v;
+			}
 
-			if (bot < botsInLevel[BOT_DIF][LVL])
-				print_tank_status(yCord[i], xCord[j], style, top, LEVEL[BOT_DIF][LVL][bot].smart);
+			if (bot >= 0)
+				print_tank_status(yCord[i], xCord[j], style, top, LEVEL[BOT_DIF][LVL][bot].kind);
 		}
 	}
 	N = botsInLevel[BOT_DIF][LVL] / 6; M = botsInLevel[BOT_DIF][LVL] % 6 - 1;
@@ -582,45 +589,45 @@ void print_high_score(){
 
 	if (HIGH_SCORE < 10){
 		I = HIGH_SCORE;
-		print_number(29, 138, I);
+		print_number(49, 138, I);
 	}
 
-	else if (HIGH_SCORE > 10 && HIGH_SCORE < 100){
+	else if (HIGH_SCORE >= 10 && HIGH_SCORE < 100){
 		II = HIGH_SCORE / 10;
 		I = HIGH_SCORE % 10;
 
-		print_number(29, 138, I);
-		print_number(29, 134, II);
+		print_number(49, 138, I);
+		print_number(49, 134, II);
 	}
-	else if (HIGH_SCORE > 100 && HIGH_SCORE < 1000){
+	else if (HIGH_SCORE >= 100 && HIGH_SCORE < 1000){
 		III = HIGH_SCORE / 100;
 		II = (HIGH_SCORE % 100) / 10;
 		I = (HIGH_SCORE % 100) % 10;
 
-		print_number(29, 138, I);
-		print_number(29, 134, II);
-		print_number(29, 130, III);
+		print_number(49, 138, I);
+		print_number(49, 134, II);
+		print_number(49, 130, III);
 	}
-	else if (HIGH_SCORE > 1000 && HIGH_SCORE < 10000){
+	else if (HIGH_SCORE >= 1000 && HIGH_SCORE < 10000){
 		IV = HIGH_SCORE / 1000;
 		III = (HIGH_SCORE % 1000) / 100;
 		II = ((HIGH_SCORE % 1000) % 100) / 10;
 		I = ((HIGH_SCORE % 1000) % 100) % 10;
 
-		print_number(29, 138, I);
-		print_number(29, 134, II);
-		print_number(29, 130, III);
-		print_number(29, 126, IV);
+		print_number(49, 138, I);
+		print_number(49, 134, II);
+		print_number(49, 130, III);
+		print_number(49, 126, IV);
 	}
-	else if (HIGH_SCORE > 10000){
+	else if (HIGH_SCORE >= 10000){
 		IV = 9;
 		III = 9;
 		II = 9;
 		I = 9;
 
-		print_number(29, 138, I);
-		print_number(29, 134, II);
-		print_number(29, 130, III);
-		print_number(29, 126, IV);
+		print_number(49, 138, I);
+		print_number(49, 134, II);
+		print_number(49, 130, III);
+		print_number(49, 126, IV);
 	}
 }
