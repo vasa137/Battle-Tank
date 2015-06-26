@@ -7,6 +7,9 @@
 #include <sys/timeb.h>
 #include "level_order.h"
 #include <math.h>
+#include <windowsx.h>
+#include <mmsystem.h>
+#pragma comment(lib, "winmm.lib")
 
 #ifndef TANK_H_INCLUDED
 #define TANK_H_INCLUDED
@@ -69,6 +72,8 @@ typedef struct TAnk{
 	int phase;
 	int type;
 	int diff;
+	int on_base;
+	int on_player;
 	TankDesign *tankDesign_v;
 	TankDesign *tankDesign_h;
 	TankPosition position;
@@ -102,9 +107,13 @@ typedef struct LST{
 
 extern Lst *lst;
 
-typedef struct Powerup_List{
+typedef struct PowerupINFO{
 	char type;
-	int position_y, position_x;
+	int position_y,position_x;
+} Powerup_info;
+
+typedef struct Powerup_List{
+	Powerup_info info;
 	struct Powerup_List * next;
 } Powerup_list;
 
@@ -140,11 +149,25 @@ typedef struct LEvels{
 	int smart;
 }Levels;
 
+typedef struct Loaded_Level_info{
+	  int Lvl, Br, time, high_score;
+  } Loaded_level_info;
+
+typedef struct box
+{
+	int min_x;
+	int min_y;
+	int max_x;
+	int max_y;
+}Box;
+
 extern Levels Level1_e[];
 extern Levels Level2_e[];
 extern Levels Level3_e[];
 
 extern int HIGH_SCORE, M, N;
+
+extern Loaded_level_info level_info;
 
 extern Powerups powerup;
 
@@ -178,8 +201,8 @@ void init_curses();
 
 void start_level(clock_t *start_lvl_time, int *l, int *br, unsigned long int *random_pup_gen, long int* random_element_gen);//
 void fire_rate_assessment(int keyPressed);//
-void execute_our_tank();//
-void execute_bots();//
+void execute_our_tank(unsigned short *mm, unsigned short *pp, int *phase, int *lastKey,clock_t start_lvl_time,int br, int decide);//
+void execute_bots(int flag);//
 void demo_mode();//
 void should_spawn_bot(clock_t *start_lvl_time, int *rez, int *br, int l);//
 
@@ -250,6 +273,7 @@ void medium_bot();
 int hit_tank(int y, int x);
 void shoot();
 void move_bot(int *z, int *t, int *bot_barrel);
+void find_bullet();
 
 void show_number(int y, int x, int numI[5][3], chtype C);
 void print_tank_status(int y, int x, TankDesign *tank_type, int *position);
@@ -298,6 +322,8 @@ extern Levels *levelHard[];
 
 extern int *botsInLevel[];
 
+extern int GAME_LOADED;
+
 extern int Easy[];
 extern int Medium[];
 extern int Hard[];
@@ -310,4 +336,25 @@ void link_levels();
 void hard_bot();
 void move_bot_barrel();
 
+void custom_map(char* mapz);
+void restaurate_tank_list(FILE *tank_list); //
+void restaurate_powerup_list(FILE *powerup_list); //
+void load_game(char *game_name);
+void restaurate_tanks_on_map();
+void restaurate_powerups_on_map();
+
+void save_game(clock_t start_lvl_time, int br);
+void pause_game(int decide,clock_t start_lvl_time, int br);
+void pause_menu_content(int decide);
+
+void spawn_bot_demo(clock_t* demo_time);
+void demo_bot();
+
+void get_direction(int x);
+int position_in_box(Box box);
+int position_in_b_box(Box box);
+int barricades(int choice);
+
+void hard_bot_demo();
+void find_bullet_demo();
 #endif
