@@ -24,7 +24,7 @@ typedef struct Map
 
 typedef struct Score
 {
-	chtype name[10];
+	char name[100];
 	long long int score;
 	struct Score* next;
 }score;
@@ -33,8 +33,9 @@ extern int Skor;
 extern char lvl_matrix[dimx][dimy];
 extern char lvl_meni[][dimx]; // stavke menija
 extern char button[][dimx];
-extern char buffer[20];
+extern char buffer[100];
 
+void init_matrix();
 void print_matrix();
 
 // save menu
