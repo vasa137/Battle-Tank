@@ -1,6 +1,6 @@
 #include "tank.h"
 
-char buffer[20];
+char buffer[100];
 
 void save_in_matrix(int yu, int xu, int yd, int xd, chtype k){
 	int i, j;
