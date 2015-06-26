@@ -72,7 +72,7 @@ int show_scores(score* best, int j, score* cmp)
 			zurzeit = zurzeit->next;
 			continue;
 		}
-		mvprintw(j, 110, "%d. %-5s    %4d", i++, zurzeit->name, zurzeit->score);
+		mvprintw(j, 110, "%d. %-5s    %-4d", i++, zurzeit->name, zurzeit->score);
 		zurzeit = zurzeit->next;
 		j += 2;
 	}
@@ -96,13 +96,18 @@ void destroy_scoreboard(score* best)
 score* insert_n_h(score** best, long long int s) // new high score is added to the list of top scores
 {
 	score* rvl, *zurzeit = best[0];
+	char string[100];
 	rvl = (score*)calloc(1, sizeof(score));
+	strcpy(rvl->name, "_________");
 	if (best[0] == NULL) { best[0] = rvl; rvl->score = s; return best[0]; }
 	else
 		while (zurzeit)
 		{
 			if (zurzeit->score < s)
 			{
+				strcpy(string, zurzeit->name);
+		 		strcpy(zurzeit->name, rvl->name);
+				strcpy(rvl->name, string);
 				rvl->score = zurzeit->score;
 				zurzeit->score = s;
 				zurzeit->next = rvl;
@@ -120,7 +125,7 @@ void new_high_score(long long int s)
 	FILE* hs;
 	score* best = NULL, *zurzeit = NULL, *neu = NULL;
 	chtype Key;
-	char name[10];
+	char name[100];
 	long long int sum = 0, checksum = 0;
 	int i = 0, tru, j = 113, row;
 	int min = 113, max = 122;
@@ -156,7 +161,6 @@ void new_high_score(long long int s)
 		destroy_scoreboard(best);
 		return;
 	}
-	hs = fopen("high_scores.dat", "wb");
 	zurzeit = best;
 	while (tru)
 	{
@@ -166,11 +170,11 @@ void new_high_score(long long int s)
 		case KEY_UP: case KEY_DOWN: case KEY_LEFT: case KEY_RIGHT: case ESC:							   break;
 		case ENTER:   tru = 0;																			   break;// name chosen 
 		default: if (j < max)	{	name[i++] = Key; name[i] = '\0'; mvaddch(row, j++, Key);};	refresh(); break;
-		case BACKSPACE: if (j > min){	name[--i] = '\0'; mvaddch(row, --j, ' ');	}; refresh();		   break;
+		case BACKSPACE: if (j > min){	name[--i] = '\0'; mvaddch(row, --j, '_');	}; refresh();		   break;
 		}
 	}
 	//=====================================
-
+	hs = fopen("high_scores.dat", "wb");
 	for (i; i < 9; name[i] = ' ', i++);
 	name[9] = '\0';
 
@@ -192,7 +196,7 @@ void new_high_score(long long int s)
 	{
 		zurzeit = best;
 	//	fwrite(best, sizeof(score*), 1, hs);
-		fwrite(best->name, sizeof(char), sizeof(best->name), hs);
+		fwrite(best->name, sizeof(char), 10, hs);
 		fwrite(&best->score, sizeof(long long int), 1, hs);
 		best = best->next;
 		free(zurzeit);
