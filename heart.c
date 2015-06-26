@@ -29,10 +29,10 @@ void start_level(clock_t *start_lvl_time, int *l, int *br, unsigned long int *ra
 	tank_struct.kind = -1;
 	tank_struct.smart = 0;
 
-	print_border_side_menu(2, x1m, 25, x2m, 3); // bots left.
-	print_bots_left(); // saljes tezinu izabranu u podesavanjima( Easy-0 medium-1 hard-2) LVL(koji je nivo).  NOVO!
-	print_border_side_menu(27, x1m + 20, 36, x2m, 4);// high score counter.
-	print_border_side_menu(58, x1m, 67, x2m, 4); // pw disclaimer.
+	print_border_side_menu(2, x1m, 25, x2m, 3);       // bots left.
+	print_bots_left();								  // saljes tezinu izabranu u podesavanjima( Easy-0 medium-1 hard-2) LVL(koji je nivo).  NOVO!
+	print_border_side_menu(47, x1m + 20, 56, x2m, 4); // high score counter. // changed coordinates-Andrija // sve spusteno za 21
+	print_border_side_menu(58, x1m, 67, x2m, 4);      // pw disclaimer.
 	print_menu_pups(61);
 	alloc_tank(0, tank_struct);
 }
@@ -54,7 +54,7 @@ void fire_rate_assessment(int keyPressed){
 	else { pridx = 0; if ((!(lst->first->tankAll.projectile[pridx].phase))) action(keyPressed, &lst->first->tankAll); }
 }
 
-void execute_our_tank(unsigned short *mm, unsigned short *pp, int *phase, int *lastKey){
+void execute_our_tank(unsigned short *mm, unsigned short *pp, int *phase, int *lastKey,clock_t start_lvl_time,int br, int decide){
 	struct timeb vreme;
 	int keyPressed;
 	ftime(&vreme);
@@ -67,7 +67,9 @@ void execute_our_tank(unsigned short *mm, unsigned short *pp, int *phase, int *l
 	if (keyPressed == ' '){
 		fire_rate_assessment(keyPressed); // for different powerup stars.
 	}
-
+	else if( keyPressed == ESC){
+		pause_game(decide,start_lvl_time,br);
+	}
 	else {
 		if (*phase == 1){ action(keyPressed, &lst->first->tankAll); *mm = *pp = vreme.millitm; *phase = 2; }
 		else{
@@ -81,7 +83,7 @@ void execute_our_tank(unsigned short *mm, unsigned short *pp, int *phase, int *l
 	}
 }
 
-void execute_bots(){
+void execute_bots(int flag){
 	int i;
 
 	for (i = 0, lst->curr = lst->first; i < lst->n; i++, lst->curr = lst->curr->next){
@@ -99,9 +101,17 @@ void execute_bots(){
 			if (!strcmp(map_name, "gameover.map")) return;
 		}
 		else{
+				if(!flag) {
+					switch (lst->curr->tankAll.tank.diff){   // ovo treba da se poveze da se pusti bot Ne znam gde da stavim
+				case 1: easy_bot(); break;
+				case 2: medium_bot(); break;
+				case 3: hard_bot_demo(); break;
+				}
+			}
 			for (pridx = 0; pridx < 4; pridx++)
-				if (lst->curr->tankAll.projectile[pridx].phase) projectile(lst->curr->tankAll.tank.position.y,
-					lst->curr->tankAll.tank.position.x, lst->curr->tankAll.projectile[pridx].position.projectil_dir);
+				if (lst->curr->tankAll.projectile[pridx].phase) {  projectile(lst->curr->tankAll.tank.position.y,
+					lst->curr->tankAll.tank.position.x, lst->curr->tankAll.projectile[pridx].position.projectil_dir); }
+			
 		}
 	}
 }
@@ -112,12 +122,17 @@ void demo_mode(){
 	lst->curr = NULL;
 	lst->last = NULL;
 	lst->n = 0;
-	strcpy(map_name, "dobraje.map");
+	powerup.life=10000;
+	strcpy(map_name, "gohardorgohome.map");
 	create_map(map_name);
 	tank_struct.kind = 0;
-	tank_struct.smart = 1;
+	tank_struct.smart = 3;
 	alloc_tank(0, tank_struct);
-	lst->curr = lst->first; // ovo mora posle alokacije
+	lst->curr=lst->first;
+	tank_struct.kind = 0;
+	srand(time(NULL));
+	tank_struct.smart = ( rand() % 3 ) + 1;
+	alloc_tank(1,tank_struct); // ovo mora posle alokacije
 }
 
 void should_spawn_bot(clock_t *start_lvl_time, int *rez, int *br, int l){
