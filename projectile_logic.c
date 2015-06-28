@@ -168,9 +168,9 @@ void collision(int y, int x, int projectil_dir, char object){ // saljes mi koord
 				lst->first->tankAll.tank.position.x = 24;
 				lst->first->tankAll.tank.position.last_move = 1;
 				lst->first->tankAll.tank.position.barrel = 1;
-				for (i = 1; i<4; i++) {
-					if (lst->curr->tankAll.projectile[pridx].phase == 2){
-						delete_projectile(lst->curr->tankAll.projectile[i].position.y, lst->curr->tankAll.projectile[i].position.x, lst->curr->tankAll.projectile[i].last_object);
+				for (i = 0; i<4; i++) {
+					if (lst->first->tankAll.projectile[i].phase == 2){
+						delete_projectile(lst->first->tankAll.projectile[i].position.y, lst->first->tankAll.projectile[i].position.x, lst->first->tankAll.projectile[i].last_object);
 					}
 					lst->first->tankAll.projectile[i].phase = 0;
 					lst->first->tankAll.projectile[i].last_object = ' ';
@@ -186,7 +186,7 @@ void collision(int y, int x, int projectil_dir, char object){ // saljes mi koord
 			}
 		}
 		else free_tank(temp);
-		PlaySound(TEXT("Unistenje_tenka.wav"), NULL, SND_ASYNC);
+		PlaySound(TEXT("Sound\\Unistenje_tenka.wav"), NULL, SND_ASYNC);
 		break;
 	case 'x': case 'l': case 's': case 'q': case 'a': case 'y':
 		pom = which_powerup(y, x);
@@ -229,10 +229,10 @@ void collision(int y, int x, int projectil_dir, char object){ // saljes mi koord
 		break;
 
 	case 'h':
-		PlaySound(TEXT("Unistenje_tenka.wav"), NULL, SND_ASYNC);
+		PlaySound(TEXT("Sound\\Unistenje_tenka.wav"), NULL, SND_ASYNC);
+		create_map("gameover.map", 0);
+		if(!(!strcmp("gohardorgohome.map",map_name))) Sleep(2300);
 		strcpy(map_name, "gameover.map");
-		create_map(map_name);
-		Sleep(2300);
 		break;
 	}
 
