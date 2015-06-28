@@ -11,7 +11,7 @@ void start_level(clock_t *start_lvl_time, int *l, int *br, unsigned long int *ra
 	strcat(lvlprint, lvl_num);
 	strcat(lvlprint, ".lvl");
 	strcpy(map_name, lvlprint);
-	create_map(map_name);
+	create_map(map_name,0);
 	Sleep(3000);
 	init_powerups();
 	*start_lvl_time = clock();
@@ -25,7 +25,7 @@ void start_level(clock_t *start_lvl_time, int *l, int *br, unsigned long int *ra
 	strcpy(map_name, "level");
 	strcat(map_name, lvl_num);
 	strcat(map_name, ".map");
-	create_map(map_name);
+	create_map(map_name,0);
 	tank_struct.kind = -1;
 	tank_struct.smart = 0;
 
@@ -122,17 +122,17 @@ void demo_mode(){
 	lst->curr = NULL;
 	lst->last = NULL;
 	lst->n = 0;
-	powerup.life=10000;
+	powerup.life=ULLONG_MAX;
 	strcpy(map_name, "gohardorgohome.map");
-	create_map(map_name);
+	create_map(map_name, 0);
 	tank_struct.kind = 0;
-	tank_struct.smart = 3;
+	tank_struct.smart = 3; // onaj koji glumi naseg bota je hard-bot
 	alloc_tank(0, tank_struct);
-	lst->curr=lst->first;
+	lst->curr=lst->first;  // ovo mora posle alokacije
 	tank_struct.kind = 0;
 	srand(time(NULL));
 	tank_struct.smart = ( rand() % 3 ) + 1;
-	alloc_tank(1,tank_struct); // ovo mora posle alokacije
+	alloc_tank(1,tank_struct);
 }
 
 void should_spawn_bot(clock_t *start_lvl_time, int *rez, int *br, int l){
