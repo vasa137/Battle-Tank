@@ -242,7 +242,7 @@ void execute_powerups(clock_t *pw_shield_start, clock_t *pw_clock_start, clock_t
 			*pw_shield_start = clock();
 			powerup.shield = 2;
 		}
-		if (((clock()-*pw_shield_start)*1000/CLOCKS_PER_SEC) >  PW_DURATION * 2){
+		if (((clock()-*pw_shield_start)*1000/CLOCKS_PER_SEC) >  PW_DURATION){
 			powerup.shield = 0;
 		}
 	}
