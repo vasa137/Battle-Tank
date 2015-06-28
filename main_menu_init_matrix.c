@@ -3,9 +3,8 @@
 char lvl_matrix[dimx][dimy];
 
 char lvl_meni[][dimx] = { " Create New Map ", " Load Map ", " Save Map As", " Exit ", " Yes ", " No ", "Continue", "Return to Main Menu", "Save Game" };
-char button[][dimx] = { " ESC : Return to menu ", " R : Turn resizing on/off ", " W : Change element to water ", " B : Change element to brick", " G : Change element to grass ",
-" SPACE : Save element on map ", " E : Eraser", " Z : Undo", " X : Redo", " SPACE : Save element on map  ", " ESC : Return to menu ", " C : Concrete "
- };
+char button[][dimx] = { " R : Turn resizing on/off ", " W : Change element to water ", " B : Change element to brick", " G : Change element to grass ",
+" C : Change element to Concrete ", " E : Eraser", " Z : Undo", " X : Redo", " SPACE : Save element on map  ", " ESC : Return to menu " };
 
 void init_matrix(){
  int i, j;
@@ -37,7 +36,7 @@ int option_selected(int mv, int mainm){ // mainm ako smo u glavnom meniju
 	case 7:      if (mainm) { HIGH_SCORE=0; return 0; }                                                                  else { init_matrix(); print_matrix(); buffer[0] = '\0'; element = 'b'; return 0; } break;
 	case 9:      if (mainm) { delete_menu(y1c, x1c, y2c, x2c); return load_maps(2); }	                else   load_maps(1);  break;
 	case 11:	 if (mainm)	{ bot_settings(); delete_menu(y1m, x1m, y2m, x2m); return 1;}	           else   return save_map();
-	case 13:	 if (mainm)	{ level_editor(); print_border_menu(y1c, x1c, y2c, x2c); print_commands(); create_map(map_name); return 1; }  else return 0;	 
+	case 13:	 if (mainm)	{ level_editor(); print_border_menu(y1c, x1c, y2c, x2c); print_commands(); create_map(map_name, 0); return 1; }  else return 0;	 
 	case 15:     if (mainm) { delete_menu(y1c, x1c, y2c, x2c); load_maps(0); return 1;} 					
 	case 17:	 if (mainm) { read_high_scores(); return 1; }                                                        break;													
 	case 19:	 if (mainm) { system("cls"); exit(0); }	                                                      break; 
@@ -60,10 +59,10 @@ void bot_settings(){
 	mvprintw(15, 117, " -> HARD  ");
 	while(1){
 		switch(getch()){
-		    case KEY_UP : PlaySound(TEXT("Menu_move.wav"),NULL, SND_ASYNC); menu_up(&mv,limitup,&i,117,1); break;
-			case KEY_DOWN : PlaySound(TEXT("Menu_move.wav"),NULL, SND_ASYNC); menu_down(&mv,limitdown,&i,117,1); break;
+		    case KEY_UP : PlaySound(TEXT("Sound\\Menu_move.wav"),NULL, SND_ASYNC); menu_up(&mv,limitup,&i,117,1); break;
+			case KEY_DOWN : PlaySound(TEXT("Sound\\Menu_move.wav"),NULL, SND_ASYNC); menu_down(&mv,limitdown,&i,117,1); break;
 			case ENTER : 
-				PlaySound(TEXT("select.wav"),NULL, SND_ASYNC);
+				PlaySound(TEXT("Sound\\select.wav"),NULL, SND_ASYNC);
 				if(mv==11) BOT_DIF=0;
 						 else if (mv==13) BOT_DIF=1;
 						 else if(mv==15) BOT_DIF=2; 
@@ -76,9 +75,9 @@ void bot_settings(){
 void menu_content(int mainm){
 	int i, j;
 	if (mainm){
-		attron(COLOR_PAIR(10));
+		attron(COLOR_PAIR(10) | A_BOLD);
 		mvprintw(4, 117, " M E N U : ");
-		attroff(COLOR_PAIR(10));
+		attroff(COLOR_PAIR(10)| A_BOLD);
 		attron(COLOR_PAIR(8)|A_BOLD);
 		mvprintw(7, 117, meni[0]);
 		attroff(COLOR_PAIR(8)|A_BOLD);
@@ -113,9 +112,9 @@ void delete_menu(int y1, int x1, int y2, int x2){
 
 void pause_menu_content(int decide)
 {
- attron(COLOR_PAIR(10));
+ attron(COLOR_PAIR(10) | A_BOLD );
  mvprintw(30, 118, "PAUSE");
- attroff(COLOR_PAIR(10));
+ attroff(COLOR_PAIR(10)| A_BOLD);
  attron(COLOR_PAIR(8)|A_BOLD);
  mvprintw(33, 113, "Continue");
  attroff(COLOR_PAIR(8)|A_BOLD);
@@ -137,14 +136,14 @@ void pause_game(int decide,clock_t start_lvl_time, int br)
  {
   switch (getch())
   {
-  case KEY_UP: PlaySound(TEXT("Menu_move.wav"),NULL, SND_ASYNC); menu_up(&mv, limitup, &ind, 113, 0);       break;
-  case KEY_DOWN: PlaySound(TEXT("Menu_move.wav"),NULL, SND_ASYNC); menu_down(&mv, limitdown, &ind, 113, 0); break;
-  case ESC: PlaySound(TEXT("select.wav"),NULL, SND_ASYNC); delete_menu(y1, x1, y2, x2);  return; break;
+  case KEY_UP: PlaySound(TEXT("Sound\\Menu_move.wav"),NULL, SND_ASYNC); menu_up(&mv, limitup, &ind, 113, 0);       break;
+  case KEY_DOWN: PlaySound(TEXT("Sound\\Menu_move.wav"),NULL, SND_ASYNC); menu_down(&mv, limitdown, &ind, 113, 0); break;
+  case ESC: PlaySound(TEXT("Sound\\select.wav"),NULL, SND_ASYNC); delete_menu(y1, x1, y2, x2);  return; break;
   case ENTER: 
-	  PlaySound(TEXT("select.wav"),NULL, SND_ASYNC);
+	  PlaySound(TEXT("Sound\\select.wav"),NULL, SND_ASYNC);
 	  switch (mv){
 		  case 33:	 delete_menu(y1, x1, y2, x2);																             return;
-		  case 35:   delete_tank_list();   delete_powerup_list();       if (decide == 1)   strcpy(map_name, "gohardorgohome.map");      else strcpy(map_name, "gameover.map");                return;                                                                    break;
+		  case 35:   delete_tank_list();   delete_powerup_list();     strcpy(map_name, "gohardorgohome.map"); return;    // else strcpy(map_name, "gameover.map");                return;                                                                    break;
 		  case 37:   save_game(time_diff, br);  print_border_menu(y1, x1, y2, x2); mv=33; ind=6 ;pause_menu_content(decide);  break;
 	  } break;
   }
@@ -168,10 +167,10 @@ int main_menu(int mainm){
 		
 		if (_kbhit()){
 			switch (getch()){
-			case KEY_UP: PlaySound(TEXT("Menu_move.wav"),NULL, SND_ASYNC); menu_up(&mv, limitup, &ind, 117, mainm);		 break;
-			case KEY_DOWN:  PlaySound(TEXT("Menu_move.wav"),NULL, SND_ASYNC); menu_down(&mv, limitdown, &ind, 117, mainm);  break;
+			case KEY_UP: PlaySound(TEXT("Sound\\Menu_move.wav"),NULL, SND_ASYNC); menu_up(&mv, limitup, &ind, 117, mainm);		 break;
+			case KEY_DOWN:  PlaySound(TEXT("Sound\\Menu_move.wav"),NULL, SND_ASYNC); menu_down(&mv, limitdown, &ind, 117, mainm);  break;
 			case ENTER:
-				PlaySound(TEXT("select.wav"),NULL, SND_ASYNC);
+				PlaySound(TEXT("Sound\\select.wav"),NULL, SND_ASYNC);
 				delete_menu(y1c - 11, x1c, y2c - 23, x2c); // vidi jos
 				delete_menu(y1m, x1m, y2m, x2m);  
 				if (tru = option_selected(mv, mainm)){
@@ -214,8 +213,8 @@ int main_menu(int mainm){
 			execute_bots(0);
 		    time_now();
 			if ((!strcmp(map_name, "gameover.map"))){
-				create_map(map_name);
-				Sleep(2000);
+				create_map(map_name, 0);
+				Sleep(430);
 				delete_tank_list();
 				demo_mode();
 			}
@@ -260,12 +259,12 @@ void level_editor(){
   while (tru){
     
    switch (getch()){ // kretanje po mapi i cuvanje elementa na mapi// biranje elementa//menjanje dimenzija elementa
-   case KEY_UP:   PlaySound(TEXT("Menu_move.wav"),NULL, SND_ASYNC); if (lvl_can_move(yu, xu, yd, xd, 1))  move_up2x2(yu--, xu, yd--, xd);        break;
-   case KEY_DOWN: PlaySound(TEXT("Menu_move.wav"),NULL, SND_ASYNC);  if (lvl_can_move(yu, xu, yd, xd, 2))  move_down2x2(yu++, xu, yd++, xd);       break;
-   case KEY_LEFT: PlaySound(TEXT("Menu_move.wav"),NULL, SND_ASYNC); if (lvl_can_move(yu, xu, yd, xd, 3))  move_left2x2(yu, xu--, yd, xd--);       break;
-   case KEY_RIGHT:PlaySound(TEXT("Menu_move.wav"),NULL, SND_ASYNC);if (lvl_can_move(yu, xu, yd, xd, 4))  move_right2x2(yu, xu++, yd, xd++);       break;
-   case ' ': PUSH_unredo(&undo, &n_undo);  save_in_matrix(yu, xu, yd, xd, element);         break;                 break;
-   case ESC: tru = 0;                         break;
+   case KEY_UP:    if (lvl_can_move(yu, xu, yd, xd, 1))  move_up2x2(yu--, xu, yd--, xd);        break;
+   case KEY_DOWN:   if (lvl_can_move(yu, xu, yd, xd, 2))  move_down2x2(yu++, xu, yd++, xd);       break;
+   case KEY_LEFT: if (lvl_can_move(yu, xu, yd, xd, 3))  move_left2x2(yu, xu--, yd, xd--);       break;
+   case KEY_RIGHT:if (lvl_can_move(yu, xu, yd, xd, 4))  move_right2x2(yu, xu++, yd, xd++);       break;
+   case ' ': PlaySound(TEXT("Sound\\select.wav"),NULL, SND_ASYNC); PUSH_unredo(&undo, &n_undo);  save_in_matrix(yu, xu, yd, xd, element);         break;                 break;
+   case ESC: PlaySound(TEXT("Sound\\select.wav"),NULL, SND_ASYNC); tru = 0;                         break;
    case 'R': case 'r': size_resize(&yu, &xu, &yd, &xd);                break;
    case 'B': case 'b': print_brick_lvl(yu, xu, yd, xd); element = 'b';             break;
    case 'G': case 'g': print_grass_lvl(yu, xu, yd, xd); element = 'g';             break;
