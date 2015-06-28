@@ -69,7 +69,7 @@ void alloc_tank(int place, Levels tank_struct){ //place=0 za nas tenk
 		novi->tankAll.tank.position.last_move = 4;
 		novi->tankAll.tank.position.barrel = 4;
 
-		delete_bots_left();
+		if(!(!strcmp(map_name,"gohardorgohome.map"))) delete_bots_left(); // ako se igra demo ne brisi meni
 	}
 	novi->tankAll.tank.type = tank_struct.kind;
 	novi->tankAll.tank.diff = tank_struct.smart;
@@ -125,8 +125,8 @@ void free_tank(List *curr){
 		pos = rand() % ((5 + 1));
 		alloc_powerup(pUps[pos], curr->tankAll.tank.position.y, curr->tankAll.tank.position.x);
 		print_powerup(curr->tankAll.tank.position.y, curr->tankAll.tank.position.x, possibility[pos], pUps[pos]);
-		for (j = curr->tankAll.tank.position.y; j < (curr->tankAll.tank.position.y + 2); j++)
-			for (i = curr->tankAll.tank.position.x; i < (curr->tankAll.tank.position.x + 2); i++)
+		for (j = curr->tankAll.tank.position.y - 1 ; j < (curr->tankAll.tank.position.y + 2); j++)
+			for (i = curr->tankAll.tank.position.x - 1; i < (curr->tankAll.tank.position.x + 2); i++)
 				matrix[j - y1b][i - x1b] = pUps[pos];
 	}
 	free(curr);
@@ -157,7 +157,7 @@ void action(int keyPressed, TankAll *current){
 		else { delete_tank(current->tank.position.y, current->tank.position.x);  create_tank(4, *current); } refresh(); break;
 
 	case ' ':
-		PlaySound(TEXT("Pucanje.wav"),NULL, SND_ASYNC);
+		PlaySound(TEXT("Sound\\Pucanje.wav"),NULL, SND_ASYNC);
 		current->projectile[pridx].last_object = 't ';
 		current->projectile[pridx].position.projectil_dir = current->tank.position.last_move;
 		current->projectile[pridx].phase = 1;
