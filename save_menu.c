@@ -2,7 +2,7 @@
 
 char buffer[100];
 
-void save_in_matrix(int yu, int xu, int yd, int xd, chtype k){
+void save_in_matrix(int yu, int xu, int yd, int xd, char k){
 	int i, j;
 	if (k == 'e') k = '.';
 	for (i = yu; i <= yd; i++)
@@ -37,7 +37,10 @@ void name_it(){
 void save_it(){
 	FILE *file;
 	int i, j;
-	file = fopen(buffer, "wb");
+	char temp[100];
+	strcpy(temp,"Saved Maps\\");
+	strcat(temp,buffer);
+	file = fopen(temp, "wb");
 //	for (j = 0; j < 65; fprintf(file, "/\n"), j++)
 	//	for (i = 0; i < 90; fprintf(file, "%c", lvl_matrix[j][i]), i++);
 	for (i = 0; i < dimx; )
@@ -47,7 +50,7 @@ void save_it(){
 
 int save_map(){
 	int i = 0, j = 115, tru = 1;
-	chtype Key;
+	char Key;
 	int x1 = 100, y1 = 2, x2 = 145, y2 = 17, min = 115, max = 130, mv = 8, ind1 = 4;
 	FILE  *saved_maps;
 	buffer[0] = '\0';
@@ -92,7 +95,7 @@ int save_map(){
 	save_it();
 
 
-	if (!(saved_maps = fopen("saved_maps.txt", "r+"))) saved_maps = fopen("saved_maps.txt", "w"); // if saved_maps doesn't exist, then create new file
+	if (!(saved_maps = fopen("Saved Maps\\saved_maps.txt", "r+"))) saved_maps = fopen("Saved Maps\\saved_maps.txt", "w"); // if saved_maps doesn't exist, then create new file
 	i = 0;
 	while ((Key = fgetc(saved_maps)) != EOF){   // does this map already exist in the file?
 		while (Key == buffer[i]) 
