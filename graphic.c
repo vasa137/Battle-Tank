@@ -301,11 +301,17 @@ void print_border()
 	refresh();
 }
 
-void create_map(char *map_name){
+void create_map(char *map_name, int load){
 	FILE *map;
+	char temp[100];
 	int y = y1b + 1, x = x1b + 1;
 	int i, j;
-	map = fopen(map_name, "rb");
+	switch(load){
+	case 0: strcpy(temp,"Levels\\"); strcat(temp,map_name); break;
+	case 1: strcpy(temp,"Saved Games\\"); strcat(temp,map_name); break;
+	case 2: strcpy(temp,"Saved Maps\\"); strcat(temp,map_name); break;
+	}
+	map = fopen(temp, "rb");
 	print_border();  //okvir
 	for (i = y; i<y2b; i++){
 		fread(matrix[i - y1b] + x - x1b, sizeof(char), 89, map);
