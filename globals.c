@@ -8,7 +8,7 @@ char map_name[50] = "dobraje.map";
 
 char matrix[dimx + 1][dimy + 1];                         // velicina mape
 
-chtype element = 'b';
+char element = 'b';
 
 Powerups powerup;
 

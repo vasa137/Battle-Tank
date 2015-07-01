@@ -7,6 +7,7 @@
 #include <sys/timeb.h>
 #include "level_order.h"
 #include <math.h>
+#include <limits.h>
 #include <windowsx.h>
 #include <mmsystem.h>
 #pragma comment(lib, "winmm.lib")
@@ -175,7 +176,7 @@ extern char pUps[];
 
 extern char matrix[dimx + 1][dimy + 1];                         // velicina mape
 
-extern chtype element;
+extern char element;
 
 extern int pridx;
 
@@ -239,7 +240,7 @@ List * which_projectile(int y, int x);
 
 void print_object(int y, int x, int c);
 void print_border();
-void create_map(char *map_name);
+void create_map(char *map_name, int load);
 void time_now();
 void print_border_menu(int y1, int x1, int y2, int x2);
 

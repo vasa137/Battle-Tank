@@ -3,7 +3,7 @@
 void save_game(clock_t time_diff, int br){
 	int i = 0, j = 122, tru = 1;
 	char matrix_copy[dimx + 1][dimy + 1]; 
-	char Key, name[100], temp[100];
+	char Key, name[100], temp[100],prefix[14], tempcat[100];
 	int y1 = 28, x1 = x1m, y2 = 45, x2 = x2m, min = 122, max = 137, flag;
 	int y = y1b + 1, x = x1b + 1;
 	FILE  *saved_games, *map, *tank, *pup;
@@ -29,7 +29,7 @@ void save_game(clock_t time_diff, int br){
 		switch (Key = getch()){
 		case KEY_UP: case KEY_DOWN: case KEY_LEFT: case KEY_RIGHT:  break;
 
-		case ENTER: PlaySound(TEXT("select.wav"),NULL, SND_ASYNC); if (name[0] == '\0')  name_it();  else  tru = check_if_legit(name); break; // checks if the name is correctly inputted
+		case ENTER: PlaySound(TEXT("Sound\\select.wav"),NULL, SND_ASYNC); if (name[0] == '\0')  name_it();  else  tru = check_if_legit(name); break; // checks if the name is correctly inputted
 
 		default: if (j < max) 
 		{ name[i++] = Key; name[i] = '\0'; mvaddch(33, j++, Key); 
@@ -40,7 +40,7 @@ void save_game(clock_t time_diff, int br){
 			name[--i] = '\0'; mvaddch(33, --j, '_'); 
 		}; refresh(); break;
 
-		case ESC: PlaySound(TEXT("select.wav"),NULL, SND_ASYNC);  delete_menu(y1, x1, y2, x2); return; break;
+		case ESC: PlaySound(TEXT("Sound\\select.wav"),NULL, SND_ASYNC);  delete_menu(y1, x1, y2, x2); return; break;
 
 
 		}
@@ -48,7 +48,7 @@ void save_game(clock_t time_diff, int br){
 	delete_menu(y1, x1, y2, x2);
 	refresh();
 	strcat(name,".svg");
-	if (!(saved_games = fopen("saved_games.txt", "r+"))) saved_games = fopen("saved_games.txt", "w");
+	if (!(saved_games = fopen("Saved Games\\saved_games.txt", "r+"))) saved_games = fopen("Saved Games\\saved_games.txt", "w");
 
 	flag=0;
 	while (fscanf(saved_games,"%s",temp) != EOF){   // does this map already exist in the file?
@@ -56,13 +56,20 @@ void save_game(clock_t time_diff, int br){
 	}
 	if(!flag){
 		fclose(saved_games);
-		saved_games = fopen("saved_games.txt", "a");
+		saved_games = fopen("Saved Games\\saved_games.txt", "a");
 		fprintf(saved_games,"%s\n",name);
 	}
-	
+
+	strcpy(prefix,"Saved Games\\");
+	//mapa
+	strcpy(tempcat,prefix);
+	strcat(tempcat,name);
+	strcpy(name,tempcat);
 	map=fopen(name,"wb");
+	//tenkovi
 	strcpy(name + strlen(name) - 4,".tnk");
 	tank=fopen(name,"wb");
+	//power-upovi
 	strcpy(name + strlen(name) - 4,".pup");
 	pup=fopen(name,"wb");
 
@@ -114,15 +121,31 @@ void save_game(clock_t time_diff, int br){
 void load_game(char * game_name){
   FILE* tank_list, *pup_list;
   int i, savedpup;
-  char tank_dat[100],pup_dat[100];
+  char tank_dat[100],pup_dat[100],prefix[14],tempcat[100];
+
+  strcpy(prefix,"Saved Games\\");
+
+  strcpy(map_name,game_name);
+
+  create_map(map_name,1);
+
   strcpy(tank_dat, game_name);
-  strcpy(pup_dat, game_name);
   strcpy(tank_dat + strlen(tank_dat) - 4,".tnk");
+  strcpy(pup_dat, game_name);
   strcpy(pup_dat + strlen(pup_dat) - 4,".pup");
-  create_map(game_name);
+
+  strcpy(tempcat,prefix);
+  strcat(tempcat,tank_dat);
+  strcpy(tank_dat,tempcat);
+
   tank_list=fopen(tank_dat,"rb");
+
+  strcpy(tempcat,prefix);
+  strcat(tempcat,pup_dat);
+  strcpy(pup_dat,tempcat);
+  
   pup_list=fopen(pup_dat,"rb");
-  create_map(game_name);
+
   fread(&level_info, sizeof(Loaded_level_info), 1, tank_list);
   restaurate_tank_list(tank_list);
 

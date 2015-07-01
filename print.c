@@ -114,7 +114,7 @@ void print_head_lvl(int yu, int xu, int yd, int xd)
 	}
 }
 
-void what_to_print(int yu, int xu, int yd, int xd, chtype k)
+void what_to_print(int yu, int xu, int yd, int xd, char k)
 { // decides what's going to be shown on the map
 	switch (k){
 	case 'b': print_brick_lvl(yu, xu, yd, xd );	break;

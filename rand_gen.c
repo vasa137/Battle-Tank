@@ -62,8 +62,8 @@ void rand_pup_gen()
 		{
 			alloc_powerup(pUps[pos], h, w);
 			print_powerup(h, w, possibility[pos], pUps[pos]);
-			for (j = (h - 1); j < (h + 2); j++)
-				for (i = (w - 1); i < (w + 2); i++)
+			for (j = h -1 ; j <(h + 2); j++)
+				for (i = w -1 ; i < (w + 2); i++)
 					matrix[j - 2][i - 2] = pUps[pos];
 			return;
 		}

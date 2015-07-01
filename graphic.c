@@ -301,11 +301,17 @@ void print_border()
 	refresh();
 }
 
-void create_map(char *map_name){
+void create_map(char *map_name, int load){
 	FILE *map;
+	char temp[100];
 	int y = y1b + 1, x = x1b + 1;
 	int i, j;
-	map = fopen(map_name, "rb");
+	switch(load){
+	case 0: strcpy(temp,"Levels\\"); strcat(temp,map_name); break;
+	case 1: strcpy(temp,"Saved Games\\"); strcat(temp,map_name); break;
+	case 2: strcpy(temp,"Saved Maps\\"); strcat(temp,map_name); break;
+	}
+	map = fopen(temp, "rb");
 	print_border();  //okvir
 	for (i = y; i<y2b; i++){
 		fread(matrix[i - y1b] + x - x1b, sizeof(char), 89, map);
@@ -521,7 +527,7 @@ void delete_bots_left(){
 	M--;
 }
 
-void print_bots_left(){// BOT_DIF - easy(0), medium(1), hard(2) LVL - koji nivo.
+void print_bots_left(){  // BOT_DIF - easy(0), medium(1), hard(2) LVL - koji nivo.
 	int i, j, bot, n, m;
 	TankDesign *style;
 	int xCord[] = { 105, 112, 119, 126, 133, 140 };
@@ -533,8 +539,8 @@ void print_bots_left(){// BOT_DIF - easy(0), medium(1), hard(2) LVL - koji nivo.
 			bot--;
 			switch (LEVEL[BOT_DIF][LVL][bot].smart) {
 			case 1:	style = normal_tank_v; break;
-			case 2: style = special_tank_v; break;
-			case 3: style = brat_tank_v; break;
+			case 2: style = brat_tank_v; break;
+			case 3: style = special_tank_v; break;
 			default: style = normal_tank_v;
 			}
 

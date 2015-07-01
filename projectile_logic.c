@@ -126,9 +126,9 @@ barrier can_fly(int y, int x)
 }
 
 void collision(int y, int x, int projectil_dir, char object){ // saljes mi koordinate udara.
-	List *temp;
+	List *temp,*currcopy;
 	Powerup_list * pom;
-	int pridxcopy, i;
+	int pridxcopy, i, j;
 	switch (object){
 	case 'b':
 		switch (projectil_dir){
@@ -160,17 +160,26 @@ void collision(int y, int x, int projectil_dir, char object){ // saljes mi koord
 		temp = which_tank(y, x);
 		if ((lst->curr != lst->first) && (temp != lst->first)) break; // friendly-fire
 		if (temp == lst->first){
-			if (powerup.shield) break;
+			if (powerup.shield){
+				break;
+			}
+			currcopy=lst->curr;
+			lst->curr=lst->first;
 			if (powerup.life>1){
-
+				PlaySound(TEXT("Sound\\Unistenje_tenka.wav"), NULL, SND_ASYNC);
 				delete_tank(lst->first->tankAll.tank.position.y, lst->first->tankAll.tank.position.x);
+				lst->curr=currcopy;
 				lst->first->tankAll.tank.position.y = 65;// Pocetne koordinate za nas tenk, zameniti sa konstantama.
 				lst->first->tankAll.tank.position.x = 24;
 				lst->first->tankAll.tank.position.last_move = 1;
 				lst->first->tankAll.tank.position.barrel = 1;
-				for (i = 1; i<4; i++) {
-					if (lst->curr->tankAll.projectile[pridx].phase == 2){
-						delete_projectile(lst->curr->tankAll.projectile[i].position.y, lst->curr->tankAll.projectile[i].position.x, lst->curr->tankAll.projectile[i].last_object);
+				for(i=0;i<3;i++)
+					for(j=0;j<3;j++) 
+						lst->first->tankAll.tank.visit_grass[i][j]=0;
+
+				for (i = 0; i<4; i++) {
+					if (lst->first->tankAll.projectile[i].phase == 2){
+						delete_projectile(lst->first->tankAll.projectile[i].position.y, lst->first->tankAll.projectile[i].position.x, lst->first->tankAll.projectile[i].last_object);
 					}
 					lst->first->tankAll.projectile[i].phase = 0;
 					lst->first->tankAll.projectile[i].last_object = ' ';
@@ -179,14 +188,16 @@ void collision(int y, int x, int projectil_dir, char object){ // saljes mi koord
 				powerup.life--;
 			}
 			else{
+				PlaySound(TEXT("Sound\\Unistenje_tenka.wav"), NULL, SND_ASYNC);
 				delete_tank(lst->first->tankAll.tank.position.y, lst->first->tankAll.tank.position.x);
+				lst->curr=currcopy;
 				strcpy(map_name, "gameover.map");
 				powerup.life--;
 				break;
 			}
 		}
 		else free_tank(temp);
-		PlaySound(TEXT("Unistenje_tenka.wav"), NULL, SND_ASYNC);
+		PlaySound(TEXT("Sound\\Unistenje_tenka.wav"), NULL, SND_ASYNC);
 		break;
 	case 'x': case 'l': case 's': case 'q': case 'a': case 'y':
 		pom = which_powerup(y, x);
@@ -229,10 +240,10 @@ void collision(int y, int x, int projectil_dir, char object){ // saljes mi koord
 		break;
 
 	case 'h':
-		PlaySound(TEXT("Unistenje_tenka.wav"), NULL, SND_ASYNC);
+		PlaySound(TEXT("Sound\\Unistenje_tenka.wav"), NULL, SND_ASYNC);
+		create_map("gameover.map", 0);
+		if(!(!strcmp("gohardorgohome.map",map_name))) Sleep(2300);
 		strcpy(map_name, "gameover.map");
-		create_map(map_name);
-		Sleep(2300);
 		break;
 	}
 

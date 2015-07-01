@@ -10,6 +10,7 @@ void init_powerups(){
 }
 
 void update_powerups(char pw){
+	PlaySound(TEXT("Sound\\powerup.wav"),NULL, SND_ASYNC);
 	switch (pw){
 	case 'l': powerup.life++;							break;
 	case 'q': powerup.bomb = 1;							break;
@@ -181,6 +182,7 @@ void execute_powerups(clock_t *pw_shield_start, clock_t *pw_clock_start, clock_t
 	(*random_pup_gen)++;
 	if (*random_pup_gen == 700000) *random_pup_gen = 0, rand_pup_gen();
 	if (powerup.bomb){
+		PlaySound(TEXT("Sound\\bomb.wav"),NULL, SND_ASYNC);
 		for (current = lst->first->next; current != NULL; ){
 			check=0;
 			for (i = 0; i < 3; i++) // proverava da li je u travi.
@@ -242,7 +244,7 @@ void execute_powerups(clock_t *pw_shield_start, clock_t *pw_clock_start, clock_t
 			*pw_shield_start = clock();
 			powerup.shield = 2;
 		}
-		if (((clock()-*pw_shield_start)*1000/CLOCKS_PER_SEC) >  PW_DURATION * 2){
+		if (((clock()-*pw_shield_start)*1000/CLOCKS_PER_SEC) >  PW_DURATION){
 			powerup.shield = 0;
 		}
 	}

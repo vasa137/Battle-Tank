@@ -110,6 +110,7 @@ score* insert_n_h(score** best, long long int s) // new high score is added to t
 				strcpy(rvl->name, string);
 				rvl->score = zurzeit->score;
 				zurzeit->score = s;
+				rvl->next = zurzeit->next;
 				zurzeit->next = rvl;
 				return zurzeit;
 			}
@@ -126,7 +127,7 @@ void new_high_score(long long int s)
 	score* best = NULL, *zurzeit = NULL, *neu = NULL;
 	chtype Key;
 	char name[100];
-	long long int sum = 0, checksum = 0;
+	unsigned long long int sum = 0, checksum = 0;
 	int i = 0, tru, j = 113, row;
 	int min = 113, max = 122;
 	int x1 = 100, y1 = 2, x2 = 145, y2 = 45;
@@ -228,10 +229,13 @@ int read_high_scores()
 	delete_menu(y1c - 11, x1c, y2c - 23, x2c);
 	print_border_side_menu(y1, x1, y2, x2, 3);
 
-	if (!(hs = fopen("high_scores.dat", "rb")))	{
+	if (!(hs = fopen("high_scores.dat", "rb")))
+	{
 		delete_menu(y1, x1, y2, x2);	  return 1;
 	} // if it doesn't exist, just go back :)
-	if (!(create_scoreboard_n_check(hs, &best))){
+
+	if (!(create_scoreboard_n_check(hs, &best)))
+	{
 		delete_menu(y1, x1, y2, x2); return 1;
 	} // creates scoreboard
 

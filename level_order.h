@@ -17,6 +17,7 @@
 #define bspawnY2 66
 #define bspawnX1 37
 #define bspawnX2 39
+
 typedef struct Map
 {
 	char mapa[dimx][dimy];
@@ -39,7 +40,7 @@ void init_matrix();
 void print_matrix();
 
 // save menu
-void save_in_matrix(int yu, int xu, int yd, int xd, chtype k);
+void save_in_matrix(int yu, int xu, int yd, int xd, char k);
 
 int check_if_legit(char buff[16]);
 
@@ -62,7 +63,7 @@ void print_head_lvl(int yu, int xu, int yd, int xd);
 void print_blocked_areas();
 //===============================
 
-void what_to_print(int yu, int xu, int yd, int xd, chtype k);
+void what_to_print(int yu, int xu, int yd, int xd, char k);
 //movement
 int lvl_can_move(int yu, int xu, int yd, int xd, int num);
 

@@ -3,8 +3,10 @@
 void load_matrix(char name[]){
 	FILE *file;
 	int i = 0, j = 0;
-	char key;
-	if (!(file = fopen(name, "rb")))
+	char key,temp[100];
+	strcpy(temp,"Saved Maps\\");
+	strcat(temp,name);
+	if (!(file = fopen(temp, "rb")))
 	{
 		init_matrix();
 		return;
@@ -96,8 +98,8 @@ int load_maps(int decide){
 	int limitup = 8, limitdown = 28, mv = 8, i = 0, j = 6;
 	int from = 113;
 	switch(decide){
-		case 0 :case 1:	if (!(saved_maps = fopen("saved_maps.txt", "r"))) return 1;   break;  //ne zaboravi break, if the file doesn't exist, return
-		case 2: if (!(saved_maps = fopen("saved_games.txt", "r"))) return 1; break;
+		case 0 :case 1:	if (!(saved_maps = fopen("Saved Maps\\saved_maps.txt", "r"))) return 1;   break;  //ne zaboravi break, if the file doesn't exist, return
+		case 2: if (!(saved_maps = fopen("Saved Games\\saved_games.txt", "r"))) return 1; break;
 	}
 	while (!feof(saved_maps)) // inserts every map name into an array
 	{
@@ -127,17 +129,17 @@ int load_maps(int decide){
 		j = print_a_page(book, c_page, limitdown, limitup, per_page) - 2;
 		while (1){
 			switch (getch()){
-			case KEY_UP: PlaySound(TEXT("Menu_move.wav"),NULL, SND_ASYNC); lmenu_up(book, &mv, limitup, &i, from); break;
-			case KEY_DOWN: PlaySound(TEXT("Menu_move.wav"),NULL, SND_ASYNC); lmenu_down(book, &mv, j, &i, from); break;
-			case KEY_LEFT:PlaySound(TEXT("Menu_move.wav"),NULL, SND_ASYNC); if (c_page > 1) 
+			case KEY_UP: PlaySound(TEXT("Sound\\Menu_move.wav"),NULL, SND_ASYNC); lmenu_up(book, &mv, limitup, &i, from); break;
+			case KEY_DOWN: PlaySound(TEXT("Sound\\Menu_move.wav"),NULL, SND_ASYNC); lmenu_down(book, &mv, j, &i, from); break;
+			case KEY_LEFT:PlaySound(TEXT("Sound\\Menu_move.wav"),NULL, SND_ASYNC); if (c_page > 1) 
 			{
 				delete_menu(5, 101, 38, 144); j = print_a_page(book, --c_page, limitdown, limitup, per_page) - 2; mv = 8; i = (c_page - 1)*per_page;
 			} break;
-			case KEY_RIGHT: PlaySound(TEXT("Menu_move.wav"),NULL, SND_ASYNC); if (c_page < pages) {
+			case KEY_RIGHT: PlaySound(TEXT("Sound\\Menu_move.wav"),NULL, SND_ASYNC); if (c_page < pages) {
 				delete_menu(5, 101, 38, 144);  j = print_a_page(book, ++c_page, limitdown, limitup, per_page) - 2; mv = 8; i = (c_page - 1)*per_page;
 			} break;
-			case ENTER: PlaySound(TEXT("select.wav"),NULL, SND_ASYNC); if (decide==1) { strcpy(buffer, book[i]); load_matrix(book[i]); print_matrix(); free_book(book);  delete_menu(y1, x1, y2, x2); return 0; }
-						else if (!decide) { clear(); custom_map(book[i]); free_book(book); delete_menu(y1, x1, y2, x2);  return 1; }
+			case ENTER: PlaySound(TEXT("Sound\\select.wav"),NULL, SND_ASYNC); if (decide==1) { strcpy(buffer, book[i]); load_matrix(book[i]); print_matrix(); free_book(book);  delete_menu(y1, x1, y2, x2); return 0; }
+						else if (!decide) { clear(); strcpy(map_name,book[i]); custom_map(map_name); free_book(book); delete_menu(y1, x1, y2, x2);  return 1; }
 						else if(decide==2){
 							load_game(book[i]);
 							delete_menu(y1, x1, y2, x2);
