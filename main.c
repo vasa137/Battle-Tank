@@ -1,8 +1,5 @@
-<<<<<<< HEAD
-﻿#include "tank.h"
-=======
 #include "tank.h"
->>>>>>> origin/master
+
 
 void main(){ // Da sredimo main kasnije.
 	int i, rez;
@@ -72,9 +69,6 @@ void main(){ // Da sredimo main kasnije.
 	}
 	free(lst);
 	free(Plst);
-<<<<<<< HEAD
 	endwin();
 }
-=======
-}
->>>>>>> origin/master
+
