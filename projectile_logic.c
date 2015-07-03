@@ -173,13 +173,9 @@ void collision(int y, int x, int projectil_dir, char object){ // saljes mi koord
 				lst->first->tankAll.tank.position.x = 24;
 				lst->first->tankAll.tank.position.last_move = 1;
 				lst->first->tankAll.tank.position.barrel = 1;
-<<<<<<< HEAD
 				for(i=0;i<3;i++)
 					for(j=0;j<3;j++) 
 						lst->first->tankAll.tank.visit_grass[i][j]=0;
-
-=======
->>>>>>> origin/master
 				for (i = 0; i<4; i++) {
 					if (lst->first->tankAll.projectile[i].phase == 2){
 						delete_projectile(lst->first->tankAll.projectile[i].position.y, lst->first->tankAll.projectile[i].position.x, lst->first->tankAll.projectile[i].last_object);
